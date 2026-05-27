@@ -1,0 +1,31 @@
+services:
+  - type: web
+    name: swamedia2
+    runtime: static
+    buildCommand: echo "No build step required for static site"
+    staticPublishPath: ./
+    envVars:
+      - key: SKIP_INSTALL_DEPS
+        value: "true"
+    routes:
+      - type: rewrite
+        source: /admin
+        destination: /offline.html
+      - type: rewrite
+        source: /subscriptions/plans
+        destination: /subscriptions/plans.html
+      - type: rewrite
+        source: /subscriptions/dashboard
+        destination: /subscriptions/dashboard.html
+      - type: rewrite
+        source: /subscriptions/plans/*
+        destination: /subscriptions/plans.html
+      - type: rewrite
+        source: /subscriptions/dashboard/*
+        destination: /subscriptions/dashboard.html
+      - type: rewrite
+        source: /app
+        destination: /index.html
+      - type: rewrite
+        source: /*
+        destination: /index.html
