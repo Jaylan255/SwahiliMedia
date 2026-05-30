@@ -1,39 +1,91 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="sw">
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="application-name" content="SwaMedia">
+    <meta name="mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-title" content="SwaMedia">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="format-detection" content="telephone=no">
-    <meta name="description" content="SwaMedia ni app ya movies, series, storyzone na entertainment kwa Kiswahili.">
-    <meta name="robots" content="index,follow,max-image-preview:large">
+    <meta name="description" content="SwaMedia ni app ya movies, series, storyzone na entertainment kwa Kiswahili. Angalia movie mpya, series, DJ collections, stories na premium access kwa experience ya haraka kwenye simu na desktop.">
+    <meta name="author" content="SwaMedia">
+    <meta name="publisher" content="SwaMedia">
+    <meta name="robots" content="index,follow,max-image-preview:large,max-snippet:-1,max-video-preview:-1">
+    <meta name="googlebot" content="index,follow,max-image-preview:large,max-snippet:-1,max-video-preview:-1">
+    <meta name="bingbot" content="index,follow,max-image-preview:large,max-snippet:-1,max-video-preview:-1">
+    <meta name="keywords" content="SwaMedia, movies za Kiswahili, series, storyzone, entertainment Tanzania, DJ mixes, premium movies, watch online Tanzania">
     <meta property="og:site_name" content="SwaMedia">
     <meta property="og:type" content="website">
     <meta property="og:title" content="SwaMedia">
-    <meta property="og:description" content="Angalia movies, series, storyzone na entertainment kwa Kiswahili kwenye SwaMedia.">
+    <meta property="og:description" content="Angalia movies, series, storyzone na entertainment kwa Kiswahili kwenye SwaMedia. Pata movie mpya, premium plans na experience safi kwenye mobile na desktop.">
     <meta property="og:url" content="https://www.swamedia.online/">
     <meta property="og:image" content="https://www.swamedia.online/icons/icon-512.png">
+    <meta property="og:image:secure_url" content="https://www.swamedia.online/icons/icon-512.png">
+    <meta property="og:image:type" content="image/png">
+    <meta property="og:image:width" content="512">
+    <meta property="og:image:height" content="512">
+    <meta property="og:image:alt" content="SwaMedia logo">
+    <meta property="og:locale" content="sw_TZ">
     <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:site" content="@swamedia">
+    <meta name="twitter:creator" content="@swamedia">
+    <meta name="twitter:domain" content="swamedia.online">
+    <meta name="twitter:url" content="https://www.swamedia.online/">
     <meta name="twitter:title" content="SwaMedia">
-    <meta name="twitter:description" content="Angalia movies, series, storyzone na entertainment kwa Kiswahili kwenye SwaMedia.">
+    <meta name="twitter:description" content="Angalia movies, series, storyzone na entertainment kwa Kiswahili kwenye SwaMedia. Pata movie mpya, premium plans na experience safi kwenye mobile na desktop.">
     <meta name="twitter:image" content="https://www.swamedia.online/icons/icon-512.png">
-    <title>SwaMedia</title>
-    <link rel="canonical" id="canonical-link" href="/">
-    <link rel="manifest" href="manifest.json">
-    <link rel="icon" type="image/png" sizes="192x192" href="icons/icon-192.png">
-    <link rel="icon" type="image/png" sizes="512x512" href="icons/icon-512.png">
-    <link rel="apple-touch-icon" sizes="192x192" href="icons/icon-192.png">
+    <meta name="twitter:image:width" content="512">
+    <meta name="twitter:image:height" content="512">
+    <meta name="twitter:image:alt" content="SwaMedia logo">
+    <title>SwaMedia | Movies, Series na StoryZone kwa Kiswahili</title>
+    <link rel="canonical" id="canonical-link" href="https://www.swamedia.online/">
+    <link rel="manifest" href="/manifest.json">
+    <link rel="sitemap" type="application/xml" href="/sitemap.xml">
+    <link rel="icon" href="/icons/favicon.ico" sizes="any">
+    <link rel="icon" type="image/svg+xml" href="/icons/favicon.svg">
+    <link rel="shortcut icon" href="/icons/favicon.svg">
+    <link rel="icon" type="image/png" sizes="48x48" href="/icons/icon-48.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="/icons/icon-32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="/icons/icon-16.png">
+    <link rel="icon" type="image/png" sizes="192x192" href="/icons/icon-192.png">
+    <link rel="icon" type="image/png" sizes="512x512" href="/icons/icon-512.png">
+    <link rel="apple-touch-icon" sizes="192x192" href="/icons/icon-192.png">
+    <link rel="apple-touch-icon" sizes="512x512" href="/icons/icon-512.png">
+    <link rel="dns-prefetch" href="//www.gstatic.com">
+    <link rel="dns-prefetch" href="//cdnjs.cloudflare.com">
+    <link rel="dns-prefetch" href="//swamediaweb-default-rtdb.firebaseio.com">
+    <link rel="preconnect" href="https://www.gstatic.com" crossorigin>
+    <link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin>
+    <link rel="preconnect" href="https://swamediaweb-default-rtdb.firebaseio.com" crossorigin>
     <script type="application/ld+json" id="seo-schema">
-      {"@context":"https://schema.org","@type":"WebSite","name":"SwaMedia","url":"https://www.swamedia.online/","potentialAction":{"@type":"SearchAction","target":"https://www.swamedia.online/search?q={search_term_string}","query-input":"required name=search_term_string"}}
+      {"@context":"https://schema.org","@graph":[{"@type":"WebSite","@id":"https://www.swamedia.online/#website","name":"SwaMedia","url":"https://www.swamedia.online/","inLanguage":"sw","potentialAction":{"@type":"SearchAction","target":"https://www.swamedia.online/search?q={search_term_string}","query-input":"required name=search_term_string"}},{"@type":"Organization","@id":"https://www.swamedia.online/#organization","name":"SwaMedia","url":"https://www.swamedia.online/","logo":{"@type":"ImageObject","url":"https://www.swamedia.online/icons/icon-512.png","width":512,"height":512},"sameAs":["https://play.google.com/store/apps/details?id=swamedia.apzxu"]},{"@type":"WebPage","@id":"https://www.swamedia.online/#webpage","url":"https://www.swamedia.online/","name":"SwaMedia | Movies, Series na StoryZone kwa Kiswahili","isPartOf":{"@id":"https://www.swamedia.online/#website"},"about":{"@id":"https://www.swamedia.online/#organization"},"description":"SwaMedia ni app ya movies, series, storyzone na entertainment kwa Kiswahili. Angalia movie mpya, series, DJ collections, stories na premium access kwa experience ya haraka kwenye simu na desktop."}]}
     </script>
 <meta name="theme-color" content="#3b82f6">
+    <meta name="msapplication-TileColor" content="#020617">
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit" async defer></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" integrity="sha512-DTOQO9RWCH3ppGqcWaEA1BIZOC6xxalwEsw9c2QQeAIftl+Vegovlnee1c9QX4TctnWMn13TZye+giMm8e2LwA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
     <style>
       body { background-color: #000000; }
+      html {
+        min-height: -webkit-fill-available;
+        text-size-adjust: 100%;
+        -webkit-text-size-adjust: 100%;
+      }
+      body {
+        min-height: 100vh;
+        min-height: -webkit-fill-available;
+        -webkit-font-smoothing: antialiased;
+        text-rendering: optimizeLegibility;
+      }
+      img,
+      video,
+      iframe {
+        max-width: 100%;
+      }
       .btn-loader { display: none !important; }
       .btn-loader.active { display: inline-block !important; }
       .turnstile-shell {
@@ -58,11 +110,11 @@
       @keyframes modalFadeIn { from { opacity: 0; transform: scale(0.95) translateY(10px); } to { opacity: 1; transform: scale(1) translateY(0); } }
       
       .plan-card {
-        transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+        transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out, border-color 0.2s ease-in-out;
       }
       .plan-card:hover {
-        transform: translateY(-5px);
-        box-shadow: 0 8px 25px rgba(59, 130, 246, 0.3); /* blue-500 with opacity */
+        transform: translateY(-3px);
+        box-shadow: 0 18px 45px rgba(220, 38, 38, 0.20);
       }
       .horizontal-scroll { scrollbar-width: none; scroll-behavior: smooth; /* Firefox */ }
       .horizontal-scroll::-webkit-scrollbar { display: none; /* Safari and Chrome */ }
@@ -1039,6 +1091,126 @@
         font-weight: 600;
       }
 
+      .content-meta-chip {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.35rem;
+        padding: 0.28rem 0.58rem;
+        border-radius: 9999px;
+        border: 1px solid rgba(255,255,255,0.08);
+        background: rgba(255,255,255,0.05);
+        color: #e2e8f0;
+        font-size: 0.62rem;
+        font-weight: 700;
+        letter-spacing: 0.14em;
+        text-transform: uppercase;
+        line-height: 1;
+        white-space: nowrap;
+      }
+
+      .content-meta-text {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.3rem;
+        color: #94a3b8;
+        font-size: 0.72rem;
+        font-weight: 600;
+        line-height: 1.2;
+        white-space: nowrap;
+      }
+
+      .content-meta-text--accent {
+        color: #cbd5e1;
+      }
+
+      .content-meta-text--warm {
+        color: #facc15;
+      }
+
+      .content-meta-text--success {
+        color: #86efac;
+      }
+
+      .content-meta-separator {
+        color: rgba(148, 163, 184, 0.48);
+        font-size: 0.68rem;
+        line-height: 1;
+      }
+
+      .content-meta-chip--accent {
+        border-color: rgba(14,165,233,0.22);
+        background: rgba(14,165,233,0.12);
+        color: #dbeafe;
+      }
+
+      .content-meta-chip--warm {
+        border-color: rgba(245,158,11,0.22);
+        background: rgba(245,158,11,0.12);
+        color: #fef3c7;
+      }
+
+      .content-meta-chip--success {
+        border-color: rgba(16,185,129,0.22);
+        background: rgba(16,185,129,0.12);
+        color: #d1fae5;
+      }
+
+      .content-meta-chip--dj {
+        border-color: rgba(34,197,94,0.28);
+        background: linear-gradient(135deg, rgba(34,197,94,0.2), rgba(14,165,233,0.12));
+        color: #dcfce7;
+        cursor: pointer;
+        text-decoration: none;
+        box-shadow: inset 0 0 0 1px rgba(255,255,255,0.04), 0 8px 20px rgba(16,185,129,0.08);
+      }
+
+      .content-meta-chip--dj:hover,
+      .content-meta-chip--dj:focus-visible {
+        border-color: rgba(34,197,94,0.62);
+        background: linear-gradient(135deg, rgba(34,197,94,0.34), rgba(14,165,233,0.2));
+        color: #ffffff;
+        outline: none;
+      }
+
+      .content-meta-chip--micro {
+        min-height: 1.1rem;
+        padding: 0.14rem 0.36rem;
+        border-radius: 0.42rem;
+        font-size: 0.48rem;
+        letter-spacing: 0.08em;
+      }
+
+      .poster-dj-chip {
+        max-width: calc(100% - 3.25rem);
+        pointer-events: auto;
+        backdrop-filter: blur(10px);
+        -webkit-backdrop-filter: blur(10px);
+        box-shadow: 0 12px 28px rgba(0, 0, 0, 0.32);
+      }
+
+      .poster-dj-chip--floating {
+        position: absolute;
+        left: 0.5rem;
+        bottom: 0.5rem;
+        z-index: 20;
+      }
+
+      .banner-dj-chip {
+        position: static;
+        max-width: 7.5rem;
+      }
+
+      .banner-dj-chip--floating {
+        position: absolute;
+        left: 0.75rem;
+        top: 0.75rem;
+        z-index: 20;
+      }
+
+      .dj-poster-host {
+        position: relative;
+      }
+
       @media (max-width: 640px) {
         .player-shell {
           border-radius: 1rem;
@@ -1158,6 +1330,7 @@
     </style>
 </head>
 <body class="bg-black text-slate-200">
+    <h1 class="sr-only">SwaMedia Movies, Series na StoryZone kwa Kiswahili</h1>
     <div id="page-loader"></div>
     <div id="app-loader" class="fixed inset-0 bg-black z-[200] flex items-center justify-center transition-opacity duration-500 ease-in-out">
         <div class="loader-content">
@@ -1271,6 +1444,41 @@
 
         const appContainer = document.getElementById('app-container');
         const bottomNav = document.getElementById('bottom-nav');
+        const enhanceMediaPerformance = (root = document) => {
+            const scope = root && root.querySelectorAll ? root : document;
+            scope.querySelectorAll('img').forEach(img => {
+                if (!img.hasAttribute('alt')) img.setAttribute('alt', 'SwaMedia media');
+                if (!img.hasAttribute('loading') && img.getAttribute('fetchpriority') !== 'high') img.setAttribute('loading', 'lazy');
+                if (!img.hasAttribute('decoding')) img.setAttribute('decoding', 'async');
+                if (!img.hasAttribute('referrerpolicy')) img.setAttribute('referrerpolicy', 'no-referrer');
+            });
+            scope.querySelectorAll('video').forEach(video => {
+                if (!video.hasAttribute('preload')) video.setAttribute('preload', 'none');
+                video.setAttribute('playsinline', '');
+                video.setAttribute('webkit-playsinline', '');
+            });
+            scope.querySelectorAll('iframe').forEach(iframe => {
+                if (!iframe.hasAttribute('loading')) iframe.setAttribute('loading', 'lazy');
+                if (!iframe.hasAttribute('title')) iframe.setAttribute('title', 'SwaMedia embedded content');
+                if (!iframe.hasAttribute('referrerpolicy')) iframe.setAttribute('referrerpolicy', 'no-referrer');
+            });
+            scope.querySelectorAll('a[target="_blank"]').forEach(link => {
+                const existingRel = link.getAttribute('rel') || '';
+                if (!/\bnoopener\b/i.test(existingRel)) {
+                    link.setAttribute('rel', `${existingRel} noopener noreferrer`.trim());
+                }
+            });
+        };
+        enhanceMediaPerformance(document);
+        if ('MutationObserver' in window && appContainer) {
+            new MutationObserver(mutations => {
+                mutations.forEach(mutation => {
+                    mutation.addedNodes.forEach(node => {
+                        if (node.nodeType === Node.ELEMENT_NODE) enhanceMediaPerformance(node);
+                    });
+                });
+            }).observe(appContainer, { childList: true, subtree: true });
+        }
         let historyStack = ['home'];
         let isOfflineViewActive = false;
         let premiumSettings = { isActive: false };
@@ -1288,8 +1496,17 @@
         let homeDjStripAutoScrollTimer = null;
         let moviesOfWeekAutoScrollTimer = null;
         let profileCountdownTimer = null;
+        let homeEmptyRepairAttempts = 0;
         let currentPremiumContext = null;
         let currentPaymentRequestContext = null;
+        let allContentCachePromise = null;
+        let allContentCacheTimestamp = 0;
+        const DATA_SNAPSHOT_CACHE_TTL_MS = 45000;
+        const ALL_CONTENT_CACHE_TTL_MS = 90000;
+        const dataSnapshotCache = new Map();
+        const DATA_CACHE_BYPASS_PREFIXES = ['notifications', 'settings/premium'];
+        const CONTENT_DATA_PATHS = new Set(['movies', 'series', 'adultContent', 'connection', 'xxx']);
+        const shouldBypassDataCache = (path = '') => DATA_CACHE_BYPASS_PREFIXES.some(prefix => path === prefix || path.startsWith(`${prefix}/`));
         const authTurnstileState = {
             login: { widgetId: null, token: '', verified: false, renderAttempts: 0 },
             signup: { widgetId: null, token: '', verified: false, renderAttempts: 0 }
@@ -1308,7 +1525,7 @@
         const REFERRAL_REWARD_POINTS = 2;
         const REWARD_ACCESS_DURATION_MS = 24 * 60 * 60 * 1000;
         const SOCIAL_POST_REWARD_POINTS = 120;
-        const APP_DOWNLOAD_URL = 'https://files.catbox.moe/amf6ef.apk';
+        const APP_DOWNLOAD_URL = 'https://play.google.com/store/apps/details?id=swamedia.apzxu';
         const AVAILABLE_LANGUAGES = [
             { code: 'sw', label: 'Swahili', flag: '🇹🇿' },
             { code: 'en', label: 'English', flag: '🇬🇧' },
@@ -1741,11 +1958,11 @@
             switch (page) {
                 case 'home': return 'Home';
                 case 'appHub': return 'App';
-                case 'search': return 'Search';
+                case 'search': return param1 ? `Search: ${decodeRouteParam(param1)}` : 'Search';
                 case 'series': return 'Series';
                 case 'profile': return 'Profile';
                 case 'signup': return 'Jisajili';
-                case 'premiumPlans': return 'Payment';
+                case 'premiumPlans': return 'Pay';
                 case 'paymentRequest': return 'Payment Request';
                 case 'inviteRewards': return 'Invite Rewards';
                 case 'likedMovies': return 'My List';
@@ -1758,16 +1975,16 @@
                 case 'connection': return param1 ? 'Connection Details' : 'Connection';
                 case 'Education': return param1 ? 'SwaX Details' : 'SwaX';
                 case 'installApp': return param1 === 'ios' ? 'Install iPhone App' : 'Install Android App';
-                case 'details': return 'Details';
-                case 'detailsInfo': return 'Info';
+                case 'details': return 'Content Details';
+                case 'detailsInfo': return 'Content Info';
                 case 'seriesEpisodeList': return 'Series Episodes';
                 case 'watch': return 'Watch';
                 case 'watchFullscreen': return 'Fullscreen Player';
-                case 'categoryContent': return 'Category';
-                case 'genreContent': return 'Genre';
-                case 'djPage': return 'DJ Page';
+                case 'categoryContent': return param1 ? `${decodeRouteParam(param1)} Collection` : 'Category';
+                case 'genreContent': return param1 ? `${decodeRouteParam(param1)} Genre` : 'Genre';
+                case 'djPage': return param1 ? `${decodeRouteParam(param1)} DJ` : 'DJ Page';
                 case 'static': return param1 ? param1.replace(/([A-Z])/g, ' $1').replace(/^./, char => char.toUpperCase()) : 'Page';
-                case 'storyDetail': return 'Story';
+                case 'storyDetail': return param1 ? `${decodeRouteParam(param1)} | Story` : 'Story';
                 case 'chapterReader': return 'Chapter Reader';
                 case 'seeAll': return 'See All';
                 case 'free': return 'Movies za Bure';
@@ -1780,37 +1997,117 @@
                 case 'home': return 'SwaMedia ni app ya movies, series, storyzone na entertainment kwa Kiswahili yenye updates za kila siku.';
                 case 'series': return 'Tazama series za Kiswahili na international series zilizopangwa vizuri kwa seasons na episodes.';
                 case 'search': return 'Tafuta movies, series, stories na entertainment ya Kiswahili kwa urahisi kwenye SwaMedia.';
+                case 'profile': return 'Ingia au jisajili ili kuendelea kutumia account yako ya SwaMedia.';
+                case 'signup': return 'Fungua account mpya ya SwaMedia na anza kufuatilia movies, series na story zako.';
                 case 'premiumPlans': return 'Chagua kifurushi cha SwaMedia na upate access ya premium ya movies na series kwa muda unaotaka.';
                 case 'paymentRequest': return 'Kamilisha ombi lako la malipo kwa plan au movie uliyochagua kwenye SwaMedia.';
+                case 'inviteRewards': return 'Invite rafiki zako na upate reward points kwenye SwaMedia.';
+                case 'likedMovies': return 'Orodha yako binafsi ya movies na series ulizohifadhi kwenye SwaMedia.';
+                case 'watchHistory': return 'Historia ya movies na series ulizowahi kutazama kwenye kifaa hiki.';
+                case 'newPosts': return 'Tazama movie mpya, series mpya na posts mpya zilizoongezwa hivi karibuni.';
                 case 'storyZone': return 'Soma stories za Kiswahili, chapters mpya, na simulizi zinazovutia kwenye StoryZone ya SwaMedia.';
                 case 'appHub': return 'Pakua SwaMedia app na ujue jinsi ya kutumia features za Android na iPhone.';
                 case 'feedbackHub': return 'Tuma maoni, request za movies na fuatilia majibu yako kwenye SwaMedia.';
                 case 'settings': return `Badili settings za SwaMedia kama language, family mode, watch options, mini player na themes${param1 ? ` kwa ${param1}` : ''}.`;
                 case 'connection': return 'Angalia connection videos na entertainment maalum zinazopatikana kwenye SwaMedia.';
+                case 'categoryContent': return `${decodeRouteParam(param1 || '') || 'Category'} content imepangwa vizuri kwenye SwaMedia.`;
+                case 'genreContent': return `${decodeRouteParam(param1 || '') || 'Genre'} content imepangwa vizuri kwenye SwaMedia.`;
+                case 'djPage': return `Orodha ya ${decodeRouteParam(param1 || '') || 'DJ'} ikiwa imepangwa kwenye SwaMedia.`;
                 case 'detailsInfo': return 'Angalia maelezo mafupi ya content uliyochagua kwenye SwaMedia.';
+                case 'details': return 'Angalia taarifa za movie au series uliyochagua kwenye SwaMedia.';
                 case 'seriesEpisodeList': return 'Angalia episodes zote za season uliyochagua kwenye list ya vertical.';
+                case 'watch': return 'Tazama content uliyochagua ndani ya player ya SwaMedia.';
                 case 'watchFullscreen': return 'Angalia player peke yake kwenye fullscreen page ya SwaMedia.';
                 case 'Education': return 'Angalia video collection maalum kwenye SwaMedia.';
                 case 'free': return 'Angalia movies na series zote za bure kwenye SwaMedia zikiwa zimepangwa vizuri kwa simu na desktop.';
+                case 'seeAll': return 'Angalia contents zote zilizochujwa kwa makundi na rank kwenye SwaMedia.';
+                case 'storyDetail': return `${decodeRouteParam(param1 || '') || 'Story'} ya Kiswahili kwenye StoryZone ya SwaMedia.`;
+                case 'chapterReader': return 'Soma chapter ya story uliyochagua kwenye StoryZone ya SwaMedia.';
                 default: return 'SwaMedia ni app ya entertainment kwa Kiswahili yenye movies, series, stories na updates za kila siku.';
             }
         };
-        const updateSeoMeta = ({ route = 'home', title = '', description = '', image = '', type = 'website', schema = null, robots = 'index,follow,max-image-preview:large' } = {}) => {
-            const resolvedTitle = title || `SwaMedia | ${getPageTitleForRoute(route)}`;
-            const resolvedDescription = description || getPageDescriptionForRoute(route);
-            const resolvedUrl = buildShareUrlForRoute(route);
+        const decodeSeoText = (value = '') => String(value || '')
+            .replace(/&amp;/g, '&')
+            .replace(/&quot;/g, '"')
+            .replace(/&#39;/g, "'")
+            .replace(/&lt;/g, '<')
+            .replace(/&gt;/g, '>');
+        const getRobotsForRoute = (route = 'home') => {
+            const [page] = String(route || 'home').split(':');
+            if (['profile', 'signup', 'paymentRequest', 'likedMovies', 'watchHistory', 'inviteRewards', 'settings'].includes(page)) {
+                return 'noindex,nofollow,max-image-preview:large,max-snippet:-1,max-video-preview:-1';
+            }
+            if (['search', 'watch', 'watchFullscreen'].includes(page)) {
+                return 'noindex,follow,max-image-preview:large,max-snippet:-1,max-video-preview:-1';
+            }
+            return 'index,follow,max-image-preview:large,max-snippet:-1,max-video-preview:-1';
+        };
+        const getSeoKeywordsForRoute = (route = 'home', title = '', description = '') => {
+            const [page, param1] = String(route || 'home').split(':');
+            const pageLabel = decodeSeoText(title || '');
+            const routeLabel = decodeSeoText(param1 ? decodeRouteParam(param1) : '');
+            const baseTerms = ['SwaMedia', 'movies za Kiswahili', 'series za Kiswahili', 'storyzone', 'entertainment'];
+            switch (page) {
+                case 'home':
+                    return [...baseTerms, 'movies za bure', 'premium streaming', 'DJ mixes'].join(', ');
+                case 'series':
+                    return [...baseTerms, 'series', 'episodes', 'seasons'].join(', ');
+                case 'search':
+                    return [...baseTerms, 'search', 'tafuta movie', 'tafuta series'].join(', ');
+                case 'free':
+                    return [...baseTerms, 'free movies', 'free series', 'watch free'].join(', ');
+                case 'storyZone':
+                    return [...baseTerms, 'stories', 'chapters', 'kiswahili stories'].join(', ');
+                case 'storyDetail':
+                    return [routeLabel || pageLabel, 'story', 'chapters', ...baseTerms].filter(Boolean).join(', ');
+                case 'chapterReader':
+                    return [routeLabel || pageLabel, 'story chapter', ...baseTerms].filter(Boolean).join(', ');
+                case 'genreContent':
+                    return [routeLabel || pageLabel, 'genre', 'movies', 'series', ...baseTerms].filter(Boolean).join(', ');
+                case 'djPage':
+                    return [routeLabel || pageLabel, 'DJ', 'mixes', 'music', ...baseTerms].filter(Boolean).join(', ');
+                case 'details':
+                    return [pageLabel, 'movie', 'series', 'watch online', ...baseTerms].filter(Boolean).join(', ');
+                case 'watch':
+                    return [pageLabel, 'watch online', 'streaming', ...baseTerms].filter(Boolean).join(', ');
+                case 'appHub':
+                    return [...baseTerms, 'Android app', 'iPhone app', 'install app'].join(', ');
+                default:
+                    return [pageLabel, description.split(/[.,]/)[0], ...baseTerms].filter(Boolean).join(', ');
+            }
+        };
+        const updateSeoMeta = ({ route = 'home', title = '', description = '', keywords = '', image = '', type = 'website', schema = null, robots = '' } = {}) => {
+            const cleanRoute = String(route || 'home');
+            const resolvedTitle = decodeSeoText(title || `SwaMedia | ${getPageTitleForRoute(cleanRoute)}`);
+            const resolvedDescription = decodeSeoText(description || getPageDescriptionForRoute(cleanRoute));
+            const resolvedUrl = buildShareUrlForRoute(cleanRoute);
             const resolvedImage = image || `${window.location.origin}/icons/icon-512.png`;
+            const resolvedImageAlt = `${resolvedTitle} image`;
+            const resolvedRobots = robots || getRobotsForRoute(cleanRoute);
+            const resolvedKeywords = keywords || getSeoKeywordsForRoute(cleanRoute, resolvedTitle, resolvedDescription);
             document.title = resolvedTitle;
             document.querySelector('meta[name="description"]')?.setAttribute('content', resolvedDescription);
-            document.querySelector('meta[name="robots"]')?.setAttribute('content', robots);
+            document.querySelector('meta[name="keywords"]')?.setAttribute('content', resolvedKeywords);
+            document.querySelector('meta[name="robots"]')?.setAttribute('content', resolvedRobots);
+            document.querySelector('meta[name="googlebot"]')?.setAttribute('content', resolvedRobots);
+            document.querySelector('meta[name="bingbot"]')?.setAttribute('content', resolvedRobots);
+            document.querySelector('meta[property="og:site_name"]')?.setAttribute('content', 'SwaMedia');
             document.querySelector('meta[property="og:title"]')?.setAttribute('content', resolvedTitle);
             document.querySelector('meta[property="og:description"]')?.setAttribute('content', resolvedDescription);
             document.querySelector('meta[property="og:url"]')?.setAttribute('content', resolvedUrl);
             document.querySelector('meta[property="og:type"]')?.setAttribute('content', type);
             document.querySelector('meta[property="og:image"]')?.setAttribute('content', resolvedImage);
+            document.querySelector('meta[property="og:image:secure_url"]')?.setAttribute('content', resolvedImage);
+            document.querySelector('meta[property="og:image:alt"]')?.setAttribute('content', resolvedImageAlt);
+            document.querySelector('meta[name="twitter:card"]')?.setAttribute('content', 'summary_large_image');
+            document.querySelector('meta[name="twitter:site"]')?.setAttribute('content', '@swamedia');
+            document.querySelector('meta[name="twitter:creator"]')?.setAttribute('content', '@swamedia');
+            document.querySelector('meta[name="twitter:url"]')?.setAttribute('content', resolvedUrl);
             document.querySelector('meta[name="twitter:title"]')?.setAttribute('content', resolvedTitle);
             document.querySelector('meta[name="twitter:description"]')?.setAttribute('content', resolvedDescription);
             document.querySelector('meta[name="twitter:image"]')?.setAttribute('content', resolvedImage);
+            document.querySelector('meta[name="twitter:image:alt"]')?.setAttribute('content', resolvedImageAlt);
+            document.querySelector('meta[name="theme-color"]')?.setAttribute('content', '#3b82f6');
             const canonicalLink = document.getElementById('canonical-link');
             if (canonicalLink) canonicalLink.setAttribute('href', resolvedUrl);
             const schemaScript = document.getElementById('seo-schema');
@@ -1880,7 +2177,7 @@
                     return second ? `watch:${decodeRouteParam(second)}` : 'home';
                 case 'category': return second ? `categoryContent:${decodeRouteParam(second)}` : 'home';
                 case 'genre': return second ? `genreContent:${decodeRouteParam(second)}` : 'home';
-                case 'dj': return second ? `djPage:${encodeRouteParam(decodeRouteParam(second))}` : 'djPage';
+                case 'dj': return second ? `djPage:${decodeRouteParam(second)}` : 'djPage';
                 case 'story':
                     if (third === 'chapter' && fourth) return `chapterReader:${decodeRouteParam(second)}:${decodeRouteParam(fourth)}`;
                     return second ? `storyDetail:${decodeRouteParam(second)}` : 'storyZone';
@@ -1975,11 +2272,18 @@
         };
         const FREE_EPISODES_PER_SEASON = 2;
         const PREMIUM_PLANS = [
-            { price: '1000', duration: '6 HOURS', subtitle: 'Plan ya masaa 6', icon: 'fa-bolt', summary: 'Tazama kila kitu kwa masaa sita' },
-            { price: '2000', duration: '1 DAY', subtitle: 'Plan ya siku 1', icon: 'fa-sun', summary: 'Tazama kila kitu kwa siku moja' },
-            { price: '3000', duration: '1 WEEK', subtitle: 'Plan ya wiki 1', icon: 'fa-fire', summary: 'Tazama kila kitu kwa wiki moja' },
-            { price: '5000', duration: '2 WEEKS', subtitle: 'Plan ya wiki 2', icon: 'fa-crown', summary: 'Tazama kila kitu kwa wiki mbili' },
-            { price: '9000', duration: '1 MONTH', subtitle: 'Plan ya mwezi 1', icon: 'fa-gem', summary: 'Tazama kila kitu kwa mwezi mzima' }
+            { price: '1000', duration: '6 HOURS', subtitle: 'Plan ya masaa 6', icon: 'fa-bolt', summary: 'Tazama kila kitu kwa masaa sita', badge: 'Quick Start' },
+            { price: '2000', duration: '1 DAY', subtitle: 'Plan ya siku 1', icon: 'fa-play', summary: 'Tazama kila kitu kwa siku moja', badge: 'Daily Watch' },
+            { price: '3000', duration: '1 WEEK', subtitle: 'Plan ya wiki 1', icon: 'fa-fire', summary: 'Tazama kila kitu kwa wiki moja', badge: 'Popular' },
+            { price: '5000', duration: '2 WEEKS', subtitle: 'Plan ya wiki 2', icon: 'fa-crown', summary: 'Tazama kila kitu kwa wiki mbili', badge: 'Best Value' },
+            { price: '9000', duration: '1 MONTH', subtitle: 'Plan ya mwezi 1', icon: 'fa-gem', summary: 'Tazama kila kitu kwa mwezi mzima', badge: 'Full Month' }
+        ];
+        const PREMIUM_PLAN_VISUALS = [
+            { border: 'border-red-500/25', iconShell: 'bg-red-500/12 border-red-400/25 text-red-200', line: 'from-red-500 via-orange-400 to-transparent' },
+            { border: 'border-cyan-400/20', iconShell: 'bg-cyan-400/10 border-cyan-300/25 text-cyan-200', line: 'from-cyan-400 via-sky-400 to-transparent' },
+            { border: 'border-orange-400/25', iconShell: 'bg-orange-400/10 border-orange-300/25 text-orange-200', line: 'from-orange-400 via-red-500 to-transparent' },
+            { border: 'border-yellow-300/25', iconShell: 'bg-yellow-300/10 border-yellow-200/25 text-yellow-100', line: 'from-yellow-300 via-red-500 to-transparent' },
+            { border: 'border-violet-400/25', iconShell: 'bg-violet-400/10 border-violet-300/25 text-violet-200', line: 'from-violet-400 via-red-500 to-transparent' }
         ];
         const CONTENT_VIEW_VISIBILITY_THRESHOLD = 500;
         const PREMIUM_PLAN_RULES = [
@@ -2257,9 +2561,9 @@
             });
             return sourceIds;
         };
-        const maybeExpireCompletedCouponAccess = async (payload = {}) => {
+        const maybeExpireCompletedCouponAccess = async (payload = {}, completionAction = 'watch') => {
             if (!currentUser?.uid) return;
-            const couponEntry = findCouponAccessForContent(payload, 'watch', currentUser);
+            const couponEntry = findCouponAccessForContent(payload, completionAction, currentUser) || findCouponAccessForContent(payload, 'watch', currentUser);
             if (!couponEntry || String(couponEntry.scope || '') !== 'content_only' || couponEntry.expireOnComplete !== true) return;
 
             const watchHistorySnap = await get(ref(database, `watchAnalytics/users/${currentUser.uid}/history`));
@@ -2278,7 +2582,9 @@
             );
 
             let isCompleted = false;
-            if (normalizeContentType(couponEntry.contentType || '') === 'series') {
+            if (completionAction === 'download') {
+                isCompleted = true;
+            } else if (normalizeContentType(couponEntry.contentType || '') === 'series') {
                 const seriesItem = (await fetchAllContent()).find(item =>
                     String(item.id || '') === String(couponEntry.contentId || '') &&
                     normalizeContentType(item.type || '') === 'series'
@@ -2309,7 +2615,7 @@
                     }
                 }
             };
-            showNotification('Coupon access imeisha baada ya kumaliza content hii.', 'success');
+            showNotification(completionAction === 'download' ? 'Access imeisha baada ya download.' : 'Coupon access imeisha baada ya kumaliza content hii.', 'success');
         };
         const activatePaidPlanForCurrentUser = async (planRule, paymentAmount = 0) => {
             if (!currentUser?.uid || !planRule) return;
@@ -2340,7 +2646,7 @@
                 contentId: contentOffer.parentId,
                 contentType: contentOffer.parentType,
                 accessMode: 'watch_download',
-                expireOnComplete: false,
+                expireOnComplete: true,
                 planKey: accessKey,
                 planLabel: contentOffer.duration || 'Content Access',
                 planAmount: Number(contentOffer.price || 0),
@@ -2534,6 +2840,7 @@
                 runTask();
             }, fallbackDelay);
         };
+        const wait = (ms = 0) => new Promise(resolve => setTimeout(resolve, ms));
         const getCachedShowcaseContent = (limit = 8) => {
             if (!Array.isArray(allContentCache) || allContentCache.length === 0) return [];
             return filterContentForPreferences(
@@ -2819,27 +3126,39 @@
             const duration = context?.planDuration || context?.contentOffer?.duration || '';
             const phoneText = String(phone || '').trim() || 'Haijawekwa';
             return [
-                `Habari, natuma ombi la malipo ya ${context?.purchaseKind === 'content' ? 'movie/content' : 'premium plan'} kwenye SwaMedia.`,
-                `Item: ${itemTitle}`,
-                duration ? `Plan/Access: ${duration}` : '',
+                `Movie/Plan: ${itemTitle}`,
                 amount ? `Amount: ${formatMoneyValue(amount, 'TZS')}` : '',
+                `User ID: ${getCurrentUserIdLabel()}`,
+                duration ? `Plan/Access: ${duration}` : '',
                 `Phone: ${phoneText}`,
                 `User name: ${getCurrentUserDisplayName()}`,
-                `User ID: ${getCurrentUserIdLabel()}`
+                '',
+                'Naomba namba nilipie hii.'
             ].filter(Boolean).join('\n');
         };
-        const openPaymentRequestPage = async ({ planPrice = 0, planDuration = '', planLabel = '', purchaseKind = 'premium', mediaItem = null, contentOffer = null } = {}) => {
+        const normalizePaymentRequestContext = ({ planPrice = 0, planDuration = '', planLabel = '', purchaseKind = 'premium', mediaItem = null, contentOffer = null } = {}) => {
+            const safePurchaseKind = purchaseKind === 'content' ? 'content' : 'premium';
+            const safeMediaItem = safePurchaseKind === 'content' ? mediaItem : null;
+            const safeContentOffer = safePurchaseKind === 'content' ? contentOffer : null;
+            return {
+                planPrice: Number(planPrice || safeContentOffer?.price || 0),
+                planDuration: planDuration || safeContentOffer?.duration || '',
+                planLabel,
+                purchaseKind: safePurchaseKind,
+                mediaItem: safeMediaItem,
+                contentOffer: safeContentOffer
+            };
+        };
+        const openPaymentRequestPage = async (paymentOptions = {}) => {
             if (!currentUser) {
                 showLoginRequiredModal();
                 return;
             }
-            setPaymentRequestContext({ planPrice, planDuration, planLabel, purchaseKind, mediaItem, contentOffer });
-            const premiumModal = document.getElementById('premium-modal');
-            if (premiumModal) {
-                premiumModal.classList.add('hidden');
-                premiumModal.classList.remove('flex');
+            const paymentContext = normalizePaymentRequestContext(paymentOptions);
+            if (paymentContext.purchaseKind !== 'content') {
+                currentPremiumContext = null;
             }
-            await navigateTo('paymentRequest');
+            showAutoPayModal(paymentContext);
         };
         const setPremiumContentTab = (scope = 'plans', root = document) => {
             const safeRoot = root || document;
@@ -2953,6 +3272,65 @@
             .replace(/./g, char => String.fromCodePoint(127397 + char.charCodeAt(0)));
         const DEFAULT_DJ_NAMES = ['DJ Mack', 'Babu DJ', 'DJ Mjukuu', 'AllyDJ', 'DJ Black', 'DJ Snecky', 'Ommy DJ', 'DJ Afro', 'DJ Jumakhan', 'DJ Niakhan', 'DJ Ramso', 'DJ Prabhass', 'DJ Six Fingers', 'DJ Remmy', 'Baba Mirinda'];
         const getNormalizedDjName = (value = '') => String(value).replace(/\s+/g, ' ').trim().toLowerCase();
+        const cleanDjNameCandidate = (value = '') => String(value || '')
+            .replace(/^[\s\-:;,.]+|[\s\-:;,.]+$/g, '')
+            .replace(/\s+/g, ' ')
+            .trim();
+        const getDjFieldValue = (item = {}) => {
+            if (!item || typeof item !== 'object') return '';
+            const djFieldKeys = new Set([
+                'dj',
+                'dji',
+                'dij',
+                'deejay',
+                'djname',
+                'djiname',
+                'dijname',
+                'deejayname',
+                'djgenre',
+                'djgenres',
+                'djtitle',
+                'djlabel'
+            ]);
+            for (const [key, value] of Object.entries(item)) {
+                const normalizedKey = String(key || '').toLowerCase().replace(/[^a-z]/g, '');
+                if (djFieldKeys.has(normalizedKey) && value) {
+                    const text = cleanDjNameCandidate(Array.isArray(value) ? value[0] : value);
+                    if (text) return text;
+                }
+            }
+            return '';
+        };
+        const isLikelyDjName = (value = '') => {
+            const text = cleanDjNameCandidate(value);
+            if (!text || text.length < 2 || text.length > 42) return false;
+            if (/https?:\/\//i.test(text)) return false;
+            const normalized = getNormalizedDjName(text);
+            const knownNames = DEFAULT_DJ_NAMES.map(getNormalizedDjName);
+            return /\bdj\b/i.test(text) || /\bdji\b/i.test(text) || /\bdij\b/i.test(text) || /dj$/i.test(text) || /dji$/i.test(text) || /dij$/i.test(text) || /deejay/i.test(text) || knownNames.includes(normalized);
+        };
+        const isReasonablePipeDjCandidate = (value = '') => {
+            const text = cleanDjNameCandidate(value);
+            if (!text || text.length < 2 || text.length > 34) return false;
+            if (!/[a-z]/i.test(text) || /^[\d\s/.-]+$/.test(text) || /^\d{4}$/.test(text)) return false;
+            return text.split(/\s+/).length <= 5;
+        };
+        const extractDjNameFromTitle = (title = '') => {
+            const parts = String(title || '').split('|').map(cleanDjNameCandidate).filter(Boolean);
+            if (parts.length < 2) {
+                const text = cleanDjNameCandidate(title);
+                const knownName = DEFAULT_DJ_NAMES.find(name => text.toLowerCase().includes(name.toLowerCase()));
+                if (knownName) return knownName;
+                const inlineMatch = text.match(/(?:^|[\s\-:])([a-z][a-z0-9.' ]{0,24}\s+d[ji]{1,2})(?:$|[\s\-:])/i);
+                return inlineMatch ? cleanDjNameCandidate(inlineMatch[1]) : '';
+            }
+            const candidates = [parts[parts.length - 1], parts[0]];
+            return candidates.find(isLikelyDjName) || (isReasonablePipeDjCandidate(parts[parts.length - 1]) ? parts[parts.length - 1] : '');
+        };
+        const getResolvedDjName = (item = {}) => {
+            const explicitDj = getDjFieldValue(item);
+            return explicitDj || extractDjNameFromTitle(item?.title || item?.parentTitle || '');
+        };
         const fetchDjNames = async () => {
             try {
                 const snap = await fetchData('djgenres');
@@ -2969,7 +3347,7 @@
             const normalizedDj = getNormalizedDjName(djName);
             if (!normalizedDj) return [];
             return items.filter(item => {
-                const itemDj = getNormalizedDjName(item?.dj || '');
+                const itemDj = getNormalizedDjName(getResolvedDjName(item));
                 const title = getNormalizedDjName(item?.title || '');
                 return itemDj.includes(normalizedDj) || title.endsWith(normalizedDj) || title.includes(`|${normalizedDj}`) || title.includes(normalizedDj);
             });
@@ -3687,6 +4065,9 @@
                 recordDownloadAnalytics(payload).catch(error => {
                     console.error('Failed to record download analytics:', error);
                 });
+                maybeExpireCompletedCouponAccess(payload, 'download').catch(error => {
+                    console.error('Failed to finalize coupon access after download:', error);
+                });
             }
         };
 
@@ -3807,47 +4188,91 @@
             }).filter(item => item !== null);
         };
 
-        const fetchData = async (type) => {
+        const fetchData = async (type, options = {}) => {
+            const path = String(type || '').replace(/^\/+/, '');
+            const ttl = Number(options.ttl || DATA_SNAPSHOT_CACHE_TTL_MS);
+            const cacheKey = path;
+            const cached = dataSnapshotCache.get(cacheKey);
+            const shouldUseCache = !options.force && !shouldBypassDataCache(path);
+            if (shouldUseCache && cached && Date.now() - cached.timestamp < ttl) {
+                return cached.snapshot;
+            }
             try {
-                const snapshot = await get(ref(database, type));
+                const snapshot = await get(ref(database, path));
+                const shouldCacheSnapshot = shouldUseCache && (!CONTENT_DATA_PATHS.has(path) || snapshot.exists());
+                if (shouldCacheSnapshot) {
+                    dataSnapshotCache.set(cacheKey, { snapshot, timestamp: Date.now() });
+                }
                 return snapshot;
             } catch (error) {
-                console.error(`Error fetching ${type}:`, error);
+                if (cached?.snapshot) return cached.snapshot;
+                console.error(`Error fetching ${path}:`, error);
                 return { val: () => null, exists: () => false };
             }
         };
 
-        const fetchAllContent = async () => {
-            if (allContentCache !== null) {
+        const fetchAllContent = async (options = {}) => {
+            const forceRefresh = options.force === true;
+            if (!forceRefresh && Array.isArray(allContentCache) && allContentCache.length > 0 && Date.now() - allContentCacheTimestamp < ALL_CONTENT_CACHE_TTL_MS) {
                 return filterContentForPreferences([...allContentCache]);
             }
+            if (!forceRefresh && allContentCachePromise) {
+                const sharedContent = await allContentCachePromise;
+                return filterContentForPreferences([...sharedContent]);
+            }
             try {
-                const [moviesSnap, seriesSnap, adultContentSnap, connectionSnap, EducationSnap] = await Promise.all([
-                    fetchData('movies'), 
-                    fetchData('series'),
-                    fetchData('adultContent'),
-                    fetchData('connection'),
-                    fetchData('xxx')
+                allContentCachePromise = Promise.all([
+                    fetchData('movies', { force: forceRefresh }), 
+                    fetchData('series', { force: forceRefresh }),
+                    fetchData('adultContent', { force: forceRefresh }),
+                    fetchData('connection', { force: forceRefresh }),
+                    fetchData('xxx', { force: forceRefresh })
                 ]);
+                const [moviesSnap, seriesSnap, adultContentSnap, connectionSnap, EducationSnap] = await allContentCachePromise;
                 const movies = transformSnapshotToArray(moviesSnap);
                 const series = transformSnapshotToArray(seriesSnap);
                 const adultContent = transformSnapshotToArray(adultContentSnap);
                 const connectionContent = transformSnapshotToArray(connectionSnap);
                 const EducationContent = transformSnapshotToArray(EducationSnap);
                 
-                const moviesWithTypes = (movies || []).map(m => ({ ...m, type: m.type || 'movie' }));
-                const seriesWithTypes = (series || []).map(s => ({ ...s, type: s.type || 'series' }));
+                const moviesWithTypes = (movies || []).map(m => ({ ...m, type: normalizeContentType(m.type || 'movie') }));
+                const seriesWithTypes = (series || []).map(s => ({ ...s, type: normalizeContentType(s.type || 'series') }));
                 const adultContentWithTypes = (adultContent || []).map(m => ({ ...m, type: m.type || 'adult' }));
                 const connectionWithTypes = (connectionContent || []).map(m => ({ ...m, type: m.type || 'connection' }));
                 const EducationWithTypes = (EducationContent || []).map(m => ({ ...m, type: m.type || 'Education' }));
 
                 allContentCache = [...moviesWithTypes, ...seriesWithTypes, ...adultContentWithTypes, ...connectionWithTypes, ...EducationWithTypes];
                 allContentCache.sort((a, b) => (b.createdAt || 0) - (a.createdAt || 0));
+                allContentCacheTimestamp = allContentCache.length > 0 ? Date.now() : 0;
                 return filterContentForPreferences([...allContentCache]);
             } catch (error) {
                 console.error("Failed to fetch and cache content", error);
+                if (Array.isArray(allContentCache) && allContentCache.length > 0) {
+                    return filterContentForPreferences([...allContentCache]);
+                }
                 allContentCache = [];
+                allContentCacheTimestamp = 0;
                 return [];
+            } finally {
+                allContentCachePromise = null;
+            }
+        };
+        const hasHomeMovieContent = (items = []) => (items || []).some(item =>
+            item &&
+            item.isPublished !== false &&
+            normalizeContentType(item.type || 'movie') === 'movie'
+        );
+        const repairHomeIfEmpty = async () => {
+            if (getRouteRoot() !== 'home') return;
+            if (appContainer.querySelector('.item-card')) {
+                homeEmptyRepairAttempts = 0;
+                return;
+            }
+            if (homeEmptyRepairAttempts >= 3) return;
+            homeEmptyRepairAttempts += 1;
+            const freshContent = await fetchAllContent({ force: true });
+            if (hasHomeMovieContent(freshContent) && getRouteRoot() === 'home') {
+                await renderHomePage(homeEmptyRepairAttempts);
             }
         };
 
@@ -4346,6 +4771,90 @@
             return 'Unknown Genre';
         };
 
+        const renderTinyMetaChip = (label, variant = 'neutral', iconClass = '') => {
+            const text = String(label || '').trim();
+            if (!text) return '';
+            if (variant === 'dj') {
+                const href = getBrowserUrlForRoute(`djPage:${text}`);
+                const variantClass = 'content-meta-chip--dj content-meta-chip--micro';
+                return `<a href="${href}" class="content-meta-chip ${variantClass}" data-dj-chip="1" data-dj-name="${escapeHtml(text)}" aria-label="Open ${escapeHtml(text)} DJ page" title="${escapeHtml(text)}">${iconClass ? `<i class="${iconClass} text-[7px]"></i>` : ''}<span class="truncate max-w-[6.25rem]">${escapeHtml(text)}</span></a>`;
+            }
+            const textVariantClass = {
+                neutral: '',
+                accent: 'content-meta-text--accent',
+                warm: 'content-meta-text--warm',
+                success: 'content-meta-text--success'
+            }[variant] || '';
+            return `<span class="content-meta-text ${textVariantClass}">${iconClass ? `<i class="${iconClass} text-[9px]"></i>` : ''}<span class="truncate max-w-[9rem]">${escapeHtml(text)}</span></span>`;
+        };
+
+        const renderPosterDjButton = (item = {}, extraClasses = '') => {
+            const djName = getResolvedDjName(item);
+            if (!djName) return '';
+            const href = getBrowserUrlForRoute(`djPage:${djName}`);
+            const placementClass = /\babsolute\b/.test(extraClasses) ? 'poster-dj-chip--floating' : '';
+            return `<a href="${href}" class="content-meta-chip content-meta-chip--dj content-meta-chip--micro poster-dj-chip ${placementClass} ${extraClasses}" data-dj-chip="1" data-dj-name="${escapeHtml(djName)}" aria-label="Open ${escapeHtml(djName)} DJ page" title="${escapeHtml(djName)}"><i class="fas fa-headphones text-[7px]"></i><span class="truncate">${escapeHtml(djName)}</span></a>`;
+        };
+
+        const createDjChipElement = (djName = '', extraClasses = '') => {
+            const safeDjName = cleanDjNameCandidate(djName);
+            if (!safeDjName) return null;
+            const link = document.createElement('a');
+            link.href = getBrowserUrlForRoute(`djPage:${safeDjName}`);
+            link.className = `content-meta-chip content-meta-chip--dj content-meta-chip--micro poster-dj-chip ${extraClasses}`.trim();
+            link.dataset.djChip = '1';
+            link.dataset.djName = safeDjName;
+            link.setAttribute('aria-label', `Open ${safeDjName} DJ page`);
+            link.title = safeDjName;
+            link.innerHTML = `<i class="fas fa-headphones text-[7px]"></i><span class="truncate">${escapeHtml(safeDjName)}</span>`;
+            return link;
+        };
+
+        const hydrateDjLabels = (scope = document) => {
+            const root = scope || document;
+            root.querySelectorAll?.('.item-card').forEach(card => {
+                const titleText = card.dataset.title || card.querySelector('h3, h4, .item-title')?.textContent || '';
+                const djName = card.dataset.djName || getResolvedDjName({ title: titleText });
+                if (!djName) return;
+                card.dataset.djName = djName;
+                card.querySelectorAll('.poster-dj-chip--inline').forEach(chip => chip.closest('.mt-1')?.remove() || chip.remove());
+
+                if (!card.querySelector('.poster-dj-chip--floating')) {
+                    const host = Array.from(card.children).find(child => child.classList?.contains('relative')) || card.querySelector('img')?.parentElement;
+                    const floatingChip = createDjChipElement(djName, 'poster-dj-chip--floating');
+                    if (host && floatingChip) {
+                        host.classList.add('dj-poster-host');
+                        host.appendChild(floatingChip);
+                    }
+                }
+            });
+
+            root.querySelectorAll?.('.banner-slide').forEach(slide => {
+                if (slide.querySelector('.banner-dj-chip, .banner-dj-chip--floating')) return;
+                const titleText = slide.querySelector('h3, .banner-title')?.textContent || slide.querySelector('img')?.getAttribute('alt') || '';
+                const djName = getResolvedDjName({ title: titleText });
+                const chip = createDjChipElement(djName, 'banner-dj-chip--floating');
+                if (chip) slide.appendChild(chip);
+            });
+        };
+
+        const renderContentMetaChips = (item = {}, { includeYear = true, includeGenre = true, includeDj = true, includeRating = false } = {}) => {
+            const chips = [];
+            if (includeYear && item.year) {
+                chips.push(renderTinyMetaChip(item.year, 'neutral', 'fas fa-calendar-days'));
+            }
+            if (includeGenre) {
+                const genreText = formatGenreText(item);
+                if (genreText && genreText !== 'Unknown Genre') {
+                    chips.push(renderTinyMetaChip(genreText, 'accent', 'fas fa-tags'));
+                }
+            }
+            if (includeRating && item.rating) {
+                chips.push(renderTinyMetaChip(`${item.rating}/10`, 'success', 'fas fa-star'));
+            }
+            return chips.length > 0 ? `<div class="flex flex-wrap items-center gap-1.5">${chips.join('<span class="content-meta-separator">|</span>')}</div>` : '';
+        };
+
         const getContentDbPath = (itemType = '') => {
             const pathMap = {
                 movie: 'movies',
@@ -4619,7 +5128,7 @@
             
             const safetyTimeout = setTimeout(async () => {
                 if (!initializationComplete) {
-                    console.warn("App initialization timed out after 5 seconds. Forcing UI render.");
+                    console.warn("App initialization timed out after 10 seconds. Forcing UI render.");
                     await navigateTo(initialRoute, true, { suppressLoader: shouldShowSplashLoader }).catch(e => {
                         console.error("Failed to render home page on timeout", e);
                         appContainer.innerHTML = `<div class="p-8 text-center text-red-400">App failed to load. Please refresh the page.</div>`;
@@ -4627,7 +5136,7 @@
                     await revealStartupContent();
                     hideLoader();
                 }
-            }, 5000);
+            }, 10000);
 
             try {
                 let isAuthReady = false;
@@ -4672,6 +5181,14 @@
                 appPreferences = loadAppPreferences();
                 applyAppTheme(appPreferences.theme);
                 document.documentElement.lang = 'sw';
+
+                if (getRouteRoot(initialRoute) === 'home') {
+                    try {
+                        await fetchAllContent({ force: true });
+                    } catch (error) {
+                        console.error('Initial home content preload failed:', error);
+                    }
+                }
                 
                 historyStack = [initialRoute];
                 await navigateTo(initialRoute, true, { skipUrlUpdate: true, skipHistoryStack: true, suppressLoader: shouldShowSplashLoader });
@@ -4749,12 +5266,16 @@
             const yearText = escapeHtml(item.year || '');
             const visibleViewCount = getVisibleViewCount(item);
             const { downloadUrl } = getPrimaryMediaUrls(item);
-            const posterHtml = item.posterUrl ? `<img src="${item.posterUrl}" alt="${item.title}" class="w-full h-40 md:h-52 object-cover rounded-xl shadow-lg group-hover:shadow-red-600/40" loading="lazy">` : `<div class="w-full h-40 md:h-52 bg-gray-800 rounded-xl flex items-center justify-center"><i class="fas ${icon} text-gray-600 text-3xl"></i></div>`;
+            const resolvedDjName = getResolvedDjName(item);
+            const metaChipsHtml = renderContentMetaChips(item, { includeYear: Boolean(yearText), includeGenre: true, includeDj: true });
+            const posterDjButtonHtml = renderPosterDjButton(item, 'absolute left-2 bottom-2 z-10');
+            const posterHtml = item.posterUrl ? `<img src="${item.posterUrl}" alt="${escapeHtml(item.title || '')}" class="w-full h-40 md:h-52 object-cover rounded-xl shadow-lg group-hover:shadow-red-600/40" loading="lazy" decoding="async" referrerpolicy="no-referrer">` : `<div class="w-full h-40 md:h-52 bg-gray-800 rounded-xl flex items-center justify-center"><i class="fas ${icon} text-gray-600 text-3xl"></i></div>`;
             const widthClass = extraClasses.includes('search-result-item') ? 'w-full' : 'flex-shrink-0 w-36 md:w-44';
             return `
-            <div class="item-card ${widthClass} cursor-pointer group ${extraClasses}" data-id="${item.id}" data-type="${type}" data-title="${item.title}" data-free-watch="${isFreeItem ? '1' : '0'}" data-is-free-access="${item.isFreeAccess === true ? '1' : '0'}" data-home-free-spotlight="${item.isHomeFreeSpotlight === true ? '1' : '0'}">
+            <div class="item-card ${widthClass} cursor-pointer group ${extraClasses}" data-id="${escapeHtml(item.id)}" data-type="${escapeHtml(type)}" data-title="${escapeHtml(item.title)}" data-dj-name="${escapeHtml(resolvedDjName)}" data-free-watch="${isFreeItem ? '1' : '0'}" data-is-free-access="${item.isFreeAccess === true ? '1' : '0'}" data-home-free-spotlight="${item.isHomeFreeSpotlight === true ? '1' : '0'}">
                 <div class="relative transform hover:scale-105 transition-transform duration-300">
                     ${posterHtml}
+                    ${posterDjButtonHtml}
                     ${isFreeItem ? `
                         <div class="absolute left-2 top-2 inline-flex items-center gap-1 rounded-full border border-emerald-300/40 bg-emerald-500/85 px-2 py-1 text-[10px] font-semibold uppercase tracking-[0.18em] text-white shadow-[0_10px_24px_rgba(16,185,129,0.35)]">
                             <i class="fas fa-unlock-keyhole text-[9px]"></i>Bure
@@ -4767,12 +5288,11 @@
                     ` : ''}
                 </div>
                 <div class="mt-2 space-y-1">
-                    ${item.dj ? `<div class="inline-flex max-w-full items-center gap-1 rounded-full border border-cyan-400/25 bg-cyan-500/10 px-2 py-1 text-[10px] font-semibold uppercase tracking-[0.14em] text-cyan-200"><i class="fas fa-headphones text-[9px]"></i><span class="truncate">${escapeHtml(item.dj)}</span></div>` : ''}
-                    <h3 class="text-sm font-semibold truncate group-hover:text-red-400">${item.title}</h3>
+                    <h3 class="text-sm font-semibold truncate group-hover:text-red-400">${escapeHtml(item.title)}</h3>
                     ${!isStory ? `
                         <div class="flex items-center justify-between gap-2">
-                            <div class="min-w-0">
-                                <p class="text-xs text-slate-400 truncate">${yearText}${yearText && genreText ? ' • ' : ''}${genreText}</p>
+                            <div class="min-w-0 space-y-1">
+                                ${metaChipsHtml || `<p class="text-xs text-slate-400 truncate">${yearText}${yearText && genreText ? ' • ' : ''}${genreText}</p>`}
                                 ${visibleViewCount > 0 ? `<p class="text-[11px] text-slate-500 mt-1"><i class="fas fa-eye mr-1"></i>${formatCompactCount(visibleViewCount)} views</p>` : ''}
                             </div>
                             <span class="flex-shrink-0 text-[11px] text-slate-500"><i class="fas ${icon}"></i></span>
@@ -5142,21 +5662,25 @@ const renderActionButtons = (item, size = 'large', itemType = null) => {
             return `<div class="flex space-x-2 mt-2">${watchBtnHtml}${lockedDownloadBtnHtml}</div>`;
         };
 
-        const renderHomePage = async () => {
+        const renderHomePage = async (retryCount = 0) => {
             const [bannersSnap, categoriesSnap, djNames] = await Promise.all([
                 fetchData('banners'), fetchData('categories'), fetchDjNames()
             ]);
-            const allContent = await fetchAllContent();
+            let allContent = await fetchAllContent();
+            if ((!Array.isArray(allContent) || allContent.length === 0 || !hasHomeMovieContent(allContent)) && retryCount < 2) {
+                await wait(350 + (retryCount * 450));
+                allContent = await fetchAllContent({ force: true });
+            }
             const publishedContent = filterContentForPreferences(allContent.filter(c => c.isPublished !== false));
-            const homeContent = publishedContent.filter(c => !['connection', 'Education', 'xxx'].includes(c.type || 'movie'));
+            const homeContent = publishedContent.filter(c => !['connection', 'xxx'].includes(normalizeContentType(c.type || 'movie')));
             
             const banners = transformSnapshotToArray(bannersSnap);
             const categories = transformSnapshotToArray(categoriesSnap);
 
             const moviesOfTheWeek = homeContent.filter(c => c.isMovieOfTheWeek === true);
             
-            const moviesWithTypes = homeContent.filter(c => (c.type || 'movie') === 'movie');
-            const seriesWithTypes = homeContent.filter(c => (c.type || 'series') === 'series');
+            const moviesWithTypes = homeContent.filter(c => normalizeContentType(c.type || 'movie') === 'movie');
+            const seriesWithTypes = homeContent.filter(c => normalizeContentType(c.type || 'series') === 'series');
             const freeSpotlightContent = homeContent
                 .filter(item => item && (item.isHomeFreeSpotlight === true || item.isFreeAccess === true))
                 .slice(0, 20);
@@ -5198,6 +5722,15 @@ const renderActionButtons = (item, size = 'large', itemType = null) => {
             renderBannerCarousel(banners, 'home-banner-carousel-container', allContent);
             renderTrendingCarousel(trendingContent);
             renderFreeSpotlightCarousel(freeSpotlightContent);
+            if (moviesWithTypes.length === 0 && retryCount < 2) {
+                scheduleAfterInitialRender(`Home content retry ${retryCount + 1}`, async () => {
+                    if (getRouteRoot() !== 'home') return;
+                    const retryContent = await fetchAllContent({ force: true });
+                    if (hasHomeMovieContent(retryContent) && getRouteRoot() === 'home') {
+                        await renderHomePage(retryCount + 1);
+                    }
+                }, 900 + (retryCount * 600));
+            }
             updateSeoMeta({
                 route: 'home',
                 title: 'SwaMedia | Movies, Series na StoryZone kwa Kiswahili',
@@ -5471,8 +6004,9 @@ const renderActionButtons = (item, size = 'large', itemType = null) => {
                         const bannerTitle = escapeHtml((linkedItem ? linkedItem.title : '') || banner.overlayText || 'Featured');
                         const bannerYear = escapeHtml((linkedItem ? linkedItem.year : '') || '');
                         const bannerGenre = escapeHtml(linkedItem ? formatGenreText(linkedItem) : '');
+                        const bannerDjChip = renderPosterDjButton(linkedItem || { title: banner.overlayText || '' }, 'banner-dj-chip');
                         const bannerPoster = linkedItem && linkedItem.posterUrl
-                            ? `<img src="${linkedItem.posterUrl}" alt="${bannerTitle}" class="w-12 h-12 md:w-14 md:h-14 object-cover rounded-lg border border-white/10 shadow-lg flex-shrink-0">`
+                            ? `<img src="${linkedItem.posterUrl}" alt="${bannerTitle}" class="w-12 h-12 md:w-14 md:h-14 object-cover rounded-lg border border-white/10 shadow-lg flex-shrink-0" loading="lazy" decoding="async" referrerpolicy="no-referrer">`
                             : `<div class="w-12 h-12 md:w-14 md:h-14 bg-gray-900/80 rounded-lg border border-white/10 flex items-center justify-center flex-shrink-0"><i class="fas ${linkedType} text-slate-300 text-sm"></i></div>`;
                         const { downloadUrl } = linkedItem ? getPrimaryMediaUrls(linkedItem) : { downloadUrl: '' };
                         const detailsHtml = `
@@ -5489,6 +6023,7 @@ const renderActionButtons = (item, size = 'large', itemType = null) => {
                                                 <span class="inline-flex items-center justify-center w-4 h-4 rounded bg-white/10 text-[9px] flex-shrink-0 ml-1">
                                                     <i class="fas ${linkedType}"></i>
                                                 </span>
+                                                ${bannerDjChip ? `<span class="text-slate-500">|</span>${bannerDjChip}` : ''}
                                             </div>
                                         </div>
                                         ${downloadUrl && shouldShowDownloadAction() ? `
@@ -5506,7 +6041,7 @@ const renderActionButtons = (item, size = 'large', itemType = null) => {
                         `;
                         return `
                         <div class="banner-slide absolute inset-0 transition-opacity duration-1000 ease-in-out ${index === 0 ? 'opacity-100' : 'opacity-0'} cursor-pointer" data-link-type="${resolvedLinkType}" data-link-id="${resolvedLinkId}" data-external-url="${resolvedExternalUrl}">
-                            <img src="${banner.imageUrl}" alt="${bannerTitle}" class="w-full h-full object-cover">
+                            <img src="${banner.imageUrl}" alt="${bannerTitle}" class="w-full h-full object-cover" loading="${index === 0 ? 'eager' : 'lazy'}" decoding="async" fetchpriority="${index === 0 ? 'high' : 'auto'}" referrerpolicy="no-referrer">
                             ${detailsHtml}
                         </div>`;
                     }).join('')}
@@ -5554,15 +6089,18 @@ const renderActionButtons = (item, size = 'large', itemType = null) => {
                 if (missingBackBtn) missingBackBtn.addEventListener('click', handleBack);
                 return;
             }
+
+            const detailsMetaChipsHtml = renderContentMetaChips(item, { includeYear: true, includeGenre: true, includeDj: true, includeRating: Boolean(item.rating) });
+            const detailsPosterDjButtonHtml = renderPosterDjButton(item, 'absolute left-2 bottom-2 z-20');
             
             const header = `
                 <div class="relative h-64 md:h-96">
-                    ${item.posterUrl ? `<img src="${item.posterUrl}" alt="${escapeHtml(item.title || 'Content poster')}" class="w-full h-full object-cover opacity-30">` : ''}
+                    ${item.posterUrl ? `<img src="${item.posterUrl}" alt="${escapeHtml(item.title || 'Content poster')}" class="w-full h-full object-cover opacity-30" loading="eager" decoding="async" fetchpriority="high" referrerpolicy="no-referrer">` : ''}
                     <div class="absolute inset-0 bg-gradient-to-t from-black to-transparent"></div>
                     <button id="back-btn" class="absolute top-4 left-4 bg-black/50 hover:bg-gray-800 text-white rounded-full w-10 h-10 flex items-center justify-center transition-colors z-10"><i class="fas fa-arrow-left"></i></button>
                     <div class="absolute bottom-0 left-0 right-0 p-4 flex items-end space-x-4">
-                        ${item.posterUrl ? `<img src="${item.posterUrl}" alt="${escapeHtml(item.title || 'Content poster')}" class="w-28 md:w-36 h-auto object-cover rounded-lg shadow-2xl flex-shrink-0">` : ''}
-                        <div class="flex-grow"><h1 class="text-2xl md:text-4xl font-bold">${item.title || ''}</h1><p class="text-slate-400">${item.year || ''}</p></div>
+                        ${item.posterUrl ? `<div class="relative flex-shrink-0 w-28 md:w-36"><img src="${item.posterUrl}" alt="${escapeHtml(item.title || 'Content poster')}" class="w-full h-auto object-cover rounded-lg shadow-2xl" loading="eager" decoding="async" fetchpriority="high" referrerpolicy="no-referrer">${detailsPosterDjButtonHtml}</div>` : ''}
+                        <div class="flex-grow min-w-0 space-y-2"><h1 class="text-2xl md:text-4xl font-bold">${escapeHtml(item.title || '')}</h1>${detailsMetaChipsHtml || `<p class="text-slate-400">${escapeHtml(item.year || '')}</p>`}</div>
                     </div>
                 </div>`;
             
@@ -5588,11 +6126,11 @@ const renderActionButtons = (item, size = 'large', itemType = null) => {
                             </button>
                         </div>
                     </div>
-                    <div class="flex items-center space-x-2 text-slate-400 flex-wrap gap-2">
-                        ${item.category ? `<span class="border border-slate-600 rounded px-2 py-0.5 text-sm">${item.category}</span>` : ''}
+                    <div class="flex items-center text-slate-400 flex-wrap gap-2">
+                        ${detailsMetaChipsHtml}
                     </div>
-                    <div><h2 class="text-lg font-semibold mb-2">Description</h2><p class="text-slate-300 leading-relaxed">${item.description || 'No description available.'}</p></div>
-                    <div><h2 class="text-lg font-semibold mb-2">Cast</h2><p class="text-slate-400">${item.cast || 'N/A'}</p></div>
+                    <div><h2 class="text-lg font-semibold mb-2">Description</h2><p class="text-slate-300 leading-relaxed">${escapeHtml(item.description || 'No description available.')}</p></div>
+                    <div><h2 class="text-lg font-semibold mb-2">Cast</h2><p class="text-slate-400">${escapeHtml(item.cast || 'N/A')}</p></div>
                 </div>`;
             
             let contentBody = '';
@@ -5711,6 +6249,7 @@ const renderActionButtons = (item, size = 'large', itemType = null) => {
                 rating,
                 year,
                 genre,
+                dj,
                 watchUrl,
                 downloadUrl,
                 threadId
@@ -5730,6 +6269,14 @@ const renderActionButtons = (item, size = 'large', itemType = null) => {
             await loadCommentAliasRegistry();
             const parentContent = allContent.find(item => item.id === parentId && (item.type || 'movie') === parentType);
             const resolvedPlaybackItem = parentContent ? { ...parentContent, ...payload } : payload;
+            const resolvedPlaybackDjName = dj || getResolvedDjName(parentContent || payload);
+            const playbackMetaChipsHtml = renderContentMetaChips({
+                title: contentTitle,
+                year: releaseYear,
+                genre: genreText,
+                dj: resolvedPlaybackDjName,
+                rating: rating && rating !== 'N/A' ? rating : ''
+            }, { includeYear: true, includeGenre: true, includeDj: true, includeRating: Boolean(rating && rating !== 'N/A') });
             const playbackUnlocked = hasContentAccess(resolvedPlaybackItem, 'watch', currentUser);
             const canDownloadFromWatchPage = Boolean(downloadUrl) && canCurrentUserDownload(resolvedPlaybackItem);
             const showDownloadButtonOnWatchPage = Boolean(downloadUrl) && shouldShowDownloadAction();
@@ -5880,9 +6427,7 @@ const renderActionButtons = (item, size = 'large', itemType = null) => {
                                         ` : ''}
                                     </div>
                                     <div class="flex flex-wrap items-center gap-2 text-xs">
-                                        <span class="bg-yellow-500/15 text-yellow-300 border border-yellow-500/30 rounded-full px-3 py-1"><i class="fas fa-star mr-2"></i>IMDB ${imdbRate}</span>
-                                        <span class="bg-white/5 text-slate-200 border border-white/10 rounded-full px-3 py-1">${releaseYear}</span>
-                                        <span class="bg-white/5 text-slate-200 border border-white/10 rounded-full px-3 py-1">${safeGenreText}</span>
+                                        ${playbackMetaChipsHtml}
                                     </div>
                                 </div>
                             </div>
@@ -5891,7 +6436,7 @@ const renderActionButtons = (item, size = 'large', itemType = null) => {
                         ${payload.posterUrl ? `
                         <section class="watch-poster-marquee">
                             <div class="watch-poster-marquee-image">
-                                <img src="${escapeHtml(payload.posterUrl)}" alt="${safeContentTitle}">
+                                <img src="${escapeHtml(payload.posterUrl)}" alt="${safeContentTitle}" loading="lazy" decoding="async" referrerpolicy="no-referrer">
                             </div>
                             <div class="watch-poster-marquee-copy">
                                 <div>
@@ -5899,9 +6444,7 @@ const renderActionButtons = (item, size = 'large', itemType = null) => {
                                     <h2>${safeContentTitle}</h2>
                                 </div>
                                 <div class="watch-poster-badges">
-                                    <span class="watch-poster-badge"><i class="fas fa-star text-yellow-300"></i>IMDB ${imdbRate}</span>
-                                    <span class="watch-poster-badge">${releaseYear}</span>
-                                    <span class="watch-poster-badge">${safeGenreText}</span>
+                                    ${playbackMetaChipsHtml}
                                 </div>
                                 <p>${safeDescription.length > 120 ? `${safeDescription.slice(0, 117)}...` : safeDescription}</p>
                             </div>
@@ -6095,6 +6638,7 @@ const renderActionButtons = (item, size = 'large', itemType = null) => {
                         rating,
                         year,
                         genre,
+                        dj: payload.dj || getResolvedDjName(parentContent || payload),
                         watchUrl: episodeUrls.watchUrl,
                         downloadUrl: targetEpisode.downloadUrl || episodeUrls.downloadUrl || '',
                         freeWatch: Boolean(parentContent?.isFreeAccess || parentContent?.isHomeFreeSpotlight || targetEpisodeNumber <= FREE_EPISODES_PER_SEASON),
@@ -6197,6 +6741,7 @@ const renderActionButtons = (item, size = 'large', itemType = null) => {
             const connectionParts = getOrderedParts(item);
             const playbackUnlocked = hasPremiumAccess(currentUser) || canWatchWithoutPremium(item);
             const seededVotes = getSeededVoteCounts(item);
+            const videoDetailMetaChipsHtml = renderContentMetaChips(item, { includeYear: true, includeGenre: true, includeDj: true, includeRating: Boolean(item.rating) });
             const connectionThreadId = buildCommentThreadId({
                 parentId: item.id,
                 parentType: itemType,
@@ -6222,6 +6767,7 @@ const renderActionButtons = (item, size = 'large', itemType = null) => {
                         </div>
                         <div class="mt-4 space-y-3">
                             <h2 class="text-2xl font-bold">${item.title}</h2>
+                            ${videoDetailMetaChipsHtml ? `<div class="flex flex-wrap items-center gap-2">${videoDetailMetaChipsHtml}</div>` : ''}
                             <div class="flex flex-wrap items-center gap-3 text-sm">
                                 <span class="inline-flex items-center gap-1 text-yellow-300"><i class="fas fa-star"></i>${escapeHtml(formatRatingText(item.rating))}</span>
                                 <span class="text-slate-400">${escapeHtml(formatContentDate(item))}</span>
@@ -6322,6 +6868,7 @@ const renderActionButtons = (item, size = 'large', itemType = null) => {
                     rating: item.rating || '',
                     year: item.releaseDate || item.date || '',
                     genre: item.category || 'Connection',
+                    dj: getResolvedDjName(item),
                     watchUrl: resolvedWatchUrl,
                     downloadUrl: resolvedDownloadUrl,
                     posterUrl: item.posterUrl || '',
@@ -6352,6 +6899,7 @@ const renderActionButtons = (item, size = 'large', itemType = null) => {
                         rating: item.rating || '',
                         year: item.releaseDate || item.date || '',
                         genre: item.category || 'Connection',
+                        dj: getResolvedDjName(item),
                         watchUrl: getGoogleDriveUrls(part.watchUrl).previewUrl || part.watchUrl,
                         downloadUrl: part.downloadUrl || '',
                         posterUrl: item.posterUrl || '',
@@ -6403,11 +6951,20 @@ const renderActionButtons = (item, size = 'large', itemType = null) => {
                 return;
             }
             const safeTitle = escapeHtml(payload.title || 'Player');
+            const fullscreenMetaChipsHtml = renderContentMetaChips({
+                title: payload.title || parentContent?.title || '',
+                year: payload.year || parentContent?.year || '',
+                genre: payload.genre || (parentContent ? formatGenreText(parentContent) : ''),
+                dj: payload.dj || getResolvedDjName(parentContent || payload)
+            }, { includeYear: false, includeGenre: true, includeDj: true });
             appContainer.innerHTML = `
                 <div class="fullscreen-player-page page">
                     <div class="sticky top-0 z-30 flex items-center justify-between gap-3 border-b border-white/10 bg-black/95 px-4 py-3">
                         <button id="fullscreen-back-btn" class="bg-gray-800 hover:bg-gray-700 text-white rounded-full w-10 h-10 flex items-center justify-center transition-colors"><i class="fas fa-arrow-left"></i></button>
-                        <p class="min-w-0 flex-1 truncate text-center text-sm font-semibold text-white">${safeTitle}</p>
+                        <div class="min-w-0 flex-1 text-center">
+                            <p class="truncate text-sm font-semibold text-white">${safeTitle}</p>
+                            ${fullscreenMetaChipsHtml ? `<div class="mt-1 flex justify-center">${fullscreenMetaChipsHtml}</div>` : ''}
+                        </div>
                         <span class="w-10"></span>
                     </div>
                     <div class="relative h-[calc(100vh-65px)] w-full bg-black">
@@ -6767,7 +7324,7 @@ const renderActionButtons = (item, size = 'large', itemType = null) => {
             const title = processText(item.title);
             const description = processText(item.description);
             const category = processText(item.category);
-            const dj = processText(item.dj);
+            const dj = processText(getResolvedDjName(item));
             const cast = processText(item.cast);
             const itemType = processText(item.type);
 
@@ -6861,7 +7418,7 @@ const renderActionButtons = (item, size = 'large', itemType = null) => {
             item.description,
             item.category,
             item.type,
-            item.dj,
+            getResolvedDjName(item),
             item.cast,
             formatGenreText(item),
             item.year
@@ -6885,7 +7442,7 @@ const renderActionButtons = (item, size = 'large', itemType = null) => {
             const category = (item.category || '').toLowerCase();
             const genre = formatGenreText(item).toLowerCase();
             const cast = (item.cast || '').toLowerCase();
-            const dj = (item.dj || '').toLowerCase();
+            const dj = getResolvedDjName(item).toLowerCase();
             let score = 0;
 
             if (title === normalizedQuery) score += 500;
@@ -6954,7 +7511,7 @@ const renderActionButtons = (item, size = 'large', itemType = null) => {
                     if (parsedQuery.titlePart && !String(entry.item.title || '').toLowerCase().includes(parsedQuery.titlePart)) {
                         return false;
                     }
-                    if (parsedQuery.djPart && !String(entry.item.dj || '').toLowerCase().includes(parsedQuery.djPart)) {
+                    if (parsedQuery.djPart && !getResolvedDjName(entry.item).toLowerCase().includes(parsedQuery.djPart)) {
                         return false;
                     }
                     return entry.score > 0 || entry.searchableText.includes(query);
@@ -7120,12 +7677,15 @@ const renderActionButtons = (item, size = 'large', itemType = null) => {
                 return;
             }
 
+            const resolvedInfoDjName = getResolvedDjName(item);
             const infoRows = [
                 { label: 'Title', value: item.title || 'N/A' },
                 { label: 'Genre', value: formatGenreText(item) || 'N/A' },
+                ...(resolvedInfoDjName ? [{ label: 'DJ', value: resolvedInfoDjName }] : []),
                 { label: 'Year', value: item.year || 'N/A' },
                 { label: 'Description', value: item.description || 'No description available.' }
             ];
+            const detailsInfoMetaChipsHtml = renderContentMetaChips(item, { includeYear: true, includeGenre: true, includeDj: true });
 
             appContainer.innerHTML = `
                 <div class="page p-4">
@@ -7134,6 +7694,7 @@ const renderActionButtons = (item, size = 'large', itemType = null) => {
                         <div>
                             <h1 class="text-2xl font-bold text-white">Details</h1>
                             <p class="text-sm text-slate-400">Maelezo mafupi ya content uliyochagua.</p>
+                            ${detailsInfoMetaChipsHtml ? `<div class="mt-3">${detailsInfoMetaChipsHtml}</div>` : ''}
                         </div>
                     </header>
                     <section class="rounded-[2rem] border border-white/10 bg-gradient-to-b from-[#161a21] to-black p-5 shadow-[0_20px_60px_rgba(0,0,0,0.35)]">
@@ -7318,6 +7879,7 @@ const renderActionButtons = (item, size = 'large', itemType = null) => {
              const [allContent, djNames] = await Promise.all([fetchAllContent(), fetchDjNames()]);
              const publishedContent = filterContentForPreferences(allContent.filter(item => item && item.isPublished !== false));
              const activeDj = selectedDjName || djNames[0] || DEFAULT_DJ_NAMES[0];
+             const displayDjNames = [...new Set([activeDj, ...djNames].map(name => String(name || '').trim()).filter(Boolean))];
              const djContent = filterContentByDjName(publishedContent, activeDj)
                 .sort((a, b) => Number(b.rating || 0) - Number(a.rating || 0));
 
@@ -7336,7 +7898,7 @@ const renderActionButtons = (item, size = 'large', itemType = null) => {
                                 <h2 class="text-[11px] sm:text-sm font-bold text-white uppercase tracking-wide">DJs</h2>
                                 <p class="text-[10px] sm:text-xs text-slate-400 mt-1">Chagua DJ</p>
                             </div>
-                            ${djNames.map((djName, djIndex) => `
+                            ${displayDjNames.map((djName, djIndex) => `
                                 <a href="#" class="dj-sidebar-link block w-full text-left bg-gray-900 border rounded-xl sm:rounded-2xl px-2 sm:px-4 py-2 sm:py-3 transition-colors flex items-center justify-between gap-2 sm:gap-4 ${getNormalizedDjName(djName) === getNormalizedDjName(activeDj) ? 'active border-red-500 bg-red-600/10 text-white' : 'border-gray-800 text-slate-300 hover:border-red-500'}" data-dj-name="${escapeHtml(djName)}">
                                     <span class="flex items-center gap-2 sm:gap-3 min-w-0">
                                         <span class="inline-flex items-center justify-center min-w-7 h-7 sm:min-w-9 sm:h-9 px-2 rounded-lg bg-red-600/15 border border-red-500/30 text-red-300 font-bold text-[10px] sm:text-sm">
@@ -7349,23 +7911,27 @@ const renderActionButtons = (item, size = 'large', itemType = null) => {
                             `).join('')}
                         </aside>
                         <div class="space-y-3 col-span-2">
-                            ${djContent.length > 0 ? djContent.map((item, index) => `
+                            ${djContent.length > 0 ? djContent.map((item, index) => {
+                                const metaChipsHtml = renderContentMetaChips({ ...item, dj: getResolvedDjName(item) || activeDj }, { includeYear: true, includeGenre: true, includeDj: true });
+                                const posterDjButtonHtml = renderPosterDjButton({ ...item, dj: getResolvedDjName(item) || activeDj }, 'absolute left-1 bottom-1 z-10');
+                                return `
                                 <div class="bg-gray-900 border border-gray-800 rounded-2xl p-3 flex items-center gap-2 sm:gap-3 item-card cursor-pointer" data-id="${item.id}" data-type="${item.type || 'movie'}" data-title="${escapeHtml(item.title)}">
                                     <div class="flex-shrink-0 flex flex-col items-center justify-center gap-1 w-10 sm:w-12 md:w-14">
                                         <span class="inline-flex items-center justify-center px-1.5 sm:px-2 py-1 rounded-md bg-yellow-400 text-black text-[9px] sm:text-[10px] font-black tracking-wide uppercase">Rank</span>
                                         <span class="text-lg sm:text-xl md:text-2xl font-black text-yellow-300 leading-none">${index + 1}</span>
                                     </div>
                                     <div class="relative flex-shrink-0 w-14 h-20 sm:w-16 sm:h-20 rounded-xl overflow-hidden bg-gray-800">
-                                        ${item.posterUrl ? `<img src="${item.posterUrl}" alt="${escapeHtml(item.title)}" class="w-full h-full object-cover">` : `<div class="w-full h-full flex items-center justify-center text-slate-500"><i class="fas fa-film"></i></div>`}
+                                        ${item.posterUrl ? `<img src="${item.posterUrl}" alt="${escapeHtml(item.title)}" class="w-full h-full object-cover" loading="lazy" decoding="async" referrerpolicy="no-referrer">` : `<div class="w-full h-full flex items-center justify-center text-slate-500"><i class="fas fa-film"></i></div>`}
+                                        ${posterDjButtonHtml}
                                     </div>
                                     <div class="min-w-0 flex-1">
-                                        <h3 class="font-semibold text-white truncate text-sm sm:text-base">${item.title}</h3>
-                                        <p class="text-[11px] sm:text-xs text-slate-400 mt-1 truncate">${item.year || 'N/A'} • ${formatGenreText(item)}</p>
+                                        <h3 class="font-semibold text-white truncate text-sm sm:text-base">${escapeHtml(item.title)}</h3>
+                                        <div class="mt-1">${metaChipsHtml}</div>
                                         <div class="flex items-center gap-2 mt-2 text-[11px] sm:text-xs text-slate-500">
                                             <span class="inline-flex items-center justify-center w-5 h-5 rounded-full bg-white/5">
                                                 <i class="fas ${(item.type || 'movie') === 'series' ? 'fa-tv' : 'fa-film'}"></i>
                                             </span>
-                                            <span>${escapeHtml(item.dj || activeDj)}</span>
+                                            <span>${escapeHtml(item.type || 'movie')}</span>
                                         </div>
                                     </div>
                                     ${getPrimaryMediaUrls(item).downloadUrl && shouldShowDownloadAction() ? `
@@ -7374,7 +7940,8 @@ const renderActionButtons = (item, size = 'large', itemType = null) => {
                                         </button>
                                     ` : ''}
                                 </div>
-                            `).join('') : `<p class="text-center text-slate-400 mt-8 col-span-full">Hakuna content ya ${escapeHtml(activeDj)} kwa sasa.</p>`}
+                            `;
+                            }).join('') : `<p class="text-center text-slate-400 mt-8 col-span-full">Hakuna content ya ${escapeHtml(activeDj)} kwa sasa.</p>`}
                         </div>
                     </div>
                 </div>
@@ -7421,18 +7988,20 @@ const renderActionButtons = (item, size = 'large', itemType = null) => {
                     </header>
                     <div class="grid grid-cols-3 gap-3 sm:gap-4 md:gap-5 items-start">
                         <div class="space-y-3 col-span-2">
-                            ${filteredItems.length > 0 ? filteredItems.map((item, index) => `
+                            ${filteredItems.length > 0 ? filteredItems.map((item, index) => {
+                                const metaChipsHtml = renderContentMetaChips(item, { includeYear: true, includeGenre: true, includeDj: true, includeRating: false });
+                                return `
                                 <div class="bg-gray-900 border border-gray-800 rounded-2xl p-3 flex items-center gap-2 sm:gap-3 item-card cursor-pointer" data-id="${item.id}" data-type="${item.type || 'movie'}" data-title="${escapeHtml(item.title)}">
                                     <div class="flex-shrink-0 flex flex-col items-center justify-center gap-1 w-10 sm:w-12 md:w-14">
                                         <span class="inline-flex items-center justify-center px-1.5 sm:px-2 py-1 rounded-md bg-yellow-400 text-black text-[9px] sm:text-[10px] font-black tracking-wide uppercase">IMDb</span>
                                         <span class="text-lg sm:text-xl md:text-2xl font-black text-yellow-300 leading-none">${index + 1}</span>
                                     </div>
                                     <div class="relative flex-shrink-0 w-14 h-20 sm:w-16 sm:h-20 rounded-xl overflow-hidden bg-gray-800">
-                                        ${item.posterUrl ? `<img src="${item.posterUrl}" alt="${escapeHtml(item.title)}" class="w-full h-full object-cover">` : `<div class="w-full h-full flex items-center justify-center text-slate-500"><i class="fas fa-film"></i></div>`}
+                                        ${item.posterUrl ? `<img src="${item.posterUrl}" alt="${escapeHtml(item.title)}" class="w-full h-full object-cover" loading="lazy" decoding="async" referrerpolicy="no-referrer">` : `<div class="w-full h-full flex items-center justify-center text-slate-500"><i class="fas fa-film"></i></div>`}
                                     </div>
                                     <div class="min-w-0 flex-1">
-                                        <h3 class="font-semibold text-white truncate text-sm sm:text-base">${item.title}</h3>
-                                        <p class="text-[11px] sm:text-xs text-slate-400 mt-1 truncate">${item.year || 'N/A'} • ${formatGenreText(item)}</p>
+                                        <h3 class="font-semibold text-white truncate text-sm sm:text-base">${escapeHtml(item.title)}</h3>
+                                        <div class="mt-1">${metaChipsHtml}</div>
                                         <div class="flex items-center gap-2 mt-2 text-[11px] sm:text-xs text-slate-500">
                                             <span class="inline-flex items-center justify-center w-5 h-5 rounded-full bg-white/5">
                                                 <i class="fas ${(item.type || 'movie') === 'series' ? 'fa-tv' : 'fa-film'}"></i>
@@ -7446,7 +8015,8 @@ const renderActionButtons = (item, size = 'large', itemType = null) => {
                                         </button>
                                     ` : ''}
                                 </div>
-                            `).join('') : `<p class="text-center text-slate-400 mt-8 col-span-full">No content found here.</p>`}
+                            `;
+                            }).join('') : `<p class="text-center text-slate-400 mt-8 col-span-full">No content found here.</p>`}
                         </div>
                         <aside class="col-span-1 bg-gray-950/70 border border-gray-800 rounded-2xl p-2 sm:p-3 space-y-2 sm:space-y-3 sticky top-4">
                             <div class="px-1">
@@ -7888,22 +8458,42 @@ const renderActionButtons = (item, size = 'large', itemType = null) => {
             if (profileBackBtn) profileBackBtn.addEventListener('click', handleBack);
         };
 
-        const showAutoPayModal = ({ planPrice = 0, planDuration = '', planLabel = '', purchaseKind = 'premium', mediaItem = null, contentOffer = null } = {}) => {
+        const showAutoPayModal = (paymentOptions = {}) => {
             if (!currentUser) {
                 showLoginRequiredModal();
                 return;
             }
 
+            const normalizedContext = normalizePaymentRequestContext(paymentOptions);
+            const { purchaseKind, mediaItem, contentOffer } = normalizedContext;
             const modal = document.getElementById('premium-modal');
             const modalContent = modal.querySelector('.modal-content');
-            const amountTzs = Math.max(MIN_PREMIUM_PAYMENT, Number(planPrice || 0));
-            const selectedPlanRule = getPremiumPlanRule({ amount: amountTzs, duration: planDuration });
+            const selectedPlanIndex = purchaseKind === 'premium'
+                ? PREMIUM_PLANS.findIndex(plan => Number(plan.price) === Number(normalizedContext.planPrice || 0) && (!normalizedContext.planDuration || plan.duration === normalizedContext.planDuration))
+                : -1;
+            const selectedPlan = selectedPlanIndex >= 0 ? PREMIUM_PLANS[selectedPlanIndex] : null;
+            const selectedVisual = PREMIUM_PLAN_VISUALS[(selectedPlanIndex >= 0 ? selectedPlanIndex : 0) % PREMIUM_PLAN_VISUALS.length];
+            const amountTzs = Math.max(MIN_PREMIUM_PAYMENT, Number(normalizedContext.planPrice || contentOffer?.price || selectedPlan?.price || 0));
+            const resolvedPlanDuration = normalizedContext.planDuration || contentOffer?.duration || selectedPlan?.duration || '';
+            const resolvedPlanLabel = normalizedContext.planLabel || (selectedPlan ? `Tsh ${selectedPlan.price} - ${selectedPlan.duration}` : `${formatMoneyValue(amountTzs, 'TZS')} - ${resolvedPlanDuration}`);
+            const paymentContext = setPaymentRequestContext({
+                planPrice: amountTzs,
+                planDuration: resolvedPlanDuration,
+                planLabel: resolvedPlanLabel,
+                purchaseKind,
+                mediaItem,
+                contentOffer
+            });
+            const selectedPlanRule = getPremiumPlanRule({ amount: amountTzs, duration: resolvedPlanDuration });
             let statusPollInterval = null;
             const paymentPosterUrl = mediaItem?.posterUrl || mediaItem?.imageUrl || '';
-            const paymentTitle = contentOffer?.title || mediaItem?.title || planLabel || 'Premium Payment';
-            const paymentDescription = contentOffer?.summary || (purchaseKind === 'content'
+            const paymentTitle = purchaseKind === 'content'
+                ? (contentOffer?.title || mediaItem?.title || 'Movie Access')
+                : (selectedPlan?.subtitle || resolvedPlanLabel || 'Premium Plan');
+            const paymentDescription = contentOffer?.summary || selectedPlan?.summary || (purchaseKind === 'content'
                 ? 'Lipa content hii ili ifunguke peke yake baada ya malipo.'
-                : 'Lipa kifurushi hiki ili content zote zifunguke.');
+                : 'Lipa kifurushi hiki ili content zote zifunguke kwenye account yako.');
+            const fallbackIcon = purchaseKind === 'content' ? 'fa-film' : (selectedPlan?.icon || 'fa-clapperboard');
             const defaultCountryCode = PAYMENT_COUNTRY_CODES.find(item => String(currentUser?.phone || '').replace(/\D/g, '').startsWith(item.code))?.code || '255';
             const defaultLocalPhone = (() => {
                 const digits = String(currentUser?.phone || '').replace(/\D/g, '');
@@ -7914,32 +8504,31 @@ const renderActionButtons = (item, size = 'large', itemType = null) => {
             })();
 
             modalContent.innerHTML = `
-                <button id="autopay-back-btn" class="absolute top-2 left-2 w-8 h-8 bg-gray-800 hover:bg-gray-700 transition-colors rounded-full text-slate-300 z-10"><i class="fas fa-arrow-left"></i></button>
-                <button id="close-autopay-modal-btn" class="absolute top-2 right-2 w-8 h-8 bg-gray-800 hover:bg-gray-700 transition-colors rounded-full text-slate-400 z-10">&times;</button>
-                <div class="space-y-4">
-                    <div class="text-center">
-                        <p class="text-[11px] uppercase tracking-[0.35em] text-blue-300 mb-2">Premium Payment</p>
-                        <h3 class="text-2xl font-bold text-white">${purchaseKind === 'content' ? 'Lipia Hii Movie' : 'Pay for Premium'}</h3>
-                        <p class="text-sm text-slate-400 mt-2">Enter your phone number and confirm the plan amount to receive the USSD push.</p>
+                <button id="close-autopay-modal-btn" class="absolute top-3 right-3 inline-flex h-9 w-9 items-center justify-center rounded-full bg-gray-800 text-slate-300 transition-colors hover:bg-gray-700 z-10">&times;</button>
+                <div class="space-y-4 pt-2">
+                    <div>
+                        <p class="text-[10px] font-black uppercase tracking-[0.34em] text-red-300">SwaMedia Pay</p>
+                        <h3 class="mt-2 text-2xl font-black text-white">${purchaseKind === 'content' ? 'Lipia Hii Movie' : 'Lipa Plan'}</h3>
+                        <p class="mt-1 text-sm text-slate-400">Weka namba yako kisha chagua automatic au WhatsApp.</p>
                     </div>
-                    <div class="rounded-[1.35rem] border border-white/10 bg-black/20 p-3">
+                    <div class="relative overflow-hidden rounded-[1.35rem] border ${purchaseKind === 'content' ? 'border-yellow-400/20' : selectedVisual.border} bg-[linear-gradient(135deg,#171717,#080808)] p-3">
+                        <div class="absolute inset-x-0 top-0 h-[3px] bg-gradient-to-r ${purchaseKind === 'content' ? 'from-yellow-300 via-red-500 to-transparent' : selectedVisual.line}"></div>
                         <div class="flex items-start gap-3">
-                            <div class="h-24 w-[72px] flex-shrink-0 overflow-hidden rounded-xl border border-white/10 bg-black/30">
-                                ${paymentPosterUrl ? `<img src="${paymentPosterUrl}" alt="${escapeHtml(paymentTitle)}" class="h-full w-full object-cover">` : `<div class="flex h-full w-full items-center justify-center text-slate-500"><i class="fas fa-film"></i></div>`}
+                            <div class="h-24 w-[72px] flex-shrink-0 overflow-hidden rounded-xl border border-white/10 bg-black/40">
+                                ${paymentPosterUrl ? `<img src="${paymentPosterUrl}" alt="${escapeHtml(paymentTitle)}" class="h-full w-full object-cover">` : `<div class="flex h-full w-full items-center justify-center ${purchaseKind === 'content' ? 'text-yellow-200' : selectedVisual.iconShell}"><i class="fas ${fallbackIcon} text-2xl"></i></div>`}
                             </div>
                             <div class="min-w-0 flex-1">
-                                <h4 class="text-base font-bold text-white leading-snug">${escapeHtml(paymentTitle)}</h4>
-                                <p class="mt-1 text-sm text-slate-300">${escapeHtml(paymentDescription)}</p>
+                                <div class="mb-1 inline-flex rounded-full border border-white/10 bg-white/5 px-2 py-1 text-[9px] font-black uppercase tracking-[0.18em] text-slate-300">${purchaseKind === 'content' ? 'Movie Access' : escapeHtml(selectedPlan?.badge || 'Premium')}</div>
+                                <h4 class="text-base font-black text-white leading-snug">${escapeHtml(paymentTitle)}</h4>
+                                <p class="mt-1 text-xs leading-relaxed text-slate-400">${escapeHtml(paymentDescription)}</p>
+                                <div class="mt-2 flex flex-wrap items-center gap-2">
+                                    <span class="rounded-full bg-red-600 px-2.5 py-1 text-[10px] font-black text-white">${formatMoneyValue(amountTzs, 'TZS')}</span>
+                                    <span class="rounded-full border border-white/10 bg-white/5 px-2.5 py-1 text-[10px] font-semibold text-slate-300">${escapeHtml(resolvedPlanDuration || 'Custom Access')}</span>
+                                </div>
                             </div>
                         </div>
                     </div>
                     <div class="rounded-2xl border border-white/10 bg-black/20 p-4 space-y-4">
-                        <div>
-                            <p class="text-xs uppercase tracking-[0.25em] text-slate-500 mb-2">Selected Plan</p>
-                            <div class="rounded-2xl border border-white/10 bg-white/[0.03] p-4">
-                                <p id="autopay-package-name" class="text-white font-semibold">${escapeHtml(planLabel || `${formatMoneyValue(amountTzs, 'TZS')} - ${planDuration}`)}</p>
-                            </div>
-                        </div>
                         <div>
                             <label for="autopay-phone-input" class="block text-xs uppercase tracking-[0.25em] text-slate-500 mb-2">Phone Number</label>
                             <div class="grid grid-cols-[120px_1fr] gap-3">
@@ -7953,16 +8542,40 @@ const renderActionButtons = (item, size = 'large', itemType = null) => {
                             <label for="autopay-amount-input" class="block text-xs uppercase tracking-[0.25em] text-slate-500 mb-2">Amount</label>
                             <input id="autopay-amount-input" type="number" min="${MIN_PREMIUM_PAYMENT}" value="${amountTzs}" readonly class="w-full rounded-2xl border border-white/10 bg-white/[0.03] px-4 py-3 text-white placeholder:text-slate-500 focus:outline-none focus:border-blue-500/60">
                         </div>
-                        <div id="autopay-country-note" class="text-xs text-slate-400">Chagua country code yako kisha andika namba bila `+` mbele.</div>
+                        <div id="autopay-country-note" class="text-xs text-slate-400">Chagua country code yako kisha andika namba bila + mbele.</div>
+                        <div>
+                            <button id="autopay-submit-btn" class="w-full rounded-xl bg-red-600 px-4 py-3 text-sm font-black text-white transition-colors hover:bg-red-700">
+                                <span class="btn-text">Pay</span>
+                                <span class="btn-loader"><i class="fas fa-spinner fa-spin"></i></span>
+                            </button>
+                            <p class="mt-1 text-center text-[10px] font-semibold uppercase tracking-[0.18em] text-slate-500">lipia automatic</p>
+                        </div>
+                        <div>
+                            <button id="autopay-whatsapp-btn" class="inline-flex w-full items-center justify-center rounded-xl bg-green-600 px-4 py-3 text-sm font-black text-white transition-colors hover:bg-green-700">
+                                <i class="fab fa-whatsapp mr-2 text-lg"></i>
+                                <span>Pay</span>
+                            </button>
+                            <p class="mt-1 text-center text-[10px] font-semibold uppercase tracking-[0.18em] text-slate-500">lipia whatsapp</p>
+                        </div>
+                        <div class="rounded-[1.2rem] border border-orange-500/20 bg-orange-500/8 px-3 py-3">
+                            <label for="autopay-coupon-input" class="block text-xs font-semibold text-white">Coupon code</label>
+                            <div class="mt-2 flex items-center gap-2 rounded-xl border border-white/10 bg-black/20 px-3 py-2">
+                                <i class="fas fa-ticket-alt text-orange-300"></i>
+                                <input id="autopay-coupon-input" type="text" placeholder="Weka coupon code" class="w-full bg-transparent text-sm text-white focus:outline-none">
+                            </div>
+                            <button id="autopay-apply-coupon-btn" class="mt-3 rounded-xl bg-orange-500 px-4 py-2 text-xs font-bold text-white transition-colors hover:bg-orange-600">Apply Coupon</button>
+                            <p id="autopay-coupon-feedback" class="mt-2 min-h-[18px] text-xs text-slate-400"></p>
+                        </div>
+                        <div id="autopay-stage" class="hidden rounded-[1.2rem] border border-emerald-500/20 bg-emerald-500/8 px-4 py-4 text-center">
+                            <div class="mx-auto mb-3 flex h-12 w-12 items-center justify-center rounded-full border border-emerald-300/30 bg-emerald-500/10 text-emerald-200">
+                                <i class="fas fa-spinner fa-spin"></i>
+                            </div>
+                            <p id="autopay-stage-title" class="text-sm font-bold text-white">Ina load autopayment...</p>
+                            <p id="autopay-stage-note" class="mt-1 text-xs text-slate-400">Thibitisha prompt kwenye simu yako.</p>
+                        </div>
                         <div id="autopay-feedback" class="text-sm min-h-[20px] text-slate-400"></div>
-                        <button id="autopay-submit-btn" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-4 rounded-xl transition-colors">
-                            <span class="btn-text">COMPLETE</span>
-                            <span class="btn-loader hidden"><i class="fas fa-spinner fa-spin"></i></span>
-                        </button>
-                        <button id="autopay-cancel-btn" class="w-full bg-gray-800 hover:bg-gray-700 text-white font-semibold py-3 px-4 rounded-xl transition-colors">Ghairi</button>
+                        <button id="autopay-cancel-btn" class="w-full rounded-xl bg-gray-800 px-4 py-3 text-sm font-semibold text-white transition-colors hover:bg-gray-700">Ghairi</button>
                     </div>
-                    <p class="text-center text-xs text-slate-400 leading-relaxed">COMPLETE</p>
-                    <p class="text-center text-xs text-slate-500 leading-relaxed">${purchaseKind === 'content' ? 'Utaruhusiwa kuipakua yote baada ya Malipo.' : 'Payment verification will continue automatically after the USSD push is sent to your phone.'}</p>
                 </div>
             `;
 
@@ -7977,6 +8590,11 @@ const renderActionButtons = (item, size = 'large', itemType = null) => {
             const submitBtn = modal.querySelector('#autopay-submit-btn');
             const submitText = submitBtn.querySelector('.btn-text');
             const submitLoader = submitBtn.querySelector('.btn-loader');
+            const couponInput = modal.querySelector('#autopay-coupon-input');
+            const couponFeedbackEl = modal.querySelector('#autopay-coupon-feedback');
+            const stageEl = modal.querySelector('#autopay-stage');
+            const stageTitleEl = modal.querySelector('#autopay-stage-title');
+            const stageNoteEl = modal.querySelector('#autopay-stage-note');
             const updateCountryPaymentHint = () => {
                 const selectedCountry = PAYMENT_COUNTRY_CODES.find(item => item.code === countryCodeSelect?.value) || PAYMENT_COUNTRY_CODES[0];
                 if (countryNote) {
@@ -7986,25 +8604,57 @@ const renderActionButtons = (item, size = 'large', itemType = null) => {
             updateCountryPaymentHint();
             countryCodeSelect?.addEventListener('change', updateCountryPaymentHint);
 
+            const setPaymentStage = (status = 'loading', title = '', note = '') => {
+                if (!stageEl) return;
+                stageEl.classList.remove('hidden');
+                const iconEl = stageEl.querySelector('i');
+                if (iconEl) {
+                    iconEl.className = status === 'success'
+                        ? 'fas fa-check'
+                        : status === 'error'
+                            ? 'fas fa-times'
+                            : 'fas fa-spinner fa-spin';
+                }
+                if (stageTitleEl) stageTitleEl.textContent = title || (status === 'success' ? 'Payment successful' : 'Ina load autopayment...');
+                if (stageNoteEl) stageNoteEl.textContent = note || (status === 'success' ? 'Access imefunguliwa kwenye account yako.' : 'Thibitisha prompt kwenye simu yako.');
+            };
+
             const closeModal = () => {
                 if (statusPollInterval) {
                     clearInterval(statusPollInterval);
                     statusPollInterval = null;
                 }
+                clearPaymentRequestContext();
                 modal.classList.add('hidden');
                 modal.classList.remove('flex');
             };
 
-            modal.querySelector('#autopay-back-btn')?.addEventListener('click', () => {
-                closeModal();
-                if (purchaseKind === 'content' && mediaItem) {
-                    showPremiumRequiredModal(mediaItem);
-                } else {
-                    renderPremiumPlansPage();
-                }
-            });
             modal.querySelector('#close-autopay-modal-btn')?.addEventListener('click', closeModal);
             modal.querySelector('#autopay-cancel-btn')?.addEventListener('click', closeModal);
+            modal.querySelector('#autopay-whatsapp-btn')?.addEventListener('click', () => {
+                const selectedCountryCode = countryCodeSelect?.value || '255';
+                const normalizedPhone = normalizeInternationalPhone(phoneInput?.value || '', selectedCountryCode);
+                const whatsappUrl = `https://wa.me/255748472076?text=${encodeURIComponent(buildPaymentRequestWhatsappMessage(paymentContext, normalizedPhone ? `+${normalizedPhone}` : ''))}`;
+                window.open(whatsappUrl, '_blank', 'noopener');
+            });
+
+            modal.querySelector('#autopay-apply-coupon-btn')?.addEventListener('click', async () => {
+                const code = couponInput?.value || '';
+                if (!couponFeedbackEl) return;
+                couponFeedbackEl.textContent = 'Tunathibitisha coupon code...';
+                couponFeedbackEl.className = 'mt-2 min-h-[18px] text-xs text-orange-300';
+                try {
+                    const coupon = await redeemPromotionCode(code);
+                    couponFeedbackEl.textContent = `${coupon.planLabel || coupon.title || 'Coupon'} imekubaliwa. Access imefunguliwa.`;
+                    couponFeedbackEl.className = 'mt-2 min-h-[18px] text-xs text-green-400';
+                    if (couponInput) couponInput.value = '';
+                    showNotification('Coupon imefanikiwa.', 'success');
+                } catch (error) {
+                    couponFeedbackEl.textContent = error?.message || 'Coupon imeshindikana.';
+                    couponFeedbackEl.className = 'mt-2 min-h-[18px] text-xs text-red-400';
+                    showNotification(error?.message || 'Coupon imeshindikana.', 'error');
+                }
+            });
 
             submitBtn.addEventListener('click', async () => {
                 const selectedCountryCode = countryCodeSelect?.value || '255';
@@ -8025,7 +8675,8 @@ const renderActionButtons = (item, size = 'large', itemType = null) => {
                 phoneInput.disabled = true;
                 amountInput.disabled = true;
                 submitText.classList.add('hidden');
-                submitLoader.classList.remove('hidden');
+                submitLoader.classList.add('active');
+                setPaymentStage('loading', 'Ina load autopayment...', 'Kama tayari umeweka namba, thibitisha prompt kwenye simu yako.');
                 feedbackEl.textContent = 'Waiting for payment confirmation...';
                 feedbackEl.className = 'text-sm min-h-[20px] text-blue-300';
 
@@ -8044,7 +8695,7 @@ const renderActionButtons = (item, size = 'large', itemType = null) => {
                     showNotification('USSD push sent. Check your phone to complete payment.', 'success');
 
                     let attempts = 0;
-                    const planSummary = `${formatMoneyValue(enteredAmount, 'TZS')} - ${planDuration}`;
+                    const planSummary = `${formatMoneyValue(enteredAmount, 'TZS')} - ${resolvedPlanDuration}`;
                     statusPollInterval = setInterval(async () => {
                         attempts += 1;
                         try {
@@ -8057,20 +8708,19 @@ const renderActionButtons = (item, size = 'large', itemType = null) => {
                                 if (purchaseKind === 'content' && contentOffer) {
                                     await activateContentPurchaseForCurrentUser({ ...contentOffer, price: enteredAmount }, mediaItem || {});
                                 } else {
-                                    await activatePaidPlanForCurrentUser(selectedPlanRule || getPremiumPlanRule({ amount: enteredAmount, duration: planDuration }), enteredAmount);
+                                    await activatePaidPlanForCurrentUser(selectedPlanRule || getPremiumPlanRule({ amount: enteredAmount, duration: resolvedPlanDuration }), enteredAmount);
                                 }
                                 feedbackEl.textContent = 'Payment successful';
                                 feedbackEl.className = 'text-sm min-h-[20px] text-emerald-300';
+                                setPaymentStage('success', 'Payment successful', 'Access imefunguliwa. Sasa unaweza kuangalia au kudownload.');
                                 showNotification('Payment successful', 'success');
                                 if (purchaseKind !== 'content') {
                                     await processReferralRewardOnPackagePurchase(planSummary);
                                 }
+                                clearPaymentRequestContext();
                                 submitBtn.classList.add('hidden');
                                 amountInput.disabled = true;
                                 phoneInput.disabled = true;
-                                setTimeout(() => {
-                                    if (!modal.classList.contains('hidden')) closeModal();
-                                }, 1800);
                                 return;
                             }
 
@@ -8079,12 +8729,13 @@ const renderActionButtons = (item, size = 'large', itemType = null) => {
                                 statusPollInterval = null;
                                 feedbackEl.textContent = 'Payment failed';
                                 feedbackEl.className = 'text-sm min-h-[20px] text-red-400';
+                                setPaymentStage('error', 'Payment failed', 'Jaribu tena au tumia WhatsApp kulipia.');
                                 showNotification('Payment failed', 'error');
                                 submitBtn.disabled = false;
                                 phoneInput.disabled = false;
                                 amountInput.disabled = false;
                                 submitText.classList.remove('hidden');
-                                submitLoader.classList.add('hidden');
+                                submitLoader.classList.remove('active');
                                 return;
                             }
 
@@ -8093,33 +8744,36 @@ const renderActionButtons = (item, size = 'large', itemType = null) => {
                                 statusPollInterval = null;
                                 feedbackEl.textContent = 'Still waiting for payment confirmation. Please complete the USSD prompt on your phone.';
                                 feedbackEl.className = 'text-sm min-h-[20px] text-yellow-300';
+                                setPaymentStage('loading', 'Bado tunasubiri verification...', 'Kamilisha USSD prompt kwenye simu yako kisha subiri.');
                                 submitBtn.disabled = false;
                                 phoneInput.disabled = false;
                                 amountInput.disabled = false;
                                 submitText.classList.remove('hidden');
-                                submitLoader.classList.add('hidden');
+                                submitLoader.classList.remove('active');
                             }
                         } catch (pollError) {
                             clearInterval(statusPollInterval);
                             statusPollInterval = null;
                             feedbackEl.textContent = pollError?.message || 'Failed to verify payment status.';
                             feedbackEl.className = 'text-sm min-h-[20px] text-red-400';
+                            setPaymentStage('error', 'Verification imeshindikana', 'Jaribu tena au tumia WhatsApp kulipia.');
                             submitBtn.disabled = false;
                             phoneInput.disabled = false;
                             amountInput.disabled = false;
                             submitText.classList.remove('hidden');
-                            submitLoader.classList.add('hidden');
+                            submitLoader.classList.remove('active');
                         }
                     }, 3000);
                 } catch (error) {
                     console.error('Auto pay failed:', error);
                     feedbackEl.textContent = error?.message || 'Imeshindwa kuanzisha malipo.';
                     feedbackEl.className = 'text-sm min-h-[20px] text-red-400';
+                    setPaymentStage('error', 'Autopayment imeshindikana', 'Angalia namba yako au tumia WhatsApp.');
                     submitBtn.disabled = false;
                     phoneInput.disabled = false;
                     amountInput.disabled = false;
                     submitText.classList.remove('hidden');
-                    submitLoader.classList.add('hidden');
+                    submitLoader.classList.remove('active');
                 }
             });
         };
@@ -8138,7 +8792,7 @@ const renderActionButtons = (item, size = 'large', itemType = null) => {
                         <p class="font-mono text-lg">0748472076</p>
                     </div>
                     <button id="copy-number-btn" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-lg transition-colors"><i class="fas fa-copy mr-2"></i>Copy Number</button>
-                    <a href="https://wa.me/255772822552" target="_blank" class="block w-full bg-green-600 hover:bg-green-700 text-white font-bold py-2 px-4 rounded-lg transition-colors"><i class="fab fa-whatsapp mr-2"></i>Chat on WhatsApp</a>
+                    <a href="https://wa.me/255772822552" target="_blank" class="block w-full bg-green-600 hover:bg-green-700 text-white font-bold py-2 px-4 rounded-lg transition-colors"><i class="fab fa-whatsapp mr-2"></i>Pay</a>
                 </div>
             `;
 
@@ -8826,41 +9480,54 @@ const renderActionButtons = (item, size = 'large', itemType = null) => {
                         <button type="button" id="premium-coupon-tab-chip" data-premium-tab="coupon" class="rounded-full border border-white/10 bg-white/5 px-3 py-1.5 text-[11px] font-semibold uppercase tracking-[0.24em] text-slate-300">Coupon</button>
                     </div>
                     <div data-premium-section="plans">
-                    <div id="premium-plan-list" class="space-y-2.5">
-                        ${PREMIUM_PLANS.map(plan => `
-                            <div class="group rounded-[1rem] border border-white/10 bg-gradient-to-r from-[#1c1f26] via-[#111318] to-black p-3 shadow-[0_14px_30px_rgba(0,0,0,0.28)]">
-                                <div class="flex items-center gap-3">
-                                    <span class="inline-flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-2xl border border-red-500/20 bg-red-500/10 text-red-300">
-                                            <i class="fas ${plan.icon || 'fa-gem'} text-sm"></i>
-                                    </span>
-                                    <div class="min-w-0 flex-1">
-                                        <div class="flex items-start justify-between gap-3">
-                                            <div class="min-w-0">
-                                                <h3 class="truncate text-sm font-bold text-white">${plan.subtitle}</h3>
-                                                <p class="mt-0.5 text-[11px] text-slate-400">${plan.summary}</p>
+                    <div id="premium-plan-list" class="space-y-3">
+                        ${PREMIUM_PLANS.map((plan, index) => {
+                            const visual = PREMIUM_PLAN_VISUALS[index % PREMIUM_PLAN_VISUALS.length];
+                            const planLabel = `Tsh ${plan.price} - ${plan.duration}`;
+                            const whatsappMessage = buildPremiumWhatsappMessage(planLabel);
+                            return `
+                                <div class="plan-card group relative overflow-hidden rounded-[1.15rem] border ${visual.border} bg-[linear-gradient(135deg,#171717,#090909_58%,#020202)] p-3.5 shadow-[0_18px_45px_rgba(0,0,0,0.38)]">
+                                    <div class="absolute inset-x-0 top-0 h-[3px] bg-gradient-to-r ${visual.line}"></div>
+                                    <div class="flex items-start gap-3">
+                                        <span class="inline-flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-2xl border ${visual.iconShell} shadow-[0_12px_30px_rgba(0,0,0,0.35)]">
+                                            <i class="fas ${plan.icon || 'fa-gem'} text-lg"></i>
+                                        </span>
+                                        <div class="min-w-0 flex-1">
+                                            <div class="flex items-start justify-between gap-3">
+                                                <div class="min-w-0">
+                                                    <p class="text-[9px] font-black uppercase tracking-[0.24em] text-red-300">${escapeHtml(plan.badge || 'Premium')}</p>
+                                                    <h3 class="mt-1 truncate text-base font-black text-white">${escapeHtml(plan.subtitle)}</h3>
+                                                    <p class="mt-1 text-[11px] leading-snug text-slate-400">${escapeHtml(plan.summary)}</p>
+                                                </div>
+                                                <div class="text-right flex-shrink-0">
+                                                    <div class="rounded-full border border-white/10 bg-white/5 px-2 py-1 text-[9px] font-bold uppercase tracking-[0.16em] text-slate-300">${escapeHtml(plan.duration)}</div>
+                                                    <div class="mt-2 text-xl font-black tracking-tight text-white">Tsh ${escapeHtml(plan.price)}</div>
+                                                </div>
                                             </div>
-                                            <div class="text-right">
-                                                <div class="text-[10px] uppercase tracking-[0.18em] text-slate-500">${plan.duration}</div>
-                                                <div class="text-lg font-black text-white tracking-tight">${plan.price}</div>
+                                            <div class="mt-4 grid grid-cols-2 gap-2">
+                                                <div>
+                                                    <button type="button" class="pay-btn w-full rounded-xl bg-red-600 px-3 py-2.5 text-[11px] font-black text-white transition-colors hover:bg-red-700" data-purchase-kind="premium" data-price="${escapeHtml(planLabel)}" data-plan-price="${escapeHtml(plan.price)}" data-plan-duration="${escapeHtml(plan.duration)}" data-payment-link="https://wa.me/255748472076?text=${encodeURIComponent(whatsappMessage)}">Pay</button>
+                                                    <p class="mt-1 text-center text-[9px] font-semibold uppercase tracking-[0.14em] text-slate-500">lipia automatic</p>
+                                                </div>
+                                                <div>
+                                                    <a href="https://wa.me/255748472076?text=${encodeURIComponent(whatsappMessage)}" target="_blank" class="inline-flex w-full items-center justify-center rounded-xl bg-green-600 px-3 py-2.5 text-[11px] font-bold text-white transition-colors hover:bg-green-700">
+                                                        <i class="fab fa-whatsapp mr-1.5"></i>Pay
+                                                    </a>
+                                                    <p class="mt-1 text-center text-[9px] font-semibold uppercase tracking-[0.14em] text-slate-500">lipia whatsapp</p>
+                                                </div>
                                             </div>
-                                        </div>
-                                        <div class="mt-3 flex flex-col gap-2 w-full max-w-[140px] ml-auto">
-                                            <button class="pay-btn w-full rounded-lg bg-red-600 px-3 py-2 text-[11px] font-bold text-white transition-colors hover:bg-red-700" data-purchase-kind="premium" data-price="Tsh ${plan.price} - ${plan.duration}" data-plan-price="${plan.price}" data-plan-duration="${plan.duration}" data-payment-link="https://wa.me/255748472076?text=${encodeURIComponent(buildPremiumWhatsappMessage(`Tsh ${plan.price} - ${plan.duration}`))}">Lipia</button>
-                                            <a href="https://wa.me/255748472076?text=${encodeURIComponent(buildPremiumWhatsappMessage(`Tsh ${plan.price} - ${plan.duration}`))}" target="_blank" class="w-full rounded-lg bg-green-600 px-3 py-2 text-center text-[11px] font-semibold text-white transition-colors hover:bg-green-700">
-                                                <i class="fab fa-whatsapp mr-1.5"></i>WhatsApp
-                                            </a>
                                         </div>
                                     </div>
                                 </div>
-                            </div>
-                        `).join('')}
+                            `;
+                        }).join('')}
                     </div>
                     </div>
                     </div>
                     <div class="mt-5 rounded-[1.4rem] border border-green-500/20 bg-green-500/8 px-4 py-4 text-center">
                         <a href="https://wa.me/255748472076" target="_blank" class="inline-flex items-center gap-3 text-green-300 hover:text-green-200 transition-colors">
                             <i class="fab fa-whatsapp text-2xl"></i>
-                            <span class="text-sm md:text-base font-medium">Contact us for help</span>
+                            <span class="text-sm md:text-base font-medium">Pay</span>
                         </a>
                     </div>
                     <div id="premium-coupon-section" data-premium-section="coupon" class="mt-5 hidden rounded-[1.4rem] border border-orange-500/20 bg-orange-500/8 px-4 py-4">
@@ -9621,7 +10288,7 @@ const renderActionButtons = (item, size = 'large', itemType = null) => {
                                     <p class="text-sm text-slate-300">Bonyeza hapa kuiweka SwaMedia kama app kwenye iPhone, Android au Windows browser inayoruhusu install.</p>
                                 ` : `
                                     <a href="${APP_DOWNLOAD_URL}" target="_blank" class="inline-flex w-full items-center justify-center gap-2 rounded-xl bg-[#34A853] px-4 py-3 text-center font-bold text-white transition-colors hover:bg-[#2d9449] shadow-[0_14px_30px_rgba(52,168,83,0.28)]"><i class="fab fa-google-play text-lg"></i><span>Download App</span></a>
-                                    <p class="text-sm text-slate-300">Pakua apk ya SwaMedia moja kwa moja na uanze kutumia app.</p>
+                                    <p class="text-sm text-slate-300">Fungua SwaMedia kwenye Google Play Store na uinstall app moja kwa moja.</p>
                                 `}
                             </div>
                         </div>
@@ -9859,6 +10526,22 @@ const renderActionButtons = (item, size = 'large', itemType = null) => {
                             <label for="payment-request-amount-input" class="block text-xs uppercase tracking-[0.25em] text-slate-500 mb-2">Amount</label>
                             <input id="payment-request-amount-input" type="number" min="${MIN_PREMIUM_PAYMENT}" value="${amountTzs}" readonly class="w-full rounded-xl border border-white/10 bg-white/[0.03] px-4 py-3 text-white focus:outline-none">
                         </div>
+                        <div class="rounded-[1.4rem] border border-blue-500/20 bg-blue-500/8 px-4 py-4">
+                            <div class="mb-3 flex items-center gap-2 text-xs font-semibold uppercase tracking-[0.22em] text-blue-200">
+                                <span class="inline-flex h-6 w-6 items-center justify-center rounded-full bg-blue-500 text-white">2</span>
+                                <span>Chagua njia ya kulipia</span>
+                            </div>
+                            <button id="payment-request-pay-btn" class="w-full rounded-xl bg-red-600 px-4 py-3 text-sm font-bold text-white transition-colors hover:bg-red-700">
+                                <span class="btn-text">Pay</span>
+                                <span class="btn-loader hidden"><i class="fas fa-spinner fa-spin"></i></span>
+                            </button>
+                            <p class="mt-1 text-center text-[10px] font-semibold uppercase tracking-[0.18em] text-slate-500">lipia automatic</p>
+                            <button id="payment-request-whatsapp-btn" class="mt-3 inline-flex w-full items-center justify-center rounded-xl bg-green-600 px-4 py-3 text-sm font-bold text-white transition-colors hover:bg-green-700" aria-label="Pay via WhatsApp">
+                                <i class="fab fa-whatsapp mr-2 text-lg"></i>
+                                <span>Pay</span>
+                            </button>
+                            <p class="mt-1 text-center text-[10px] font-semibold uppercase tracking-[0.18em] text-slate-500">lipia whatsapp</p>
+                        </div>
                         <div class="rounded-[1.4rem] border border-orange-500/20 bg-orange-500/8 px-4 py-4">
                             <label for="payment-request-coupon-input" class="block text-sm font-semibold text-white">Coupon code</label>
                             <div class="mt-2 flex items-center gap-2 rounded-xl border border-white/10 bg-black/20 px-3 py-2">
@@ -9867,18 +10550,15 @@ const renderActionButtons = (item, size = 'large', itemType = null) => {
                             </div>
                             <div class="mt-3 flex gap-2">
                                 <button id="payment-request-apply-coupon-btn" class="rounded-xl bg-orange-500 px-4 py-2.5 text-sm font-bold text-white transition-colors hover:bg-orange-600">Apply Coupon</button>
-                                <button id="payment-request-whatsapp-btn" class="inline-flex items-center justify-center rounded-xl bg-green-600 px-4 py-2.5 text-white transition-colors hover:bg-green-700">
-                                    <i class="fab fa-whatsapp text-lg"></i>
-                                </button>
                             </div>
                             <p id="payment-request-coupon-feedback" class="mt-2 min-h-[20px] text-xs text-slate-400"></p>
                         </div>
-                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                            <button id="payment-request-submit-btn" class="rounded-xl bg-slate-700 px-4 py-3 text-sm font-bold text-white transition-colors hover:bg-slate-600">Tuma Ombi</button>
-                            <button id="payment-request-pay-btn" class="rounded-xl bg-red-600 px-4 py-3 text-sm font-bold text-white transition-colors hover:bg-red-700">
-                                <span class="btn-text">Lipia</span>
-                                <span class="btn-loader hidden"><i class="fas fa-spinner fa-spin"></i></span>
-                            </button>
+                        <div id="payment-request-stage" class="hidden rounded-[1.4rem] border border-emerald-500/20 bg-emerald-500/8 px-4 py-4 text-center">
+                            <div class="mx-auto mb-3 flex h-12 w-12 items-center justify-center rounded-full border border-emerald-300/30 bg-emerald-500/10 text-emerald-200">
+                                <i class="fas fa-spinner fa-spin"></i>
+                            </div>
+                            <p id="payment-request-stage-title" class="text-sm font-bold text-white">Ina load autopayment...</p>
+                            <p id="payment-request-stage-note" class="mt-1 text-xs text-slate-400">Thibitisha prompt kwenye simu yako.</p>
                         </div>
                         <p id="payment-request-feedback" class="min-h-[24px] text-sm text-slate-400"></p>
                     </section>
@@ -9897,7 +10577,25 @@ const renderActionButtons = (item, size = 'large', itemType = null) => {
             const payBtn = document.getElementById('payment-request-pay-btn');
             const payBtnText = payBtn?.querySelector('.btn-text');
             const payBtnLoader = payBtn?.querySelector('.btn-loader');
+            const stageEl = document.getElementById('payment-request-stage');
+            const stageTitleEl = document.getElementById('payment-request-stage-title');
+            const stageNoteEl = document.getElementById('payment-request-stage-note');
             let statusPollInterval = null;
+
+            const setPaymentStage = (status = 'loading', title = '', note = '') => {
+                if (!stageEl) return;
+                stageEl.classList.remove('hidden');
+                const iconEl = stageEl.querySelector('i');
+                if (iconEl) {
+                    iconEl.className = status === 'success'
+                        ? 'fas fa-check'
+                        : status === 'error'
+                            ? 'fas fa-times'
+                            : 'fas fa-spinner fa-spin';
+                }
+                if (stageTitleEl) stageTitleEl.textContent = title || (status === 'success' ? 'Payment successful' : 'Ina load autopayment...');
+                if (stageNoteEl) stageNoteEl.textContent = note || (status === 'success' ? 'Access imefunguliwa kwenye account yako.' : 'Thibitisha prompt kwenye simu yako.');
+            };
 
             const closePaymentPolling = () => {
                 if (statusPollInterval) {
@@ -9968,11 +10666,12 @@ const renderActionButtons = (item, size = 'large', itemType = null) => {
                 }
 
                 payBtn.disabled = true;
-                submitRequestBtn.disabled = true;
+                if (submitRequestBtn) submitRequestBtn.disabled = true;
                 phoneInput.disabled = true;
                 amountInput.disabled = true;
                 payBtnText?.classList.add('hidden');
                 payBtnLoader?.classList.remove('hidden');
+                setPaymentStage('loading', 'Ina load autopayment...', 'Kama tayari umeweka namba, thibitisha prompt kwenye simu yako.');
                 feedbackEl.textContent = 'Waiting for payment confirmation...';
                 feedbackEl.className = 'min-h-[24px] text-sm text-blue-300';
 
@@ -10005,10 +10704,11 @@ const renderActionButtons = (item, size = 'large', itemType = null) => {
                                 }
                                 feedbackEl.textContent = 'Payment successful';
                                 feedbackEl.className = 'min-h-[24px] text-sm text-emerald-300';
+                                setPaymentStage('success', 'Payment successful', 'Access imefunguliwa. Sasa unaweza kuangalia au kudownload.');
                                 showNotification('Payment successful', 'success');
                                 clearPaymentRequestContext();
                                 payBtn.classList.add('hidden');
-                                submitRequestBtn.classList.add('hidden');
+                                submitRequestBtn?.classList.add('hidden');
                                 return;
                             }
 
@@ -10016,9 +10716,10 @@ const renderActionButtons = (item, size = 'large', itemType = null) => {
                                 closePaymentPolling();
                                 feedbackEl.textContent = 'Payment failed';
                                 feedbackEl.className = 'min-h-[24px] text-sm text-red-400';
+                                setPaymentStage('error', 'Payment failed', 'Jaribu tena au tumia WhatsApp kulipia.');
                                 showNotification('Payment failed', 'error');
                                 payBtn.disabled = false;
-                                submitRequestBtn.disabled = false;
+                                if (submitRequestBtn) submitRequestBtn.disabled = false;
                                 phoneInput.disabled = false;
                                 amountInput.disabled = false;
                                 payBtnText?.classList.remove('hidden');
@@ -10030,8 +10731,9 @@ const renderActionButtons = (item, size = 'large', itemType = null) => {
                                 closePaymentPolling();
                                 feedbackEl.textContent = 'Still waiting for payment confirmation. Please complete the USSD prompt on your phone.';
                                 feedbackEl.className = 'min-h-[24px] text-sm text-yellow-300';
+                                setPaymentStage('loading', 'Bado tunasubiri verification...', 'Kamilisha USSD prompt kwenye simu yako kisha subiri.');
                                 payBtn.disabled = false;
-                                submitRequestBtn.disabled = false;
+                                if (submitRequestBtn) submitRequestBtn.disabled = false;
                                 phoneInput.disabled = false;
                                 amountInput.disabled = false;
                                 payBtnText?.classList.remove('hidden');
@@ -10041,8 +10743,9 @@ const renderActionButtons = (item, size = 'large', itemType = null) => {
                             closePaymentPolling();
                             feedbackEl.textContent = pollError?.message || 'Failed to verify payment status.';
                             feedbackEl.className = 'min-h-[24px] text-sm text-red-400';
+                            setPaymentStage('error', 'Verification imeshindikana', 'Jaribu tena au tumia WhatsApp kulipia.');
                             payBtn.disabled = false;
-                            submitRequestBtn.disabled = false;
+                            if (submitRequestBtn) submitRequestBtn.disabled = false;
                             phoneInput.disabled = false;
                             amountInput.disabled = false;
                             payBtnText?.classList.remove('hidden');
@@ -10053,8 +10756,9 @@ const renderActionButtons = (item, size = 'large', itemType = null) => {
                     console.error('Payment page auto pay failed:', error);
                     feedbackEl.textContent = error?.message || 'Imeshindwa kuanzisha malipo.';
                     feedbackEl.className = 'min-h-[24px] text-sm text-red-400';
+                    setPaymentStage('error', 'Autopayment imeshindikana', 'Angalia namba yako au tumia WhatsApp.');
                     payBtn.disabled = false;
-                    submitRequestBtn.disabled = false;
+                    if (submitRequestBtn) submitRequestBtn.disabled = false;
                     phoneInput.disabled = false;
                     amountInput.disabled = false;
                     payBtnText?.classList.remove('hidden');
@@ -10715,7 +11419,7 @@ const renderActionButtons = (item, size = 'large', itemType = null) => {
                     case 'free': await renderFreePage(param1 || 'all'); break;
                     case 'categoryContent': await renderCategoryContentPage(param1); break;
                     case 'genreContent': await renderGenreContentPage(param1); break;
-                    case 'djPage': await renderDjPage(param1 ? decodeURIComponent(param1) : ''); break;
+                    case 'djPage': await renderDjPage(param1 ? decodeRouteParam(param1) : ''); break;
                     case 'static': await renderStaticPage(param1); break;
                     case 'Review': await renderWakubwaTuPage(); break;
                     case 'storyZone': await renderStoryZonePage(); break;
@@ -10740,6 +11444,13 @@ const renderActionButtons = (item, size = 'large', itemType = null) => {
 
                 mountGlobalFooter();
                 bindGlobalFooterEvents();
+                enhanceMediaPerformance(appContainer);
+                hydrateDjLabels(appContainer);
+                if (page === 'home') {
+                    scheduleAfterInitialRender('Home empty DOM repair', repairHomeIfEmpty, 1200);
+                } else {
+                    homeEmptyRepairAttempts = 0;
+                }
 
                 // Restore scroll position
                 const savedScrollPos = sessionStorage.getItem(`scrollpos-${pageRoute}`);
@@ -10781,12 +11492,91 @@ const renderActionButtons = (item, size = 'large', itemType = null) => {
             if (page) navigateTo(page);
         });
 
+        const handleContentOfferOpenButton = async (button) => {
+            const contentOffer = currentPremiumContext?.contentOffer || null;
+            const mediaItem = currentPremiumContext?.mediaItem || null;
+            if (!contentOffer) {
+                showNotification('Movie payment plan haijapatikana. Fungua movie tena ujaribu.', 'error');
+                return;
+            }
+            if (!currentUser) {
+                showLoginRequiredModal();
+                return;
+            }
+            await openPaymentRequestPage({
+                planPrice: Number(button.dataset.planPrice || contentOffer.price || 0),
+                planDuration: button.dataset.planDuration || contentOffer.duration || '',
+                planLabel: button.dataset.price || `Tsh ${contentOffer.price} - ${contentOffer.duration}`,
+                purchaseKind: 'content',
+                mediaItem,
+                contentOffer
+            });
+        };
+
+        const handlePremiumPayButton = async (button) => {
+            if (!currentUser) {
+                showLoginRequiredModal();
+                return;
+            }
+
+            if (!AUTO_PAYMENT_ENABLED) {
+                const paymentLink = button.dataset.paymentLink;
+                if (paymentLink) {
+                    window.open(paymentLink, '_blank');
+                } else {
+                    showContactModal();
+                }
+                return;
+            }
+
+            const purchaseKind = button.dataset.purchaseKind === 'content' ? 'content' : 'premium';
+            const isContentPurchase = purchaseKind === 'content';
+            const contentOffer = isContentPurchase ? currentPremiumContext?.contentOffer || null : null;
+            const mediaItem = isContentPurchase ? currentPremiumContext?.mediaItem || null : null;
+            if (isContentPurchase && !contentOffer) {
+                showNotification('Movie payment plan haijapatikana. Fungua movie tena ujaribu.', 'error');
+                return;
+            }
+            if (!isContentPurchase) {
+                currentPremiumContext = null;
+            }
+            await openPaymentRequestPage({
+                planPrice: Number(button.dataset.planPrice || 0),
+                planDuration: button.dataset.planDuration || '',
+                planLabel: button.dataset.price || '',
+                purchaseKind,
+                mediaItem,
+                contentOffer
+            });
+        };
+
+        const premiumModal = document.getElementById('premium-modal');
+        if (premiumModal) {
+            premiumModal.addEventListener('click', async (e) => {
+                const target = e.target instanceof Element ? e.target : null;
+                if (!target) return;
+                const contentOfferOpenBtn = target.closest('.content-offer-open-btn');
+                const payBtn = target.closest('.pay-btn');
+
+                if (contentOfferOpenBtn) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    await handleContentOfferOpenButton(contentOfferOpenBtn);
+                } else if (payBtn) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    await handlePremiumPayButton(payBtn);
+                }
+            });
+        }
+
         appContainer.addEventListener('click', async (e) => {
             const cardDownloadBtn = e.target.closest('.card-download-btn');
             const bannerDownloadBtn = e.target.closest('.banner-download-btn');
             const itemCard = e.target.closest('.item-card');
             const genreItem = e.target.closest('.genre-item');
             const djPageBtn = e.target.closest('[data-page="djPage"]');
+            const djMetaChip = e.target.closest('[data-dj-chip]');
             const homeDjLink = e.target.closest('.home-dj-link');
             const djSidebarLink = e.target.closest('.dj-sidebar-link');
             const openMoreMenuBtn = e.target.closest('#open-more-menu-btn');
@@ -10868,21 +11658,7 @@ const renderActionButtons = (item, size = 'large', itemType = null) => {
                 }
             } else if (contentOfferOpenBtn) {
                 e.preventDefault();
-                const contentOffer = currentPremiumContext?.contentOffer || null;
-                const mediaItem = currentPremiumContext?.mediaItem || null;
-                if (!contentOffer) return;
-                if (!currentUser) {
-                    showLoginRequiredModal();
-                    return;
-                }
-                openPaymentRequestPage({
-                    planPrice: Number(contentOfferOpenBtn.dataset.planPrice || contentOffer.price || 0),
-                    planDuration: contentOfferOpenBtn.dataset.planDuration || contentOffer.duration || '',
-                    planLabel: contentOfferOpenBtn.dataset.price || `Tsh ${contentOffer.price} - ${contentOffer.duration}`,
-                    purchaseKind: 'content',
-                    mediaItem,
-                    contentOffer
-                });
+                await handleContentOfferOpenButton(contentOfferOpenBtn);
             } else if (seeAllGenreBtn) {
                 sessionStorage.setItem('seeAllSelectedGenre', seeAllGenreBtn.dataset.genre || '');
                 const title = sessionStorage.getItem('seeAllTitle');
@@ -10912,6 +11688,11 @@ const renderActionButtons = (item, size = 'large', itemType = null) => {
                 navigateTo('free');
             } else if (openMoreMenuBtn) {
                 openMoreMenuDrawer();
+            } else if (djMetaChip) {
+                e.preventDefault();
+                e.stopPropagation();
+                const djName = djMetaChip.dataset.djName || djMetaChip.textContent || '';
+                if (djName.trim()) navigateTo(`djPage:${djName.trim()}`);
             } else if (itemCard) {
                 const { id, type } = itemCard.dataset;
                 const cardMediaItem = {
@@ -10939,10 +11720,10 @@ const renderActionButtons = (item, size = 'large', itemType = null) => {
                 navigateTo(`genreContent:${genreName}`);
             } else if (homeDjLink) {
                 e.preventDefault();
-                navigateTo(`djPage:${encodeURIComponent(homeDjLink.dataset.djName || '')}`);
+                navigateTo(`djPage:${homeDjLink.dataset.djName || ''}`);
             } else if (djSidebarLink) {
                 e.preventDefault();
-                navigateTo(`djPage:${encodeURIComponent(djSidebarLink.dataset.djName || '')}`);
+                navigateTo(`djPage:${djSidebarLink.dataset.djName || ''}`);
             } else if (seeAllBtn) {
                 const title = seeAllBtn.dataset.seeAllTitle;
                 const itemsStr = seeAllBtn.dataset.seeAllItems;
@@ -10969,31 +11750,7 @@ const renderActionButtons = (item, size = 'large', itemType = null) => {
                 }
             } else if (payBtn) {
                 e.preventDefault();
-                if (!currentUser) { 
-                    showLoginRequiredModal(); 
-                    return; 
-                }
-
-                if (!AUTO_PAYMENT_ENABLED) {
-                    const paymentLink = payBtn.dataset.paymentLink;
-                    if (paymentLink) {
-                        window.open(paymentLink, '_blank');
-                    } else {
-                        showContactModal();
-                    }
-                    return;
-                }
-
-                const purchaseKind = payBtn.dataset.purchaseKind || 'premium';
-                const contentOffer = purchaseKind === 'content' ? currentPremiumContext?.contentOffer || null : null;
-                openPaymentRequestPage({
-                    planPrice: Number(payBtn.dataset.planPrice || 0),
-                    planDuration: payBtn.dataset.planDuration || '',
-                    planLabel: payBtn.dataset.price || '',
-                    purchaseKind,
-                    mediaItem: currentPremiumContext?.mediaItem || null,
-                    contentOffer
-                });
+                await handlePremiumPayButton(payBtn);
             } else if (contactBtn) {
                 e.preventDefault();
                 showContactModal();
@@ -11108,6 +11865,7 @@ const renderActionButtons = (item, size = 'large', itemType = null) => {
                                 rating: item.rating || item.imdbRating || 'N/A',
                                 year: item.year || 'N/A',
                                 genre: formatGenreText(item),
+                                dj: getResolvedDjName(item),
                                 watchUrl: url,
                                 downloadUrl: button.dataset.downloadUrl || '',
                                 freeWatch: button.dataset.freeWatch === '1',
@@ -11243,7 +12001,7 @@ const renderActionButtons = (item, size = 'large', itemType = null) => {
                     <p class="text-slate-300 text-center text-sm">Chagua kifurushi cha internet unachotaka kununua.</p>
                     <div class="grid grid-cols-2 gap-3" id="bando-plans-container">${plansHtml}</div>
                     <a id="bando-whatsapp-btn" href="#" target="_blank" class="block w-full text-center bg-gray-600 text-white font-bold py-2 px-4 rounded-lg transition-colors pointer-events-none">
-                        <i class="fab fa-whatsapp mr-2"></i>Nunua Kifurushi
+                        <i class="fab fa-whatsapp mr-2"></i>Pay
                     </a>
                 </div>
             `;

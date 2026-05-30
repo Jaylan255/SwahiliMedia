@@ -1,0 +1,8 @@
+{
+  "name": "swamedia",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "generate:seo": "node scripts/generate-sitemap.mjs"
+  }
+}

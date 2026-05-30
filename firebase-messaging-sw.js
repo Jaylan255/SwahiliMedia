@@ -1,14 +1,21 @@
-const CACHE_NAME = 'swamedia-cache-v2';
-const OFFLINE_URL = '/offline.html';
+const CACHE_NAME = 'swamedia-cache-v7';
+const SCOPE_PATH = new URL(self.registration.scope).pathname.replace(/\/$/, '');
+const withScope = (path) => `${SCOPE_PATH}${String(path || '/').startsWith('/') ? path : `/${path}`}` || '/';
+const OFFLINE_URL = withScope('/offline.html');
 const ASSETS_TO_CACHE = [
-  '/',
-  '/index.html',
-  '/manifest.json',
-  '/offline.html',
-  '/style.css',
-  '/script.js',
-  '/icons/icon-192.png',
-  '/icons/icon-512.png'
+  withScope('/'),
+  withScope('/index.html'),
+  withScope('/manifest.json'),
+  OFFLINE_URL,
+  withScope('/style.css'),
+  withScope('/script.js'),
+  withScope('/icons/favicon.ico'),
+  withScope('/icons/favicon.svg'),
+  withScope('/icons/icon-16.png'),
+  withScope('/icons/icon-32.png'),
+  withScope('/icons/icon-48.png'),
+  withScope('/icons/icon-192.png'),
+  withScope('/icons/icon-512.png')
 ];
 
 self.addEventListener('install', event => {
@@ -31,11 +38,12 @@ self.addEventListener('fetch', event => {
 
   if (request.method !== 'GET') return;
   if (url.origin !== self.location.origin) return;
+  const scopedPathname = url.pathname.startsWith(SCOPE_PATH) ? url.pathname.slice(SCOPE_PATH.length) || '/' : url.pathname;
   if (
-    url.pathname.startsWith('/admin') ||
-    url.pathname.startsWith('/api') ||
-    url.pathname.startsWith('/security') ||
-    url.pathname.startsWith('/storage')
+    scopedPathname.startsWith('/admin') ||
+    scopedPathname.startsWith('/api') ||
+    scopedPathname.startsWith('/security') ||
+    scopedPathname.startsWith('/storage')
   ) {
     return;
   }
