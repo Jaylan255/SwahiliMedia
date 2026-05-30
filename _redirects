@@ -1,12 +1,7 @@
-# Canonical URL cleanup. Cloudflare Pages already serves .html files at extension-less URLs.
-/index.html / 301
-/index / 301
-/admin/index.html /admin/ 301
+# Cloudflare Pages/Workers compatible redirects.
+# Avoid .html -> extensionless and /index -> / redirects here because Cloudflare
+# normalizes those paths internally and can flag them as infinite loops.
 
-# Subscription pages: keep clean URLs canonical and support nested/deep links safely.
-/subscriptions/plans.html /subscriptions/plans 301
-/subscriptions/plans/ /subscriptions/plans 301
-/subscriptions/dashboard.html /subscriptions/dashboard 301
-/subscriptions/dashboard/ /subscriptions/dashboard 301
+# Subscription clean-route deep links.
 /subscriptions/plans/* /subscriptions/plans 200
 /subscriptions/dashboard/* /subscriptions/dashboard 200
