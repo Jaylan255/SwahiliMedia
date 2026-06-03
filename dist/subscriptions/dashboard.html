@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="SwaMedia subscription dashboard ya kuangalia plan status na muda wa premium access uliobaki.">
+  <meta name="robots" content="noindex,nofollow">
+  <meta property="og:site_name" content="SwaMedia">
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="SwaMedia Subscription Dashboard">
+  <meta property="og:description" content="Angalia status ya SwaMedia premium access yako.">
+  <meta property="og:image" content="https://www.swamedia.online/icons/icon-512.png">
+  <meta name="twitter:card" content="summary">
+  <meta name="twitter:title" content="SwaMedia Subscription Dashboard">
+  <meta name="twitter:description" content="Angalia status ya SwaMedia premium access yako.">
+  <title>SwaMedia Dashboard</title>
+  <link rel="canonical" href="https://www.swamedia.online/subscriptions/dashboard">
+  <link rel="icon" href="/icons/favicon.ico" sizes="any">
+  <link rel="icon" type="image/svg+xml" href="/icons/favicon.svg">
+  <link rel="stylesheet" href="/subscriptions/subscription.css">
+</head>
+<body>
+  <main class="shell">
+    <section class="hero">
+      <div class="eyebrow">Subscription Dashboard</div>
+      <h1>Track plan status and remaining access time.</h1>
+      <p>This dashboard reads the verified subscription state, calculates days remaining from the expiry date, and syncs the result back into Firebase so expired users fall back to unpaid access automatically.</p>
+    </section>
+
+    <section class="summary">
+      <article class="card status-card">
+        <h2 class="panel-title">Account</h2>
+        <div id="account-info"></div>
+      </article>
+
+      <article class="card status-card">
+        <h2 class="panel-title">Subscription</h2>
+        <div id="subscription-info"></div>
+      </article>
+    </section>
+
+    <section class="card" style="margin-top: 22px;">
+      <h2 class="panel-title">Access Control</h2>
+      <div id="access-notice" class="notice"></div>
+      <div class="actions" style="margin-top: 16px;">
+        <a class="button-link primary" href="/plans">Upgrade or Renew</a>
+        <a class="button-link secondary" href="/">Back to App</a>
+      </div>
+    </section>
+  </main>
+
+  <script type="module" src="/subscriptions/dashboard.js"></script>
+  <script src="/swamedia2/security/content-protection.js" defer></script>
+</body>
+</html>
