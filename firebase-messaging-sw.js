@@ -1,4 +1,4 @@
-const CACHE_NAME = 'swamedia-cache-v12';
+const CACHE_NAME = 'swamedia-cache-v15';
 const SCOPE_PATH = new URL(self.registration.scope).pathname.replace(/\/$/, '');
 const withScope = (path) => `${SCOPE_PATH}${String(path || '/').startsWith('/') ? path : `/${path}`}` || '/';
 const OFFLINE_URL = withScope('/offline.html');

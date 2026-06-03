@@ -1506,6 +1506,8 @@
         let allContentCacheTimestamp = 0;
         const DATA_SNAPSHOT_CACHE_TTL_MS = 45000;
         const ALL_CONTENT_CACHE_TTL_MS = 90000;
+        const HOME_INITIAL_CONTENT_TIMEOUT_MS = 6000;
+        const HOME_REPAIR_MAX_ATTEMPTS = 10;
         const dataSnapshotCache = new Map();
         const DATA_CACHE_BYPASS_PREFIXES = ['notifications', 'settings/premium'];
         const CONTENT_DATA_PATHS = new Set(['movies', 'series', 'adultContent', 'connection', 'xxx']);
@@ -1639,7 +1641,7 @@
             }
             return deviceId;
         };
-        const KNOWN_ROUTE_ROOTS = new Set(['home', 'app', 'search', 'series', 'profile', 'signup', 'payment', 'invite-rewards', 'my-list', 'watch-history', 'new-posts', 'feedback', 'settings', 'storyzone', 'trending', 'connection', 'viral', 'install', 'movie', 'series-show', 'adult', 'details', 'details-info', 'series-episodes', 'watch', 'category', 'genre', 'dj', 'story', 'browse', 'see-all', 'help', 'disclaimer', 'privacy-policy', 'about-us']);
+        const KNOWN_ROUTE_ROOTS = new Set(['home', 'app', 'games', 'swagames', 'game', 'search', 'series', 'profile', 'signup', 'payment', 'invite-rewards', 'my-list', 'watch-history', 'new-posts', 'feedback', 'settings', 'storyzone', 'trending', 'connection', 'viral', 'install', 'movie', 'series-show', 'adult', 'details', 'details-info', 'series-episodes', 'watch', 'category', 'genre', 'dj', 'story', 'browse', 'see-all', 'help', 'disclaimer', 'privacy-policy', 'about-us']);
         const APP_BASE_PATH = (() => {
             const rawPath = String(window.location.pathname || '/').replace(/\/{2,}/g, '/');
             if (/\/index\.html$/i.test(rawPath)) {
@@ -1769,6 +1771,8 @@
             switch (page) {
                 case 'home': return '/';
                 case 'appHub': return '/app';
+                case 'swaGames': return '/games';
+                case 'gameDetails': return `/games/${encodeRouteParam(param1 || '')}`;
                 case 'search': return '/search';
                 case 'series': return '/series';
                 case 'profile': return '/profile';
@@ -2041,6 +2045,9 @@
             switch (first) {
                 case 'home': return 'home';
                 case 'app': return 'appHub';
+                case 'games': return second ? `gameDetails:${decodeRouteParam(second)}` : 'swaGames';
+                case 'swagames': return 'swaGames';
+                case 'game': return second ? `gameDetails:${decodeRouteParam(second)}` : 'swaGames';
                 case 'search': return 'search';
                 case 'series': return 'series';
                 case 'profile': return 'profile';
@@ -4171,17 +4178,48 @@
             item.isPublished !== false &&
             normalizeContentType(item.type || 'movie') === 'movie'
         );
+        const waitForHomeMovieContent = async (retryCount = 0) => {
+            let attempt = Math.max(0, retryCount);
+            while (getRouteRoot() === 'home') {
+                const timeoutMs = Math.min(HOME_INITIAL_CONTENT_TIMEOUT_MS + (attempt * 900), 9000);
+                const content = await withTimeout(
+                    fetchAllContent({ force: attempt > 0 }),
+                    timeoutMs,
+                    null,
+                    `Home content attempt ${attempt + 1}`
+                );
+                if (Array.isArray(content) && hasHomeMovieContent(content)) {
+                    return content;
+                }
+                attempt += 1;
+                await wait(Math.min(500 + (attempt * 250), 1800));
+            }
+            return [];
+        };
+        const scheduleHomeRepair = (delay = 1200) => {
+            scheduleAfterInitialRender('Home empty DOM repair', repairHomeIfEmpty, delay);
+        };
         const repairHomeIfEmpty = async () => {
             if (getRouteRoot() !== 'home') return;
             if (appContainer.querySelector('.item-card')) {
                 homeEmptyRepairAttempts = 0;
                 return;
             }
-            if (homeEmptyRepairAttempts >= 3) return;
+            if (homeEmptyRepairAttempts >= HOME_REPAIR_MAX_ATTEMPTS) return;
             homeEmptyRepairAttempts += 1;
-            const freshContent = await fetchAllContent({ force: true });
+            const freshContent = await withTimeout(
+                fetchAllContent({ force: homeEmptyRepairAttempts > 1 }),
+                2600,
+                [],
+                'Home repair content'
+            );
             if (hasHomeMovieContent(freshContent) && getRouteRoot() === 'home') {
-                await renderHomePage(homeEmptyRepairAttempts);
+                await renderHomePage(0);
+                homeEmptyRepairAttempts = 0;
+                return;
+            }
+            if (getRouteRoot() === 'home') {
+                scheduleHomeRepair(Math.min(900 + (homeEmptyRepairAttempts * 450), 3200));
             }
         };
 
@@ -5038,7 +5076,11 @@
             
             const safetyTimeout = setTimeout(async () => {
                 if (!initializationComplete) {
-                    console.warn("App initialization timed out after 10 seconds. Forcing UI render.");
+                    if (getRouteRoot(initialRoute) === 'home') {
+                        console.warn("Home startup is still waiting for movie content. Keeping splash loader visible.");
+                        return;
+                    }
+                    console.warn("App initialization timed out after 30 seconds. Forcing UI render.");
                     await navigateTo(initialRoute, true, { suppressLoader: shouldShowSplashLoader }).catch(e => {
                         console.error("Failed to render home page on timeout", e);
                         appContainer.innerHTML = `<div class="p-8 text-center text-red-400">App failed to load. Please refresh the page.</div>`;
@@ -5046,7 +5088,7 @@
                     await revealStartupContent();
                     hideLoader();
                 }
-            }, 5000);
+            }, 30000);
 
             try {
                 let isAuthReady = false;
@@ -5270,10 +5312,13 @@
             `;
         };
 
-        const normalizeGameTags = (tags = '') => String(tags || '')
-            .split(',')
-            .map(tag => tag.trim())
-            .filter(Boolean);
+        const normalizeGameTags = (tags = '') => {
+            if (Array.isArray(tags)) return tags.map(tag => String(tag || '').trim()).filter(Boolean);
+            return String(tags || '')
+                .split(',')
+                .map(tag => tag.trim())
+                .filter(Boolean);
+        };
 
         const getPublishedGames = async () => {
             if (gamesCache.length > 0) {
@@ -5292,144 +5337,299 @@
                         return Number(Boolean(b.isFeatured)) - Number(Boolean(a.isFeatured));
                     }
                     return Number(b.sortOrder || b.createdAt || 0) - Number(a.sortOrder || a.createdAt || 0);
-                });
+            });
             return gamesCache;
+        };
+
+        const getGameGenreText = (game = {}) => String(game.genre || game.category || 'Game').trim() || 'Game';
+        const getGamePlatformLabel = (game = {}) => {
+            const raw = String(game.platform || game.device || '').trim();
+            if (/pc|windows|desktop/i.test(raw)) return 'PC';
+            if (/iphone|ios/i.test(raw)) return 'iPhone';
+            if (/android|mobile|phone|simu/i.test(raw)) return 'Mobile';
+            return raw || 'PC / Mobile';
+        };
+        const getGameYearText = (game = {}) => {
+            if (game.year) return String(game.year);
+            const dateValue = Number(game.createdAt || game.timestamp || 0);
+            if (!dateValue) return '2026';
+            const parsedDate = new Date(dateValue);
+            return Number.isNaN(parsedDate.getFullYear()) ? '2026' : String(parsedDate.getFullYear());
+        };
+        const getGameSizeText = (game = {}) => String(game.size || game.gameSize || 'Size N/A').trim() || 'Size N/A';
+        const getGameDescription = (game = {}) => String(game.description || 'Game hii imewekwa kwenye SwaGames kwa users wanaopenda download na kucheza kwa PC au simu. Angalia details kabla ya kudownload.').trim();
+        const getGameSortTime = (game = {}) => Number(game.updatedAt || game.createdAt || game.timestamp || 0);
+        const getGameGenreList = (game = {}) => {
+            const values = [game.genre, game.category, ...normalizeGameTags(game.tags)];
+            return [...new Set(values.map(value => String(value || '').trim()).filter(Boolean))];
+        };
+        const slugifyGameValue = (value = '') => String(value || 'games').trim().toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '') || 'games';
+        const gameMatchesCollection = (game = {}, collectionName = '') => {
+            const needle = String(collectionName || '').trim().toLowerCase();
+            return getGameGenreList(game).some(value => String(value).toLowerCase().includes(needle));
+        };
+        const renderSwaGamesLogo = (extraClasses = '') => `
+            <div class="inline-flex items-center gap-3 ${extraClasses}">
+                <span class="relative inline-flex h-12 w-12 items-center justify-center rounded-2xl border border-cyan-300/30 bg-cyan-400 text-slate-950 shadow-[0_16px_36px_rgba(34,211,238,0.28)]">
+                    <i class="fas fa-gamepad text-xl"></i>
+                    <i class="fas fa-bolt absolute -right-1 -top-1 rounded-full bg-lime-400 p-1 text-[9px] text-slate-950"></i>
+                </span>
+                <span class="text-2xl font-black tracking-wide text-white">SwaGames</span>
+            </div>
+        `;
+        const renderGamePoster = (game = {}, classes = 'h-full w-full object-cover') => (
+            game.posterUrl
+                ? `<img src="${escapeHtml(game.posterUrl)}" alt="${escapeHtml(game.title || 'Game poster')}" class="${classes}" loading="lazy" decoding="async" referrerpolicy="no-referrer">`
+                : `<div class="flex h-full w-full items-center justify-center bg-slate-900 text-slate-600"><i class="fas fa-gamepad text-4xl"></i></div>`
+        );
+        const renderGamePills = (game = {}, includeGameOfDay = false) => `
+            <div class="flex flex-wrap gap-2 text-[11px] font-semibold">
+                ${includeGameOfDay ? `<span class="rounded-full border border-lime-300/30 bg-lime-400/15 px-2.5 py-1 text-lime-200">Game of the Day</span>` : ''}
+                <span class="rounded-full border border-cyan-300/30 bg-cyan-400/15 px-2.5 py-1 text-cyan-100">${escapeHtml(getGamePlatformLabel(game))}</span>
+                <span class="rounded-full border border-white/10 bg-white/[0.06] px-2.5 py-1 text-slate-200">${escapeHtml(getGameYearText(game))}</span>
+                <span class="rounded-full border border-fuchsia-300/20 bg-fuchsia-400/10 px-2.5 py-1 text-fuchsia-100">${escapeHtml(getGameSizeText(game))}</span>
+            </div>
+        `;
+        const renderGameDownloadButton = (game = {}, classes = 'rounded-xl bg-lime-400 px-4 py-3 text-sm font-black text-slate-950 transition-colors hover:bg-lime-300') => (
+            game.downloadUrl
+                ? `<button class="game-launch-btn ${classes}" data-url="${escapeHtml(game.downloadUrl)}" data-direct-download="1" data-title="${escapeHtml(game.title || 'game')}" type="button"><i class="fas fa-download mr-2"></i>Download</button>`
+                : `<button class="${classes} cursor-not-allowed opacity-50" type="button" disabled><i class="fas fa-download mr-2"></i>No Link</button>`
+        );
+        const renderGameDetailsButton = (game = {}, classes = 'rounded-xl border border-white/10 bg-white/[0.05] px-4 py-3 text-sm font-black text-white transition-colors hover:bg-white/[0.09]') => (
+            `<button class="game-details-btn ${classes}" data-game-id="${escapeHtml(game.id || '')}" type="button"><i class="fas fa-circle-info mr-2"></i>Details</button>`
+        );
+        const renderSwaGameMiniCard = (game = {}, mode = 'compact') => {
+            const wide = mode === 'wide';
+            return `
+                <article class="swagame-card group ${wide ? 'min-w-[19rem] max-w-[19rem]' : 'min-w-[15rem] max-w-[15rem]'} cursor-pointer overflow-hidden rounded-2xl border border-white/10 bg-[#0b1118] shadow-[0_18px_42px_rgba(0,0,0,0.28)] transition-transform hover:-translate-y-1" data-game-id="${escapeHtml(game.id || '')}">
+                    <div class="relative ${wide ? 'h-40' : 'h-36'} overflow-hidden bg-slate-950">
+                        ${renderGamePoster(game)}
+                        <div class="absolute inset-0 bg-gradient-to-t from-black/85 via-black/10 to-transparent"></div>
+                        <span class="absolute left-3 top-3 rounded-full border border-cyan-300/25 bg-black/55 px-2.5 py-1 text-[10px] font-bold uppercase tracking-[0.14em] text-cyan-100">${escapeHtml(getGamePlatformLabel(game))}</span>
+                        <span class="absolute bottom-3 right-3 rounded-full bg-lime-400 px-2.5 py-1 text-[10px] font-black text-slate-950">${escapeHtml(getGameSizeText(game))}</span>
+                    </div>
+                    <div class="space-y-2 p-3">
+                        <h3 class="line-clamp-1 text-sm font-black text-white">${escapeHtml(game.title || 'Untitled Game')}</h3>
+                        <div class="flex items-center justify-between gap-2 text-[11px] text-slate-400">
+                            <span class="truncate"><i class="fas fa-tags mr-1 text-cyan-300"></i>${escapeHtml(getGameGenreText(game))}</span>
+                            <span>${escapeHtml(getGameYearText(game))}</span>
+                        </div>
+                        ${wide ? `<p class="line-clamp-2 text-xs leading-relaxed text-slate-400">${escapeHtml(getGameDescription(game))}</p>` : ''}
+                    </div>
+                </article>
+            `;
         };
 
         const renderSwaGamesPage = async () => {
             const games = await getPublishedGames();
-            const featuredGame = games.find(item => item.isFeatured) || games[0] || null;
-            const trendingGames = games.slice(0, 10);
-            const recentGames = [...games].sort((a, b) => Number(b.createdAt || 0) - Number(a.createdAt || 0)).slice(0, 10);
-            const gameCount = games.length;
-            const categoriesCount = new Set(games.map(item => (item.genre || '').trim()).filter(Boolean)).size;
-
-            const renderGameCard = (game) => {
-                if (!game) return '';
-                const tags = normalizeGameTags(game.tags).slice(0, 3);
-                return `
-                    <article class="rounded-[2rem] border border-white/10 bg-white/[0.03] p-3 shadow-[0_18px_48px_rgba(0,0,0,0.35)]">
-                        <div class="relative overflow-hidden rounded-[1.2rem] aspect-[4/5] bg-slate-900">
-                            ${game.posterUrl ? `<img src="${game.posterUrl}" alt="${escapeHtml(game.title || 'Game')}" class="w-full h-full object-cover">` : `<div class="w-full h-full flex items-center justify-center text-slate-600"><i class="fas fa-gamepad text-5xl"></i></div>`}
-                            <div class="absolute inset-0 bg-gradient-to-t from-black via-black/10 to-transparent"></div>
-                            <div class="absolute top-3 left-3 flex flex-wrap gap-2">
-                                ${game.badge ? `<span class="rounded-full bg-emerald-500/85 px-3 py-1 text-[11px] font-semibold text-white">${escapeHtml(game.badge)}</span>` : ''}
-                                ${game.category ? `<span class="rounded-full border border-white/15 bg-black/35 px-3 py-1 text-[11px] text-slate-100">${escapeHtml(game.category)}</span>` : ''}
-                                ${game.platform ? `<span class="rounded-full border border-white/15 bg-black/35 px-3 py-1 text-[11px] text-slate-100">${escapeHtml(game.platform)}</span>` : ''}
-                            </div>
-                        </div>
-                        <div class="mt-4">
-                            <div class="flex items-start justify-between gap-3">
-                                <div>
-                                    <h3 class="text-lg font-bold text-white">${escapeHtml(game.title || 'Untitled Game')}</h3>
-                                    <p class="mt-1 text-sm text-cyan-300">${escapeHtml(game.genre || game.category || 'Popular Pick')}</p>
-                                </div>
-                                <div class="text-right text-sm">
-                                    <p class="text-yellow-300"><i class="fas fa-star mr-1"></i>${escapeHtml(game.rating || '4.8')}</p>
-                                    <p class="text-slate-500">${escapeHtml(game.year || '2026')}</p>
-                                </div>
-                            </div>
-                            <div class="mt-3 flex flex-wrap gap-2 text-xs">
-                                ${game.size ? `<span class="rounded-full border border-white/10 bg-white/[0.04] px-3 py-1 text-slate-200"><i class="fas fa-hard-drive mr-1"></i>${escapeHtml(game.size)}</span>` : ''}
-                                ${(game.hasPassword || game.password) ? `<span class="rounded-full border border-amber-500/20 bg-amber-500/10 px-3 py-1 text-amber-200"><i class="fas fa-lock mr-1"></i>Password Required</span>` : ''}
-                            </div>
-                            <p class="mt-3 line-clamp-3 text-sm leading-relaxed text-slate-300">${escapeHtml(game.description || 'Mchezo huu umechaguliwa kwa gameplay nzuri, graphics safi na experience inayovutia kwa gamers wengi.')}</p>
-                            ${tags.length ? `<div class="mt-3 flex flex-wrap gap-2">${tags.map(tag => `<span class="rounded-full border border-cyan-500/20 bg-cyan-500/10 px-3 py-1 text-[11px] text-cyan-100">${escapeHtml(tag)}</span>`).join('')}</div>` : ''}
-                            <div class="mt-4 flex gap-3">
-                                ${game.playUrl ? `<button class="game-launch-btn flex-1 rounded-full bg-cyan-500 hover:bg-cyan-400 px-4 py-3 font-semibold text-slate-950 transition-colors" data-url="${game.playUrl}"><i class="fas fa-play mr-2"></i>Play Now</button>` : ''}
-                                ${game.downloadUrl ? `<button class="game-launch-btn flex-1 rounded-full border border-white/10 bg-white/5 hover:bg-white/10 px-4 py-3 font-semibold text-white transition-colors" data-url="${game.downloadUrl}" data-direct-download="1" data-title="${escapeHtml(game.title || 'game')}"><i class="fas fa-download mr-2"></i>Download</button>` : ''}
-                            </div>
-                        </div>
-                    </article>
-                `;
-            };
-
-            const renderGameStrip = (title, items, emptyText) => `
-                <section class="mt-8">
-                    <div class="mb-4 flex items-center justify-between gap-3">
+            const topGames = [...games].sort((a, b) => Number(b.rating || 0) - Number(a.rating || 0)).slice(0, 12);
+            const trendingGames = games.slice(0, 18);
+            const latestGames = [...games].sort((a, b) => getGameSortTime(b) - getGameSortTime(a)).slice(0, 18);
+            const gameOfDay = games.find(item => item.isFeatured) || topGames[0] || games[0] || null;
+            const primaryGames = games.slice(0, 12);
+            const baseGenres = ['Action', 'Adventure', 'Horror', 'Open World', 'Anime'];
+            const discoveredGenres = [...new Set(games.flatMap(getGameGenreList))]
+                .filter(name => !baseGenres.some(base => base.toLowerCase() === name.toLowerCase()))
+                .slice(0, 8);
+            const genreButtons = [...baseGenres, ...discoveredGenres];
+            const collectionGroups = genreButtons
+                .map(name => ({ name, slug: slugifyGameValue(name), items: games.filter(game => gameMatchesCollection(game, name)).slice(0, 8) }))
+                .filter(group => group.items.length > 0);
+            const renderRail = (title, items, sectionId, emptyText) => `
+                <section id="${sectionId}" class="mt-8">
+                    <div class="mb-4 flex items-center justify-between gap-3 px-1">
                         <div>
                             <h2 class="text-2xl font-black text-white">${title}</h2>
-                            <p class="text-sm text-slate-400">Collection iliyochaguliwa kwa trend na ubora wa experience.</p>
+                            <p class="text-xs text-slate-400">Swipe upande kushoto au kulia kuona games zaidi.</p>
                         </div>
-                        <span class="rounded-full border border-white/10 bg-white/[0.04] px-4 py-2 text-xs text-slate-300">${items.length} picks</span>
+                        <span class="rounded-full border border-white/10 bg-white/[0.05] px-3 py-1 text-xs font-semibold text-slate-300">${items.length}</span>
                     </div>
-                    ${items.length ? `<div class="flex overflow-x-auto gap-4 pb-3 horizontal-scroll">${items.map(game => `<div class="min-w-[280px] max-w-[280px] flex-shrink-0">${renderGameCard(game)}</div>`).join('')}<div class="flex-shrink-0 w-1"></div></div>` : `<div class="rounded-3xl border border-white/10 bg-white/[0.03] p-6 text-slate-400">${emptyText}</div>`}
+                    ${items.length ? `
+                        <div class="grid grid-flow-col grid-rows-3 auto-cols-[minmax(15rem,1fr)] gap-4 overflow-x-auto pb-4 horizontal-scroll">
+                            ${items.map(game => renderSwaGameMiniCard(game)).join('')}
+                        </div>
+                    ` : `<div class="rounded-2xl border border-white/10 bg-white/[0.04] p-5 text-sm text-slate-400">${emptyText}</div>`}
                 </section>
             `;
-
+            const renderCollectionCard = (group) => `
+                <article id="swagame-collection-${group.slug}" class="min-w-[18rem] max-w-[18rem] flex-shrink-0 rounded-2xl border border-white/10 bg-[#10141c] p-4">
+                    <div class="grid grid-cols-3 gap-2">
+                        ${group.items.slice(0, 3).map(game => `<div class="aspect-[3/4] overflow-hidden rounded-xl bg-slate-900">${renderGamePoster(game)}</div>`).join('')}
+                    </div>
+                    <div class="mt-4 flex items-center justify-between gap-3">
+                        <div>
+                            <h3 class="text-lg font-black text-white">${escapeHtml(group.name)}</h3>
+                            <p class="text-xs text-slate-400">${group.items.length} games collection</p>
+                        </div>
+                        ${renderGameDetailsButton(group.items[0], 'rounded-xl border border-cyan-300/20 bg-cyan-400/10 px-3 py-2 text-xs font-black text-cyan-100 transition-colors hover:bg-cyan-400/20')}
+                    </div>
+                </article>
+            `;
+            const emptyPage = `
+                <div class="page min-h-screen bg-[#05070b] p-4 pb-12">
+                    <div class="flex items-center justify-between gap-3 pt-4">${renderSwaGamesLogo()}<span class="rounded-full border border-white/10 px-3 py-2 text-xs text-slate-300">All Game</span></div>
+                    <div class="mt-8 rounded-3xl border border-dashed border-white/10 bg-white/[0.03] p-8 text-center">
+                        <i class="fas fa-gamepad text-5xl text-cyan-300"></i>
+                        <h1 class="mt-4 text-2xl font-black text-white">SwaGames bado haina games</h1>
+                        <p class="mt-2 text-sm text-slate-400">Admin akiongeza games, zitaonekana hapa moja kwa moja.</p>
+                    </div>
+                </div>
+            `;
+            if (!games.length) {
+                appContainer.innerHTML = emptyPage;
+                return;
+            }
             appContainer.innerHTML = `
-                <div class="page p-4 pb-12">
-                    <div class="pt-4 mb-8">${SwaMediaHeader}</div>
-                    <section class="relative overflow-hidden rounded-[2rem] border border-cyan-500/20 bg-[radial-gradient(circle_at_top_left,_rgba(34,211,238,0.24),_transparent_32%),linear-gradient(135deg,_#06141f_0%,_#0b1020_48%,_#04070d_100%)] p-5 md:p-8 shadow-[0_24px_80px_rgba(0,0,0,0.38)]">
-                        <div class="absolute -right-16 top-8 h-40 w-40 rounded-full bg-cyan-400/10 blur-3xl"></div>
-                        <div class="absolute left-0 bottom-0 h-32 w-32 rounded-full bg-emerald-400/10 blur-3xl"></div>
-                        <div class="relative grid gap-6 lg:grid-cols-[1.25fr_0.75fr] lg:items-center">
-                            <div>
-                                <div class="inline-flex items-center gap-2 rounded-full border border-cyan-400/20 bg-cyan-400/10 px-4 py-2 text-xs font-semibold uppercase tracking-[0.24em] text-cyan-200">
-                                    <i class="fas fa-gamepad"></i>SwaGames Arena
-                                </div>
-                                <h1 class="mt-5 max-w-3xl text-4xl font-black leading-tight text-white md:text-5xl">Michezo mikali, layout safi, na picks zinazopendwa na gamers duniani.</h1>
-                                <p class="mt-4 max-w-2xl text-base leading-relaxed text-slate-300">Kutoka battle royale, football, racing, open world hadi offline hits. Hii page imepangwa kama gaming hub ya kisasa ili user aone featured game, categories muhimu, na buttons za action kwa haraka.</p>
-                                <div class="mt-6 grid gap-3 sm:grid-cols-3">
-                                    <div class="rounded-2xl border border-white/10 bg-white/[0.04] p-4">
-                                        <p class="text-2xl font-black text-white">${gameCount}</p>
-                                        <p class="mt-1 text-sm text-slate-400">Games Available</p>
-                                    </div>
-                                    <div class="rounded-2xl border border-white/10 bg-white/[0.04] p-4">
-                                        <p class="text-2xl font-black text-white">${categoriesCount}</p>
-                                        <p class="mt-1 text-sm text-slate-400">Popular Genres</p>
-                                    </div>
-                                    <div class="rounded-2xl border border-white/10 bg-white/[0.04] p-4">
-                                        <p class="text-2xl font-black text-white">${games.filter(item => item.isFeatured).length || (featuredGame ? 1 : 0)}</p>
-                                        <p class="mt-1 text-sm text-slate-400">Featured Picks</p>
-                                    </div>
-                                </div>
+                <div class="page min-h-screen bg-[#05070b] p-4 pb-14">
+                    <header class="pt-4">
+                        <div class="flex items-center justify-between gap-3">
+                            ${renderSwaGamesLogo()}
+                            <div class="hidden items-center gap-2 text-cyan-200 sm:flex">
+                                <i class="fas fa-desktop"></i>
+                                <i class="fas fa-mobile-screen"></i>
+                                <i class="fas fa-download"></i>
                             </div>
-                            <div class="rounded-[1.8rem] border border-white/10 bg-black/30 p-4 backdrop-blur-sm">
-                                ${featuredGame ? `
-                                    <div class="overflow-hidden rounded-[1.4rem] border border-white/10 bg-slate-950">
-                                        ${featuredGame.posterUrl ? `<img src="${featuredGame.posterUrl}" alt="${escapeHtml(featuredGame.title || 'Featured Game')}" class="h-72 w-full object-cover">` : `<div class="flex h-72 items-center justify-center text-slate-600"><i class="fas fa-gamepad text-6xl"></i></div>`}
-                                    </div>
-                                    <div class="mt-4">
-                                        <div class="flex items-center justify-between gap-3">
-                                            <div>
-                                                <p class="text-xs uppercase tracking-[0.24em] text-cyan-300">Featured Title</p>
-                                                <h2 class="mt-2 text-2xl font-black text-white">${escapeHtml(featuredGame.title || 'SwaGames')}</h2>
-                                            </div>
-                                            <span class="rounded-full bg-emerald-500/90 px-3 py-1 text-xs font-semibold text-white">${escapeHtml(featuredGame.badge || 'Hot')}</span>
+                        </div>
+                        <nav class="mt-5 flex gap-3 overflow-x-auto pb-2 horizontal-scroll">
+                            ${[
+                                ['All Game', 'swagames-all'],
+                                ['Top', 'swagames-top'],
+                                ['Treanding', 'swagames-trending'],
+                                ['Genre', 'swagames-genres'],
+                                ['recently Update', 'swagames-latest'],
+                                ['collection', 'swagames-collection']
+                            ].map(([label, target]) => `<button class="swagame-nav-btn flex-shrink-0 rounded-full border border-white/10 bg-white/[0.05] px-4 py-2 text-sm font-bold text-slate-200 transition-colors hover:border-cyan-300/40 hover:text-white" data-scroll-target="${target}" type="button">${label}</button>`).join('')}
+                        </nav>
+                    </header>
+
+                    <section id="swagames-all" class="mt-4">
+                        <div class="flex gap-4 overflow-x-auto pb-4 horizontal-scroll">
+                            ${primaryGames.map(game => `
+                                <article class="swagame-card min-w-[20rem] max-w-[20rem] cursor-pointer rounded-2xl border border-white/10 bg-[#10141c] p-3 shadow-[0_18px_48px_rgba(0,0,0,0.3)]" data-game-id="${escapeHtml(game.id || '')}">
+                                    <div class="flex gap-3">
+                                        <div class="h-36 w-24 flex-shrink-0 overflow-hidden rounded-xl bg-slate-900">${renderGamePoster(game)}</div>
+                                        <div class="min-w-0 flex-1">
+                                            ${renderGamePills(game)}
+                                            <h2 class="mt-3 line-clamp-1 text-lg font-black text-white">${escapeHtml(game.title || 'Untitled Game')}</h2>
+                                            <p class="mt-1 text-xs font-semibold text-cyan-200">${escapeHtml(getGameGenreText(game))}</p>
+                                            <p class="mt-2 line-clamp-3 text-sm leading-relaxed text-slate-400">${escapeHtml(getGameDescription(game))}</p>
                                         </div>
-                                        <div class="mt-3 flex flex-wrap gap-2 text-xs">
-                                            ${featuredGame.category ? `<span class="rounded-full border border-white/10 bg-white/[0.04] px-3 py-1 text-slate-200">${escapeHtml(featuredGame.category)}</span>` : ''}
-                                            ${featuredGame.size ? `<span class="rounded-full border border-white/10 bg-white/[0.04] px-3 py-1 text-slate-200"><i class="fas fa-hard-drive mr-1"></i>${escapeHtml(featuredGame.size)}</span>` : ''}
-                                            ${(featuredGame.hasPassword || featuredGame.password) ? `<span class="rounded-full border border-amber-500/20 bg-amber-500/10 px-3 py-1 text-amber-200"><i class="fas fa-lock mr-1"></i>Password Required</span>` : ''}
-                                        </div>
-                                        <p class="mt-3 text-sm leading-relaxed text-slate-300">${escapeHtml(featuredGame.description || 'Featured game ya wiki hii imewekwa juu ili user aweze kuifikia haraka sana.')}</p>
-                                        <div class="mt-4 flex gap-3">
-                                            ${featuredGame.playUrl ? `<button class="game-launch-btn flex-1 rounded-xl bg-cyan-500 hover:bg-cyan-400 px-4 py-3 font-semibold text-slate-950 transition-colors" data-url="${featuredGame.playUrl}"><i class="fas fa-play mr-2"></i>Open Game</button>` : ''}
-                                            ${featuredGame.downloadUrl ? `<button class="game-launch-btn flex-1 rounded-xl border border-white/10 bg-white/5 hover:bg-white/10 px-4 py-3 font-semibold text-white transition-colors" data-url="${featuredGame.downloadUrl}" data-direct-download="1" data-title="${escapeHtml(featuredGame.title || 'game')}"><i class="fas fa-download mr-2"></i>Install</button>` : ''}
-                                        </div>
                                     </div>
-                                ` : `
-                                    <div class="flex min-h-[24rem] flex-col items-center justify-center rounded-[1.4rem] border border-dashed border-white/10 bg-black/20 p-8 text-center">
-                                        <i class="fas fa-gamepad text-5xl text-cyan-300"></i>
-                                        <h2 class="mt-4 text-2xl font-black text-white">SwaGames inatayarishwa</h2>
-                                        <p class="mt-3 max-w-sm text-sm text-slate-400">Admin akishaanza kuongeza games, featured titles zitaonekana hapa moja kwa moja.</p>
+                                    <div class="mt-3 grid grid-cols-2 gap-3">
+                                        ${renderGameDownloadButton(game)}
+                                        ${renderGameDetailsButton(game)}
                                     </div>
-                                `}
-                            </div>
+                                </article>
+                            `).join('')}
                         </div>
                     </section>
 
-                    ${renderGameStrip('Trending Now', trendingGames, 'Hakuna trending games kwa sasa. Admin anaweza kuongeza games kwenye panel.')}
-                    ${renderGameStrip('Recently Added', recentGames, 'Hakuna recent games kwa sasa.')}
-                    ${featuredGame ? `
-                        <button class="game-launch-btn fixed right-4 bottom-24 z-40 inline-flex items-center gap-3 rounded-full border border-cyan-300/20 bg-cyan-500 px-4 py-3 text-slate-950 shadow-[0_18px_42px_rgba(34,211,238,0.32)]" data-url="${featuredGame.playUrl || featuredGame.downloadUrl || ''}" ${featuredGame.playUrl ? '' : 'data-direct-download="1"'} data-title="${escapeHtml(featuredGame.title || 'game')}" type="button">
-                            <span class="inline-flex h-10 w-10 items-center justify-center rounded-full bg-white text-cyan-600"><i class="fas fa-gamepad"></i></span>
-                            <span class="text-sm font-bold">Open ${escapeHtml(featuredGame.title || 'Game')}</span>
-                        </button>
+                    <section id="swagames-top" class="mt-4">
+                        <div class="mb-4 flex items-center justify-between gap-3">
+                            <h2 class="text-2xl font-black text-white">Top Games</h2>
+                            <span class="rounded-full border border-white/10 bg-white/[0.05] px-3 py-1 text-xs text-slate-300">${topGames.length}</span>
+                        </div>
+                        <div class="flex gap-4 overflow-x-auto pb-4 horizontal-scroll">
+                            ${topGames.map(game => renderSwaGameMiniCard(game, 'wide')).join('')}
+                        </div>
+                    </section>
+
+                    ${renderRail('Treanding Games', trendingGames, 'swagames-trending', 'Hakuna trending games kwa sasa.')}
+                    ${renderRail('Latest Game', latestGames, 'swagames-latest', 'Hakuna latest games kwa sasa.')}
+
+                    <section id="swagames-genres" class="mt-8">
+                        <div class="flex gap-3 overflow-x-auto pb-3 horizontal-scroll">
+                            ${genreButtons.map(name => `<button class="swagame-genre-btn flex-shrink-0 rounded-full border border-cyan-300/20 bg-cyan-400/10 px-5 py-3 text-sm font-black text-cyan-100 transition-colors hover:bg-cyan-400/20" data-genre-slug="${slugifyGameValue(name)}" type="button">${escapeHtml(name)}</button>`).join('')}
+                        </div>
+                    </section>
+
+                    ${gameOfDay ? `
+                        <section class="mt-8 rounded-2xl border border-lime-300/20 bg-[linear-gradient(135deg,rgba(132,204,22,0.14),rgba(8,13,22,0.95))] p-4">
+                            <div class="grid gap-4 md:grid-cols-[14rem_1fr] md:items-center">
+                                <div class="aspect-[3/4] overflow-hidden rounded-2xl bg-slate-900">${renderGamePoster(gameOfDay)}</div>
+                                <div class="space-y-3">
+                                    ${renderGamePills(gameOfDay, true)}
+                                    <h2 class="text-2xl font-black text-white">${escapeHtml(gameOfDay.title || 'Game of the Day')}</h2>
+                                    <p class="text-sm font-semibold text-cyan-200">${escapeHtml(getGameGenreText(gameOfDay))}</p>
+                                    <p class="line-clamp-4 text-sm leading-relaxed text-slate-300">${escapeHtml(getGameDescription(gameOfDay))}</p>
+                                    ${renderGameDetailsButton(gameOfDay, 'rounded-xl bg-lime-400 px-5 py-3 text-sm font-black text-slate-950 transition-colors hover:bg-lime-300')}
+                                </div>
+                            </div>
+                        </section>
                     ` : ''}
+
+                    <section id="swagames-collection" class="mt-8">
+                        <div class="mb-4">
+                            <h2 class="text-2xl font-black text-white">Epic Collection</h2>
+                            <p class="text-xs text-slate-400">Collections zimepangwa kwa genre na tags za games.</p>
+                        </div>
+                        <div class="flex gap-4 overflow-x-auto pb-4 horizontal-scroll">
+                            ${collectionGroups.length ? collectionGroups.map(renderCollectionCard).join('') : '<div class="rounded-2xl border border-white/10 bg-white/[0.04] p-5 text-sm text-slate-400">Hakuna collection kwa sasa.</div>'}
+                        </div>
+                    </section>
+
+                    <footer class="mt-10 rounded-2xl border border-white/10 bg-[#0d1219] p-5">
+                        <div class="flex flex-wrap items-center justify-between gap-4">
+                            ${renderSwaGamesLogo()}
+                            <div class="flex gap-3 text-cyan-100">
+                                <span class="inline-flex h-10 w-10 items-center justify-center rounded-full border border-white/10 bg-white/[0.05]"><i class="fas fa-gamepad"></i></span>
+                                <span class="inline-flex h-10 w-10 items-center justify-center rounded-full border border-white/10 bg-white/[0.05]"><i class="fas fa-trophy"></i></span>
+                                <span class="inline-flex h-10 w-10 items-center justify-center rounded-full border border-white/10 bg-white/[0.05]"><i class="fas fa-desktop"></i></span>
+                                <span class="inline-flex h-10 w-10 items-center justify-center rounded-full border border-white/10 bg-white/[0.05]"><i class="fas fa-mobile-screen"></i></span>
+                            </div>
+                        </div>
+                    </footer>
                 </div>
             `;
+        };
+
+        const renderGameDetailsPage = async (gameId = '') => {
+            const games = await getPublishedGames();
+            const game = games.find(item => String(item.id) === String(gameId));
+            if (!game) {
+                appContainer.innerHTML = `
+                    <div class="page min-h-screen bg-[#05070b] p-4">
+                        <button id="back-btn" class="mb-5 inline-flex h-11 w-11 items-center justify-center rounded-full bg-white/[0.06] text-white"><i class="fas fa-arrow-left"></i></button>
+                        <div class="rounded-2xl border border-white/10 bg-white/[0.04] p-6 text-center text-slate-300">Game haijapatikana.</div>
+                    </div>
+                `;
+                document.getElementById('back-btn')?.addEventListener('click', handleBack);
+                return;
+            }
+            appContainer.innerHTML = `
+                <div class="page min-h-screen bg-[#05070b] pb-14">
+                    <div class="relative">
+                        <div class="h-[24rem] w-full overflow-hidden bg-slate-950 md:h-[30rem]">
+                            ${renderGamePoster(game)}
+                            <div class="absolute inset-0 bg-gradient-to-t from-[#05070b] via-[#05070b]/35 to-black/20"></div>
+                        </div>
+                        <button id="back-btn" class="absolute left-4 top-4 inline-flex h-11 w-11 items-center justify-center rounded-full border border-white/10 bg-black/55 text-white backdrop-blur"><i class="fas fa-arrow-left"></i></button>
+                    </div>
+                    <section class="-mt-20 relative z-10 px-4">
+                        <div class="rounded-2xl border border-white/10 bg-[#0d1219]/95 p-5 shadow-[0_24px_70px_rgba(0,0,0,0.42)]">
+                            ${renderSwaGamesLogo('mb-5')}
+                            ${renderGamePills(game)}
+                            <h1 class="mt-4 text-3xl font-black text-white">${escapeHtml(game.title || 'Untitled Game')}</h1>
+                            <div class="mt-3 flex flex-wrap gap-3 text-sm text-slate-300">
+                                <span><i class="fas fa-calendar mr-2 text-cyan-300"></i>${escapeHtml(getGameYearText(game))}</span>
+                                <span><i class="fas fa-tags mr-2 text-cyan-300"></i>${escapeHtml(getGameGenreText(game))}</span>
+                                <span><i class="fas fa-hard-drive mr-2 text-cyan-300"></i>${escapeHtml(getGameSizeText(game))}</span>
+                            </div>
+                            <p class="mt-5 text-sm leading-7 text-slate-300">${escapeHtml(getGameDescription(game))}</p>
+                            <div class="mt-6 grid gap-3 sm:grid-cols-2">
+                                ${renderGameDownloadButton(game, 'rounded-xl bg-lime-400 px-5 py-4 text-sm font-black text-slate-950 transition-colors hover:bg-lime-300')}
+                                ${game.playUrl ? `<button class="game-launch-btn rounded-xl border border-white/10 bg-white/[0.05] px-5 py-4 text-sm font-black text-white transition-colors hover:bg-white/[0.09]" data-url="${escapeHtml(game.playUrl)}" type="button"><i class="fas fa-play mr-2"></i>Open</button>` : ''}
+                            </div>
+                        </div>
+                    </section>
+                </div>
+            `;
+            document.getElementById('back-btn')?.addEventListener('click', handleBack);
+            updateSeoMeta({
+                route: `gameDetails:${game.id}`,
+                title: `${game.title || 'Game'} | SwaGames`,
+                description: getGameDescription(game)
+            });
         };
 
         const carouselTemplate = (title, items, defaultType) => {
@@ -5573,16 +5773,13 @@ const renderActionButtons = (item, size = 'large', itemType = null) => {
         };
 
         const renderHomePage = async (retryCount = 0) => {
-            const [bannersSnap, categoriesSnap, djNames] = await Promise.all([
+            const [bannersSnap, categoriesSnap, djNames, firstContent] = await Promise.all([
                 withTimeout(fetchData('banners'), 1400, createEmptyDataSnapshot(), 'Home banners'),
                 withTimeout(fetchData('categories'), 1400, createEmptyDataSnapshot(), 'Home categories'),
-                withTimeout(fetchDjNames(), 1400, [], 'Home DJ names')
+                withTimeout(fetchDjNames(), 1400, [], 'Home DJ names'),
+                waitForHomeMovieContent(retryCount)
             ]);
-            let allContent = await fetchAllContent();
-            if ((!Array.isArray(allContent) || allContent.length === 0 || !hasHomeMovieContent(allContent)) && retryCount < 2) {
-                await wait(350 + (retryCount * 450));
-                allContent = await fetchAllContent({ force: true });
-            }
+            let allContent = Array.isArray(firstContent) ? firstContent : [];
             const publishedContent = filterContentForPreferences(allContent.filter(c => c.isPublished !== false));
             const homeContent = publishedContent.filter(c => !['connection', 'xxx'].includes(normalizeContentType(c.type || 'movie')));
             
@@ -5593,6 +5790,10 @@ const renderActionButtons = (item, size = 'large', itemType = null) => {
             
             const moviesWithTypes = homeContent.filter(c => normalizeContentType(c.type || 'movie') === 'movie');
             const seriesWithTypes = homeContent.filter(c => normalizeContentType(c.type || 'series') === 'series');
+            if (moviesWithTypes.length === 0) {
+                return;
+            }
+            homeEmptyRepairAttempts = 0;
             const freeSpotlightContent = homeContent
                 .filter(item => item && (item.isHomeFreeSpotlight === true || item.isFreeAccess === true))
                 .slice(0, 20);
@@ -5634,15 +5835,6 @@ const renderActionButtons = (item, size = 'large', itemType = null) => {
             renderBannerCarousel(banners, 'home-banner-carousel-container', allContent);
             renderTrendingCarousel(trendingContent);
             renderFreeSpotlightCarousel(freeSpotlightContent);
-            if (moviesWithTypes.length === 0 && retryCount < 2) {
-                scheduleAfterInitialRender(`Home content retry ${retryCount + 1}`, async () => {
-                    if (getRouteRoot() !== 'home') return;
-                    const retryContent = await fetchAllContent({ force: true });
-                    if (hasHomeMovieContent(retryContent) && getRouteRoot() === 'home') {
-                        await renderHomePage(retryCount + 1);
-                    }
-                }, 900 + (retryCount * 600));
-            }
             updateSeoMeta({
                 route: 'home',
                 title: 'SwaMedia | Movies, Series na StoryZone kwa Kiswahili',
@@ -11286,6 +11478,7 @@ const renderActionButtons = (item, size = 'large', itemType = null) => {
                     case 'profile': renderProfilePage('login'); break;
                     case 'signup': renderProfilePage('signup'); break;
                     case 'swaGames': await renderSwaGamesPage(); break;
+                    case 'gameDetails': await renderGameDetailsPage(param1); break;
                     case 'inviteRewards': await renderInviteRewardsPage(); break;
                     case 'likedMovies': await renderLikedMoviesPage(); break;
                     case 'watchHistory': await renderWatchHistoryPage(); break;
@@ -11336,7 +11529,7 @@ const renderActionButtons = (item, size = 'large', itemType = null) => {
                 enhanceMediaPerformance(appContainer);
                 hydrateDjLabels(appContainer);
                 if (page === 'home') {
-                    scheduleAfterInitialRender('Home empty DOM repair', repairHomeIfEmpty, 1200);
+                    scheduleHomeRepair(1200);
                 } else {
                     homeEmptyRepairAttempts = 0;
                 }
@@ -11484,6 +11677,10 @@ const renderActionButtons = (item, size = 'large', itemType = null) => {
             const bannerSlide = e.target.closest('.banner-slide');
             const chapterLink = e.target.closest('.chapter-link');
             const gameLaunchBtn = e.target.closest('.game-launch-btn');
+            const gameDetailsBtn = e.target.closest('.game-details-btn');
+            const swaGameCard = e.target.closest('.swagame-card');
+            const swaGameNavBtn = e.target.closest('.swagame-nav-btn');
+            const swaGameGenreBtn = e.target.closest('.swagame-genre-btn');
             const applyPromoCodeBtn = e.target.closest('#apply-promo-code-btn');
             const contentOfferOpenBtn = e.target.closest('.content-offer-open-btn');
 
@@ -11523,6 +11720,27 @@ const renderActionButtons = (item, size = 'large', itemType = null) => {
                 } else {
                     showNotification('Game link haipo kwa sasa.', 'error');
                 }
+            } else if (gameDetailsBtn) {
+                e.preventDefault();
+                e.stopPropagation();
+                const gameId = gameDetailsBtn.dataset.gameId;
+                if (gameId) navigateTo(`gameDetails:${gameId}`);
+            } else if (swaGameNavBtn) {
+                e.preventDefault();
+                const target = document.getElementById(swaGameNavBtn.dataset.scrollTarget || '');
+                if (target) target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            } else if (swaGameGenreBtn) {
+                e.preventDefault();
+                const target = document.getElementById(`swagame-collection-${swaGameGenreBtn.dataset.genreSlug || ''}`);
+                if (target) {
+                    target.scrollIntoView({ behavior: 'smooth', block: 'center', inline: 'center' });
+                } else {
+                    showNotification('Collection hii bado haina games.', 'error');
+                }
+            } else if (swaGameCard) {
+                e.preventDefault();
+                const gameId = swaGameCard.dataset.gameId;
+                if (gameId) navigateTo(`gameDetails:${gameId}`);
             } else if (applyPromoCodeBtn) {
                 e.preventDefault();
                 const input = document.getElementById('promotion-code-input');
