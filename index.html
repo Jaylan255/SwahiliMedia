@@ -40,7 +40,7 @@
     <meta name="twitter:image:width" content="512">
     <meta name="twitter:image:height" content="512">
     <meta name="twitter:image:alt" content="SwaMedia logo">
-    <title>SwaMedia | Movies, Series na StoryZone kwa Kiswahili</title>
+    <title>SwaMedia | Movies zilizotafsiriwa, Series na StoryZone kwa Kiswahili</title>
     <link rel="canonical" id="canonical-link" href="https://www.swamedia.online/">
     <link rel="manifest" href="/manifest.json">
     <link rel="sitemap" type="application/xml" href="/sitemap.xml">
@@ -1439,7 +1439,7 @@
         const DONATE_FUNCTION_URL = `${SUPABASE_URL}/functions/v1/donate`;
         const DONATION_STATUS_FUNCTION_URL = `${SUPABASE_URL}/functions/v1/donation-status`;
         const MIN_PREMIUM_PAYMENT = 500;
-        const TURNSTILE_SITE_KEY = '0x4AAAAAADWujqRSMr7xwB-u';
+        const TURNSTILE_SITE_KEY = '0x4AAAAAADbmHuATwp881_Us';
         const TURNSTILE_VERIFY_ENDPOINT = '/api/security/verify-turnstile.php';
 
         const appContainer = document.getElementById('app-container');
@@ -1764,34 +1764,58 @@
             state.verified = false;
             renderAuthTurnstile(view);
         };
+        const getTurnstileFailureMessage = (response, data = {}) => {
+            if (response?.status === 429) {
+                return 'Verification imejaribiwa mara nyingi. Subiri kidogo kisha jaribu tena.';
+            }
+            if (response?.status === 404) {
+                return 'Human verification server haipatikani. Hakikisha Turnstile API imewekwa kwenye server.';
+            }
+            if (response?.status === 503) {
+                return 'Human verification haijaconfigure. Weka TURNSTILE_SECRET_KEY kwenye server.';
+            }
+            return data?.message || 'Please verify that you are human.';
+        };
         const verifyTurnstileToken = async (view) => {
             const state = getAuthTurnstileState(view);
             if (!state.verified || !state.token) {
-                setAuthTurnstileError(view, 'Please verify that you are human.');
+                const message = 'Please verify that you are human.';
+                setAuthTurnstileError(view, message);
                 syncAuthButtonStates();
-                return false;
+                return { success: false, message };
             }
 
-            const response = await fetch(getTurnstileVerifyUrl(), {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Accept': 'application/json'
-                },
-                body: JSON.stringify({
-                    token: state.token,
-                    action: view
-                })
-            });
+            let response;
+            try {
+                response = await fetch(getTurnstileVerifyUrl(), {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Accept': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        token: state.token,
+                        action: view
+                    })
+                });
+            } catch (error) {
+                console.error('Turnstile verification request failed:', error);
+                const message = 'Human verification server haijajibu. Refresh page au angalia HTTPS/API config.';
+                setAuthTurnstileError(view, message);
+                syncAuthButtonStates();
+                return { success: false, message };
+            }
+
             const data = await response.json().catch(() => ({}));
             if (!response.ok || data.success !== true) {
-                setAuthTurnstileError(view, 'Please verify that you are human.');
+                const message = getTurnstileFailureMessage(response, data);
+                setAuthTurnstileError(view, message);
                 syncAuthButtonStates();
-                return false;
+                return { success: false, message };
             }
 
             setAuthTurnstileError(view, '');
-            return true;
+            return { success: true, message: '' };
         };
 
         const getBaseShareUrl = () => {
@@ -9670,7 +9694,7 @@ const renderActionButtons = (item, size = 'large', itemType = null) => {
                                 <div>
                                     <input id="auth-password-confirm" type="password" placeholder="Confirm Password" class="w-full bg-gray-800 border border-gray-700 rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-red-500" minlength="6">
                                 </div>
-                                <div id="auth-feedback" class="text-sm h-5 mb-2 min-h-[20px]"></div>
+                                <div id="auth-feedback" class="text-sm min-h-[20px] mb-2 leading-snug"></div>
                                 <label class="flex items-start gap-3 text-left text-sm text-slate-300 bg-gray-800 border border-gray-700 rounded-lg p-3">
                                     <input id="auth-policy-checkbox" type="checkbox" class="mt-1">
                                     <span>Je umekubaliana na policy za SwaMedia</span>
@@ -9715,7 +9739,7 @@ const renderActionButtons = (item, size = 'large', itemType = null) => {
                                 <div>
                                     <input id="auth-login-password" type="password" placeholder="Password" class="w-full bg-gray-800 border border-gray-700 rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-red-500" minlength="6">
                                 </div>
-                                <div id="auth-feedback" class="text-sm h-5 mb-2 min-h-[20px]"></div>
+                                <div id="auth-feedback" class="text-sm min-h-[20px] mb-2 leading-snug"></div>
                                 <div class="space-y-2">
                                     <div id="turnstile-login" class="turnstile-shell"></div>
                                     <p id="turnstile-login-error" class="text-sm min-h-[20px] text-transparent"></p>
@@ -11170,19 +11194,19 @@ const renderActionButtons = (item, size = 'large', itemType = null) => {
             
             if (!identifier) {
                 feedbackEl.textContent = 'Andika email yako ili uweze kubadili password.';
-                feedbackEl.className = 'text-sm text-red-400 h-5 mb-2';
+                feedbackEl.className = 'text-sm text-red-400 min-h-[20px] mb-2 leading-snug';
                 return;
             }
              if (isPhoneNumber(identifier)) {
                 feedbackEl.textContent = 'Kubadili password hakupo kwa simu. Wasiliana na support.';
-                feedbackEl.className = 'text-sm text-red-400 h-5 mb-2';
+                feedbackEl.className = 'text-sm text-red-400 min-h-[20px] mb-2 leading-snug';
                 return;
             }
 
             try {
                 await sendPasswordResetEmail(auth, identifier);
                 feedbackEl.textContent = 'Email ya kubadili password imetumwa. Angalia inbox yako (na spam pia).';
-                feedbackEl.className = 'text-sm text-green-400 h-5 mb-2';
+                feedbackEl.className = 'text-sm text-green-400 min-h-[20px] mb-2 leading-snug';
             } catch (error) {
                 console.error(error);
                 // alert removed - using custom message
@@ -11195,22 +11219,22 @@ const renderActionButtons = (item, size = 'large', itemType = null) => {
                     errorMessage = 'Tatizo la app. Jaribu tena.';
                 }
                 feedbackEl.textContent = errorMessage;
-                feedbackEl.className = 'text-sm text-red-400 h-5 mb-2';
+                feedbackEl.className = 'text-sm text-red-400 min-h-[20px] mb-2 leading-snug';
             }
         };
 
         const handleAuthAction = async (action, email, password, feedbackEl, btn, originalIdentifier, extraData = {}) => {
             const turnstileView = action === 'signup' ? 'signup' : 'login';
             feedbackEl.textContent = '';
-            feedbackEl.className = 'text-sm h-5 mb-2';
+            feedbackEl.className = 'text-sm min-h-[20px] mb-2 leading-snug';
             btn.querySelector('.btn-text').classList.add('hidden');
             btn.querySelector('.btn-loader').classList.add('active');
             btn.disabled = true;
 
             try {
-                const isHumanVerified = await verifyTurnstileToken(turnstileView);
-                if (!isHumanVerified) {
-                    feedbackEl.textContent = 'Please verify that you are human.';
+                const humanVerification = await verifyTurnstileToken(turnstileView);
+                if (!humanVerification.success) {
+                    feedbackEl.textContent = humanVerification.message || 'Please verify that you are human.';
                     feedbackEl.classList.add('text-red-400');
                     return;
                 }
@@ -11306,22 +11330,22 @@ const renderActionButtons = (item, size = 'large', itemType = null) => {
             const feedbackEl = document.getElementById('auth-feedback');
             if (!username) {
                 feedbackEl.textContent = 'Andika user name.';
-                feedbackEl.className = 'text-sm text-red-400 h-5 mb-2';
+                feedbackEl.className = 'text-sm text-red-400 min-h-[20px] mb-2 leading-snug';
                 return;
             }
             if (!identifier) {
                 feedbackEl.textContent = usePhone ? 'Andika namba.' : 'Andika email.';
-                feedbackEl.className = 'text-sm text-red-400 h-5 mb-2';
+                feedbackEl.className = 'text-sm text-red-400 min-h-[20px] mb-2 leading-snug';
                 return;
             }
             if (password !== confirmPassword) {
                 feedbackEl.textContent = 'Password hazijafanana.';
-                feedbackEl.className = 'text-sm text-red-400 h-5 mb-2';
+                feedbackEl.className = 'text-sm text-red-400 min-h-[20px] mb-2 leading-snug';
                 return;
             }
             if (!document.getElementById('auth-policy-checkbox')?.checked) {
                 feedbackEl.textContent = 'Kubali policy za SwaMedia kwanza.';
-                feedbackEl.className = 'text-sm text-red-400 h-5 mb-2';
+                feedbackEl.className = 'text-sm text-red-400 min-h-[20px] mb-2 leading-snug';
                 return;
             }
             const normalizedEmail = normalizeAuthIdentifier(identifier);
