@@ -51,12 +51,12 @@
     <link rel="icon" type="image/png" sizes="32x32" href="/icons/icon-32.png">
     <link rel="icon" type="image/png" sizes="16x16" href="/icons/icon-16.png">
     <link rel="icon" type="image/png" sizes="192x192" href="/icons/icon-192.png">
-    <link rel="icon" type="image/png" sizes="512x512" href="/icons/icon-512.png">
     <link rel="apple-touch-icon" sizes="192x192" href="/icons/icon-192.png">
-    <link rel="apple-touch-icon" sizes="512x512" href="/icons/icon-512.png">
+    <link rel="dns-prefetch" href="//cdn.tailwindcss.com">
     <link rel="dns-prefetch" href="//www.gstatic.com">
     <link rel="dns-prefetch" href="//cdnjs.cloudflare.com">
     <link rel="dns-prefetch" href="//swamediaweb-default-rtdb.firebaseio.com">
+    <link rel="preconnect" href="https://cdn.tailwindcss.com" crossorigin>
     <link rel="preconnect" href="https://www.gstatic.com" crossorigin>
     <link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin>
     <link rel="preconnect" href="https://swamediaweb-default-rtdb.firebaseio.com" crossorigin>
@@ -65,9 +65,9 @@
     </script>
 <meta name="theme-color" content="#3b82f6">
     <meta name="msapplication-TileColor" content="#020617">
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script src="https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit" async defer></script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" integrity="sha512-DTOQO9RWCH3ppGqcWaEA1BIZOC6xxalwEsw9c2QQeAIftl+Vegovlnee1c9QX4TctnWMn13TZye+giMm8e2LwA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <script src="https://cdn.tailwindcss.com" defer></script>
+    <link rel="preload" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" integrity="sha512-DTOQO9RWCH3ppGqcWaEA1BIZOC6xxalwEsw9c2QQeAIftl+Vegovlnee1c9QX4TctnWMn13TZye+giMm8e2LwA==" crossorigin="anonymous" referrerpolicy="no-referrer" onload="this.onload=null;this.rel='stylesheet'">
+    <noscript><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" integrity="sha512-DTOQO9RWCH3ppGqcWaEA1BIZOC6xxalwEsw9c2QQeAIftl+Vegovlnee1c9QX4TctnWMn13TZye+giMm8e2LwA==" crossorigin="anonymous" referrerpolicy="no-referrer"></noscript>
     <style>
       body { background-color: #000000; }
       html {
@@ -80,6 +80,7 @@
         min-height: -webkit-fill-available;
         -webkit-font-smoothing: antialiased;
         text-rendering: optimizeLegibility;
+        color: #e2e8f0;
       }
       img,
       video,
@@ -132,7 +133,24 @@
 
       /* Custom Loader Styles */
       #app-loader {
+        position: fixed;
+        inset: 0;
+        z-index: 200;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: #000;
+        color: #e2e8f0;
+        transition: opacity 0.5s ease-in-out;
         flex-direction: column;
+      }
+      #app-loader .loader-icon svg {
+        width: 5rem;
+        height: 5rem;
+        color: #ef4444;
+      }
+      #app-loader .loader-text {
+        color: #ef4444;
       }
       #app-loader .loader-content {
         display: flex;
@@ -325,7 +343,6 @@
         visibility: visible;
         transition: opacity 0.25s ease-in-out;
       }
-      
       /* Story Reader Themes */
       .reader-theme-dark { background-color: #111827; color: #d1d5db; }
       .reader-theme-light { background-color: #f8f8f8; color: #1f2937; }
@@ -1511,6 +1528,7 @@
             login: { widgetId: null, token: '', verified: false, renderAttempts: 0 },
             signup: { widgetId: null, token: '', verified: false, renderAttempts: 0 }
         };
+        let turnstileApiLoadPromise = null;
         const PENDING_REFERRAL_CODE_KEY = 'swamedia_pending_referral_code';
         const DEVICE_ID_KEY = 'swamedia_device_id';
         const WATCH_HISTORY_KEY = 'swamedia_watch_history';
@@ -1699,6 +1717,37 @@
             syncLoginButtonState();
             syncSignupButtonState();
         };
+        const loadTurnstileApi = () => {
+            if (window.turnstile && typeof window.turnstile.render === 'function') {
+                return Promise.resolve(window.turnstile);
+            }
+            if (turnstileApiLoadPromise) {
+                return turnstileApiLoadPromise;
+            }
+
+            turnstileApiLoadPromise = new Promise((resolve, reject) => {
+                const existingScript = document.querySelector('script[data-turnstile-api="true"]');
+                if (existingScript) {
+                    existingScript.addEventListener('load', () => resolve(window.turnstile), { once: true });
+                    existingScript.addEventListener('error', reject, { once: true });
+                    return;
+                }
+
+                const script = document.createElement('script');
+                script.src = 'https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit';
+                script.async = true;
+                script.defer = true;
+                script.dataset.turnstileApi = 'true';
+                script.onload = () => resolve(window.turnstile);
+                script.onerror = () => {
+                    turnstileApiLoadPromise = null;
+                    reject(new Error('Turnstile API failed to load.'));
+                };
+                document.head.appendChild(script);
+            });
+
+            return turnstileApiLoadPromise;
+        };
         const resetAuthTurnstile = (view) => {
             const state = getAuthTurnstileState(view);
             state.token = '';
@@ -1762,7 +1811,15 @@
             state.widgetId = null;
             state.token = '';
             state.verified = false;
-            renderAuthTurnstile(view);
+            setAuthTurnstileError(view, '');
+            syncAuthButtonStates();
+            loadTurnstileApi()
+                .then(() => renderAuthTurnstile(view))
+                .catch(error => {
+                    console.error('Could not load Turnstile:', error);
+                    setAuthTurnstileError(view, 'Human verification haijaload. Refresh page kisha jaribu tena.');
+                    syncAuthButtonStates();
+                });
         };
         const getTurnstileFailureMessage = (response, data = {}) => {
             if (response?.status === 429) {
@@ -2865,6 +2922,21 @@
             }, fallbackDelay);
         };
         const wait = (ms = 0) => new Promise(resolve => setTimeout(resolve, ms));
+        const createEmptyDataSnapshot = () => ({ val: () => null, exists: () => false });
+        const withTimeout = async (promise, ms, fallbackValue, label = 'Task') => {
+            try {
+                return await Promise.race([
+                    promise,
+                    wait(ms).then(() => {
+                        console.warn(`${label} timed out after ${ms}ms.`);
+                        return fallbackValue;
+                    })
+                ]);
+            } catch (error) {
+                console.error(`${label} failed:`, error);
+                return fallbackValue;
+            }
+        };
         const getCachedShowcaseContent = (limit = 8) => {
             if (!Array.isArray(allContentCache) || allContentCache.length === 0) return [];
             return filterContentForPreferences(
@@ -4231,7 +4303,7 @@
             } catch (error) {
                 if (cached?.snapshot) return cached.snapshot;
                 console.error(`Error fetching ${path}:`, error);
-                return { val: () => null, exists: () => false };
+                return createEmptyDataSnapshot();
             }
         };
 
@@ -5092,6 +5164,7 @@
                     navigator.serviceWorker.register(swUrl)
                         .then(async (registration) => {
                             console.log('Service Worker registered with scope:', registration.scope);
+                            if (Notification.permission !== 'granted') return;
                             const messagingApi = await loadFirebaseMessagingModule();
                             if (!messagingApi) return;
                             const messaging = messagingApi.getMessaging(app);
@@ -5160,12 +5233,14 @@
                     await revealStartupContent();
                     hideLoader();
                 }
-            }, 10000);
+            }, 5000);
 
             try {
                 let isAuthReady = false;
+                let hasRenderedInitialRoute = false;
                 const authReadyPromise = new Promise(resolve => {
                     onAuthStateChanged(auth, async (user) => {
+                        const isFirstAuthEvent = !isAuthReady;
                         if (user) {
                             try {
                                 const userSnap = await get(ref(database, `users/${user.uid}`));
@@ -5179,15 +5254,16 @@
                         } else {
                             currentUser = null;
                         }
-                        if (isAuthReady) {
-                            await syncAppPreferencesForCurrentUser();
-                        }
-                        if (isAuthReady && ['profile', 'signup'].includes(historyStack[historyStack.length - 1])) {
-                            renderProfilePage(historyStack[historyStack.length - 1] === 'signup' ? 'signup' : 'login');
-                        }
-                        if (!isAuthReady) {
+                        if (isFirstAuthEvent) {
                             isAuthReady = true;
                             resolve();
+                        }
+                        if (hasRenderedInitialRoute) {
+                            await syncAppPreferencesForCurrentUser();
+                            const activeRoute = getRouteRoot();
+                            if (['profile', 'signup'].includes(activeRoute)) {
+                                renderProfilePage(activeRoute === 'signup' ? 'signup' : 'login');
+                            }
                         }
                         recordSiteVisitAnalytics().catch(error => {
                             console.error('Visit analytics error:', error);
@@ -5201,21 +5277,18 @@
                     console.error('Failed to load premium settings during startup:', error);
                 });
 
-                await authReadyPromise;
+                const initialRouteRoot = getRouteRoot(initialRoute);
+                const authSensitiveRoutes = new Set(['profile', 'signup', 'likedMovies', 'watchHistory', 'inviteRewards', 'paymentRequest']);
+                if (authSensitiveRoutes.has(initialRouteRoot)) {
+                    await Promise.race([authReadyPromise, wait(850)]);
+                }
                 appPreferences = loadAppPreferences();
                 applyAppTheme(appPreferences.theme);
                 document.documentElement.lang = 'sw';
 
-                if (getRouteRoot(initialRoute) === 'home') {
-                    try {
-                        await fetchAllContent({ force: true });
-                    } catch (error) {
-                        console.error('Initial home content preload failed:', error);
-                    }
-                }
-                
                 historyStack = [initialRoute];
                 await navigateTo(initialRoute, true, { skipUrlUpdate: true, skipHistoryStack: true, suppressLoader: shouldShowSplashLoader });
+                hasRenderedInitialRoute = true;
                 await revealStartupContent();
 
                 scheduleAfterInitialRender('Background startup tasks', async () => {
@@ -5688,7 +5761,9 @@ const renderActionButtons = (item, size = 'large', itemType = null) => {
 
         const renderHomePage = async (retryCount = 0) => {
             const [bannersSnap, categoriesSnap, djNames] = await Promise.all([
-                fetchData('banners'), fetchData('categories'), fetchDjNames()
+                withTimeout(fetchData('banners'), 1400, createEmptyDataSnapshot(), 'Home banners'),
+                withTimeout(fetchData('categories'), 1400, createEmptyDataSnapshot(), 'Home categories'),
+                withTimeout(fetchDjNames(), 1400, [], 'Home DJ names')
             ]);
             let allContent = await fetchAllContent();
             if ((!Array.isArray(allContent) || allContent.length === 0 || !hasHomeMovieContent(allContent)) && retryCount < 2) {
@@ -12208,6 +12283,30 @@ const renderActionButtons = (item, size = 'large', itemType = null) => {
         
         initApp();
     </script>
- <script src="//code.tidio.co/butv1zkybzax5efzwh3qc7zty22bwaqy.js" async></script>
+    <script>
+      (() => {
+        const loadTidioChat = () => {
+          if (document.querySelector('script[data-tidio-chat="true"]')) return;
+          if (window.matchMedia && window.matchMedia('(max-width: 640px)').matches) return;
+          const script = document.createElement('script');
+          script.src = 'https://code.tidio.co/butv1zkybzax5efzwh3qc7zty22bwaqy.js';
+          script.async = true;
+          script.dataset.tidioChat = 'true';
+          document.body.appendChild(script);
+        };
+        const scheduleTidioChat = () => {
+          if ('requestIdleCallback' in window) {
+            window.requestIdleCallback(loadTidioChat, { timeout: 12000 });
+          } else {
+            window.setTimeout(loadTidioChat, 8000);
+          }
+        };
+        if (document.readyState === 'complete') {
+          scheduleTidioChat();
+        } else {
+          window.addEventListener('load', scheduleTidioChat, { once: true });
+        }
+      })();
+    </script>
 </body>
 </html>

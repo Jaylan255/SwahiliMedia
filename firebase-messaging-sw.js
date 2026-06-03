@@ -1,21 +1,12 @@
-const CACHE_NAME = 'swamedia-cache-v7';
+const CACHE_NAME = 'swamedia-cache-v11';
 const SCOPE_PATH = new URL(self.registration.scope).pathname.replace(/\/$/, '');
 const withScope = (path) => `${SCOPE_PATH}${String(path || '/').startsWith('/') ? path : `/${path}`}` || '/';
 const OFFLINE_URL = withScope('/offline.html');
 const ASSETS_TO_CACHE = [
-  withScope('/'),
-  withScope('/index.html'),
   withScope('/manifest.json'),
   OFFLINE_URL,
-  withScope('/style.css'),
-  withScope('/script.js'),
-  withScope('/icons/favicon.ico'),
   withScope('/icons/favicon.svg'),
-  withScope('/icons/icon-16.png'),
-  withScope('/icons/icon-32.png'),
-  withScope('/icons/icon-48.png'),
-  withScope('/icons/icon-192.png'),
-  withScope('/icons/icon-512.png')
+  withScope('/icons/icon-192.png')
 ];
 
 self.addEventListener('install', event => {

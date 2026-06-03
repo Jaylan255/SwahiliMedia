@@ -2,7 +2,7 @@
   "name": "swamedia",
   "compatibility_date": "2026-05-30",
   "assets": {
-    "directory": ".",
+    "directory": "./dist",
     "not_found_handling": "single-page-application"
   }
 }
