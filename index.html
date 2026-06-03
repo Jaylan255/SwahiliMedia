@@ -89,18 +89,6 @@
       }
       .btn-loader { display: none !important; }
       .btn-loader.active { display: inline-block !important; }
-      .turnstile-shell {
-        display: flex;
-        justify-content: center;
-        width: 100%;
-        min-height: 72px;
-        overflow: hidden;
-      }
-      .turnstile-shell > div {
-        width: 100%;
-        display: flex;
-        justify-content: center;
-      }
       ::-webkit-scrollbar { width: 8px; height: 8px; }
       ::-webkit-scrollbar-track { background: #1f2937; } /* bg-gray-800 */
       ::-webkit-scrollbar-thumb { background: #4b5563; border-radius: 10px; } /* bg-gray-600 */
@@ -1456,8 +1444,6 @@
         const DONATE_FUNCTION_URL = `${SUPABASE_URL}/functions/v1/donate`;
         const DONATION_STATUS_FUNCTION_URL = `${SUPABASE_URL}/functions/v1/donation-status`;
         const MIN_PREMIUM_PAYMENT = 500;
-        const TURNSTILE_SITE_KEY = '0x4AAAAAADbmHuATwp881_Us';
-        const TURNSTILE_VERIFY_ENDPOINT = '/api/security/verify-turnstile.php';
 
         const appContainer = document.getElementById('app-container');
         const bottomNav = document.getElementById('bottom-nav');
@@ -1524,11 +1510,6 @@
         const DATA_CACHE_BYPASS_PREFIXES = ['notifications', 'settings/premium'];
         const CONTENT_DATA_PATHS = new Set(['movies', 'series', 'adultContent', 'connection', 'xxx']);
         const shouldBypassDataCache = (path = '') => DATA_CACHE_BYPASS_PREFIXES.some(prefix => path === prefix || path.startsWith(`${prefix}/`));
-        const authTurnstileState = {
-            login: { widgetId: null, token: '', verified: false, renderAttempts: 0 },
-            signup: { widgetId: null, token: '', verified: false, renderAttempts: 0 }
-        };
-        let turnstileApiLoadPromise = null;
         const PENDING_REFERRAL_CODE_KEY = 'swamedia_pending_referral_code';
         const DEVICE_ID_KEY = 'swamedia_device_id';
         const WATCH_HISTORY_KEY = 'swamedia_watch_history';
@@ -1688,191 +1669,23 @@
             }
             return normalizedPath;
         };
-        const getTurnstileVerifyUrl = () => withAppBasePath(TURNSTILE_VERIFY_ENDPOINT);
-        const getAuthTurnstileState = (view) => authTurnstileState[view] || authTurnstileState.login;
-        const getAuthTurnstileButton = (view) => document.getElementById(view === 'signup' ? 'signup-btn' : 'login-btn');
-        const getAuthTurnstileErrorEl = (view) => document.getElementById(`turnstile-${view}-error`);
-        const setAuthTurnstileError = (view, message = '') => {
-            const errorEl = getAuthTurnstileErrorEl(view);
-            if (!errorEl) return;
-            errorEl.textContent = message;
-            errorEl.className = `text-sm min-h-[20px] ${message ? 'text-red-400' : 'text-transparent'}`;
-        };
         const syncLoginButtonState = () => {
-            const loginBtn = getAuthTurnstileButton('login');
+            const loginBtn = document.getElementById('login-btn');
             if (!loginBtn) return;
-            const enabled = getAuthTurnstileState('login').verified;
-            loginBtn.disabled = !enabled;
-            loginBtn.className = `w-full ${enabled ? 'bg-blue-600 hover:bg-blue-700 text-white opacity-100' : 'bg-gray-700 text-slate-300 opacity-70'} font-bold py-4 px-4 rounded-xl text-base transition-colors`;
+            loginBtn.disabled = false;
+            loginBtn.className = 'w-full bg-blue-600 hover:bg-blue-700 text-white opacity-100 font-bold py-4 px-4 rounded-xl text-base transition-colors';
         };
         const syncSignupButtonState = () => {
-            const signupBtn = getAuthTurnstileButton('signup');
+            const signupBtn = document.getElementById('signup-btn');
             const policyCheckbox = document.getElementById('auth-policy-checkbox');
             if (!signupBtn) return;
-            const enabled = Boolean(policyCheckbox?.checked) && getAuthTurnstileState('signup').verified;
+            const enabled = Boolean(policyCheckbox?.checked);
             signupBtn.disabled = !enabled;
             signupBtn.className = `w-full ${enabled ? 'bg-blue-600 hover:bg-blue-700 text-white opacity-100' : 'bg-gray-700 text-slate-300 opacity-70'} font-bold py-4 px-4 rounded-xl text-base transition-colors`;
         };
         const syncAuthButtonStates = () => {
             syncLoginButtonState();
             syncSignupButtonState();
-        };
-        const loadTurnstileApi = () => {
-            if (window.turnstile && typeof window.turnstile.render === 'function') {
-                return Promise.resolve(window.turnstile);
-            }
-            if (turnstileApiLoadPromise) {
-                return turnstileApiLoadPromise;
-            }
-
-            turnstileApiLoadPromise = new Promise((resolve, reject) => {
-                const existingScript = document.querySelector('script[data-turnstile-api="true"]');
-                if (existingScript) {
-                    existingScript.addEventListener('load', () => resolve(window.turnstile), { once: true });
-                    existingScript.addEventListener('error', reject, { once: true });
-                    return;
-                }
-
-                const script = document.createElement('script');
-                script.src = 'https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit';
-                script.async = true;
-                script.defer = true;
-                script.dataset.turnstileApi = 'true';
-                script.onload = () => resolve(window.turnstile);
-                script.onerror = () => {
-                    turnstileApiLoadPromise = null;
-                    reject(new Error('Turnstile API failed to load.'));
-                };
-                document.head.appendChild(script);
-            });
-
-            return turnstileApiLoadPromise;
-        };
-        const resetAuthTurnstile = (view) => {
-            const state = getAuthTurnstileState(view);
-            state.token = '';
-            state.verified = false;
-            setAuthTurnstileError(view, '');
-            if (window.turnstile && state.widgetId !== null && state.widgetId !== undefined) {
-                try {
-                    window.turnstile.reset(state.widgetId);
-                } catch (error) {
-                    console.warn(`Failed to reset ${view} Turnstile widget:`, error);
-                }
-            }
-            syncAuthButtonStates();
-        };
-        const renderAuthTurnstile = (view, attempt = 0) => {
-            const container = document.getElementById(`turnstile-${view}`);
-            if (!container) return;
-            const state = getAuthTurnstileState(view);
-
-            if (!window.turnstile || typeof window.turnstile.render !== 'function') {
-                if (attempt < 20) {
-                    window.setTimeout(() => renderAuthTurnstile(view, attempt + 1), 250);
-                } else {
-                    setAuthTurnstileError(view, 'Please verify that you are human.');
-                }
-                return;
-            }
-
-            container.innerHTML = '';
-            state.widgetId = window.turnstile.render(container, {
-                sitekey: TURNSTILE_SITE_KEY,
-                theme: 'dark',
-                action: view,
-                callback: (token) => {
-                    state.token = token;
-                    state.verified = true;
-                    setAuthTurnstileError(view, '');
-                    syncAuthButtonStates();
-                },
-                'expired-callback': () => {
-                    state.token = '';
-                    state.verified = false;
-                    setAuthTurnstileError(view, 'Please verify that you are human.');
-                    syncAuthButtonStates();
-                },
-                'error-callback': () => {
-                    state.token = '';
-                    state.verified = false;
-                    setAuthTurnstileError(view, 'Please verify that you are human.');
-                    syncAuthButtonStates();
-                }
-            });
-            state.token = '';
-            state.verified = false;
-            syncAuthButtonStates();
-        };
-        const ensureAuthTurnstile = (view) => {
-            const container = document.getElementById(`turnstile-${view}`);
-            if (!container) return;
-            const state = getAuthTurnstileState(view);
-            state.widgetId = null;
-            state.token = '';
-            state.verified = false;
-            setAuthTurnstileError(view, '');
-            syncAuthButtonStates();
-            loadTurnstileApi()
-                .then(() => renderAuthTurnstile(view))
-                .catch(error => {
-                    console.error('Could not load Turnstile:', error);
-                    setAuthTurnstileError(view, 'Human verification haijaload. Refresh page kisha jaribu tena.');
-                    syncAuthButtonStates();
-                });
-        };
-        const getTurnstileFailureMessage = (response, data = {}) => {
-            if (response?.status === 429) {
-                return 'Verification imejaribiwa mara nyingi. Subiri kidogo kisha jaribu tena.';
-            }
-            if (response?.status === 404) {
-                return 'Human verification server haipatikani. Hakikisha Turnstile API imewekwa kwenye server.';
-            }
-            if (response?.status === 503) {
-                return 'Human verification haijaconfigure. Weka TURNSTILE_SECRET_KEY kwenye server.';
-            }
-            return data?.message || 'Please verify that you are human.';
-        };
-        const verifyTurnstileToken = async (view) => {
-            const state = getAuthTurnstileState(view);
-            if (!state.verified || !state.token) {
-                const message = 'Please verify that you are human.';
-                setAuthTurnstileError(view, message);
-                syncAuthButtonStates();
-                return { success: false, message };
-            }
-
-            let response;
-            try {
-                response = await fetch(getTurnstileVerifyUrl(), {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'Accept': 'application/json'
-                    },
-                    body: JSON.stringify({
-                        token: state.token,
-                        action: view
-                    })
-                });
-            } catch (error) {
-                console.error('Turnstile verification request failed:', error);
-                const message = 'Human verification server haijajibu. Refresh page au angalia HTTPS/API config.';
-                setAuthTurnstileError(view, message);
-                syncAuthButtonStates();
-                return { success: false, message };
-            }
-
-            const data = await response.json().catch(() => ({}));
-            if (!response.ok || data.success !== true) {
-                const message = getTurnstileFailureMessage(response, data);
-                setAuthTurnstileError(view, message);
-                syncAuthButtonStates();
-                return { success: false, message };
-            }
-
-            setAuthTurnstileError(view, '');
-            return { success: true, message: '' };
         };
 
         const getBaseShareUrl = () => {
@@ -9774,10 +9587,6 @@ const renderActionButtons = (item, size = 'large', itemType = null) => {
                                     <input id="auth-policy-checkbox" type="checkbox" class="mt-1">
                                     <span>Je umekubaliana na policy za SwaMedia</span>
                                 </label>
-                                <div class="space-y-2">
-                                    <div id="turnstile-signup" class="turnstile-shell"></div>
-                                    <p id="turnstile-signup-error" class="text-sm min-h-[20px] text-transparent"></p>
-                                </div>
                                 <button type="button" id="signup-btn" class="w-full bg-gray-700 text-slate-300 font-bold py-4 px-4 rounded-xl text-base transition-colors opacity-70" disabled>
                                     <span class="btn-text">Jisajili</span>
                                     <i class="fas fa-spinner fa-spin btn-loader hidden"></i>
@@ -9815,11 +9624,7 @@ const renderActionButtons = (item, size = 'large', itemType = null) => {
                                     <input id="auth-login-password" type="password" placeholder="Password" class="w-full bg-gray-800 border border-gray-700 rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-red-500" minlength="6">
                                 </div>
                                 <div id="auth-feedback" class="text-sm min-h-[20px] mb-2 leading-snug"></div>
-                                <div class="space-y-2">
-                                    <div id="turnstile-login" class="turnstile-shell"></div>
-                                    <p id="turnstile-login-error" class="text-sm min-h-[20px] text-transparent"></p>
-                                </div>
-                                <button type="submit" id="login-btn" class="w-full bg-gray-700 text-slate-300 font-bold py-4 px-4 rounded-xl text-base transition-colors opacity-70" disabled>
+                                <button type="submit" id="login-btn" class="w-full bg-blue-600 hover:bg-blue-700 text-white opacity-100 font-bold py-4 px-4 rounded-xl text-base transition-colors">
                                     <span class="btn-text">Log In</span>
                                     <i class="fas fa-spinner fa-spin btn-loader hidden"></i>
                                 </button>
@@ -9991,12 +9796,6 @@ const renderActionButtons = (item, size = 'large', itemType = null) => {
                 policyCheckbox?.addEventListener('change', syncSignupButton);
                 syncSignupMethod();
                 syncSignupButton();
-                if (loginForm) {
-                    ensureAuthTurnstile('login');
-                }
-                if (signupForm) {
-                    ensureAuthTurnstile('signup');
-                }
                 syncAuthButtonStates();
             } else {
                 const logoutBtn = document.getElementById('logout-btn');
@@ -11299,7 +11098,6 @@ const renderActionButtons = (item, size = 'large', itemType = null) => {
         };
 
         const handleAuthAction = async (action, email, password, feedbackEl, btn, originalIdentifier, extraData = {}) => {
-            const turnstileView = action === 'signup' ? 'signup' : 'login';
             feedbackEl.textContent = '';
             feedbackEl.className = 'text-sm min-h-[20px] mb-2 leading-snug';
             btn.querySelector('.btn-text').classList.add('hidden');
@@ -11307,13 +11105,6 @@ const renderActionButtons = (item, size = 'large', itemType = null) => {
             btn.disabled = true;
 
             try {
-                const humanVerification = await verifyTurnstileToken(turnstileView);
-                if (!humanVerification.success) {
-                    feedbackEl.textContent = humanVerification.message || 'Please verify that you are human.';
-                    feedbackEl.classList.add('text-red-400');
-                    return;
-                }
-
                 if (action === 'signup') {
                     const userCredential = await createUserWithEmailAndPassword(auth, email, password);
                     const referralCode = await generateUniqueReferralCode(userCredential.user.uid);
@@ -11369,7 +11160,7 @@ const renderActionButtons = (item, size = 'large', itemType = null) => {
                 } else if (errorCode === 'auth/unauthorized-continue-uri') {
                     errorMessage = 'Tatizo la server. Wasiliana na support.';
                 } else if (!errorCode) {
-                    errorMessage = 'Please verify that you are human.';
+                    errorMessage = 'Hitilafu imetokea. Jaribu tena.';
                 } else {
                     errorMessage = 'Error: ' + errorCode;
                 }
@@ -11377,7 +11168,6 @@ const renderActionButtons = (item, size = 'large', itemType = null) => {
                 feedbackEl.textContent = errorMessage;
                 feedbackEl.classList.add('text-red-400');
             } finally {
-                resetAuthTurnstile(turnstileView);
                 btn.querySelector('.btn-text').classList.remove('hidden');
                 btn.querySelector('.btn-loader').classList.remove('active');
                 syncAuthButtonStates();

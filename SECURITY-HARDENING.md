@@ -15,7 +15,6 @@ This project now includes application-level protections for:
 Set these environment variables in Apache, XAMPP, or your host:
 
 - `MONGIKE_API_KEY`
-- `TURNSTILE_SECRET_KEY`
 - `FORCE_HTTPS=1`
 
 ## 2. Enable HTTPS/SSL
