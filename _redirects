@@ -1,0 +1,7 @@
+# Cloudflare Pages/Workers compatible redirects.
+# Avoid .html -> extensionless and /index -> / redirects here because Cloudflare
+# normalizes those paths internally and can flag them as infinite loops.
+
+# Subscription clean-route deep links.
+/subscriptions/plans/* /subscriptions/plans 200
+/subscriptions/dashboard/* /subscriptions/dashboard 200

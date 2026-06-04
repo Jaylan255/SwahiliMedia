@@ -1,0 +1,10 @@
+{
+  "name": "swamedia",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "build": "node scripts/prepare-cloudflare-assets.mjs",
+    "deploy": "npm run build && npx wrangler deploy",
+    "generate:seo": "node scripts/generate-sitemap.mjs"
+  }
+}
