@@ -207,6 +207,40 @@
         gap: 0.4rem;
         margin-top: 0.15rem;
       }
+      #app-loader .loader-progress {
+        position: absolute;
+        left: 50%;
+        bottom: 2.45rem;
+        width: min(8.75rem, 38vw);
+        height: 0.12rem;
+        transform: translateX(-50%);
+        overflow: hidden;
+        border-radius: 9999px;
+        background: rgba(37, 99, 235, 0.18);
+        box-shadow:
+          inset 0 0 0 1px rgba(96, 165, 250, 0.22),
+          0 0 16px rgba(59, 130, 246, 0.18);
+      }
+      #app-loader .loader-progress span {
+        display: block;
+        width: 100%;
+        height: 100%;
+        border-radius: inherit;
+        transform: scaleX(var(--loader-progress, 0.08));
+        transform-origin: left center;
+        transition: transform 0.18s ease-out;
+        background: linear-gradient(90deg, #1d4ed8, #38bdf8, #93c5fd);
+        box-shadow: 0 0 14px rgba(56, 189, 248, 0.62);
+      }
+      #app-loader .loader-progress::after {
+        content: '';
+        position: absolute;
+        inset: 0;
+        width: 38%;
+        background: linear-gradient(90deg, transparent, rgba(255,255,255,0.82), transparent);
+        transform: translateX(-120%);
+        animation: techLineScan 1.2s ease-in-out infinite;
+      }
       #app-loader .loader-dot {
         width: 0.48rem;
         height: 0.48rem;
@@ -291,6 +325,11 @@
         }
         75% {
           transform: translateX(-1px) translateY(-1px) rotate(-3deg) scale(1.03);
+        }
+      }
+      @keyframes techLineScan {
+        100% {
+          transform: translateX(270%);
         }
       }
       @keyframes bannerPlaceholderShimmer {
@@ -1387,6 +1426,9 @@
                 <span class="loader-dot"></span>
                 <span class="loader-dot"></span>
             </div>
+            <div class="loader-progress" role="progressbar" aria-label="Loading SwaMedia" aria-valuemin="0" aria-valuemax="100" aria-valuenow="8">
+                <span id="app-loader-progress-bar"></span>
+            </div>
             <div class="loader-powered-by">Powered by Umoja Movie Distribution</div>
         </div>
     </div>
@@ -1457,7 +1499,7 @@
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
-        import { getDatabase, ref, get, set, update, push, runTransaction } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
+        import { getDatabase, ref, get, set, update, push, runTransaction, query as firebaseQuery, orderByChild, limitToLast } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
         import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, sendPasswordResetEmail, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
 
         const firebaseConfig = {
@@ -1520,7 +1562,7 @@
         let historyStack = ['home'];
         let isOfflineViewActive = false;
         let premiumSettings = { isActive: false };
-        let allContentCache = null;
+        let allContentCache = [];
         let currentUser = null;
         let notificationsCache = [];
         let gamesCache = [];
@@ -1540,14 +1582,29 @@
         let currentPaymentRequestContext = null;
         let allContentCachePromise = null;
         let allContentCacheTimestamp = 0;
+        let allContentCacheComplete = false;
+        const contentCollectionPromises = new Map();
+        const contentCollectionCache = new Map();
         const DATA_SNAPSHOT_CACHE_TTL_MS = 45000;
         const ALL_CONTENT_CACHE_TTL_MS = 90000;
-        const HOME_INITIAL_CONTENT_TIMEOUT_MS = 6000;
+        const HOME_INITIAL_CONTENT_TIMEOUT_MS = 2600;
+        const SPLASH_FORCE_OPEN_MS = 5200;
+        const HOME_MOVIES_LIMIT = 90;
+        const HOME_SERIES_LIMIT = 45;
+        const HOME_CATEGORY_SECTION_LIMIT = 12;
+        const HOME_CATEGORY_ITEMS_LIMIT = 12;
         const HOME_REPAIR_MAX_ATTEMPTS = 10;
         const HOME_BANNER_REPAIR_MAX_ATTEMPTS = 8;
         const dataSnapshotCache = new Map();
         const DATA_CACHE_BYPASS_PREFIXES = ['notifications', 'settings/premium'];
         const CONTENT_DATA_PATHS = new Set(['movies', 'series', 'adultContent', 'connection', 'xxx']);
+        const CONTENT_COLLECTION_CONFIGS = [
+            { path: 'movies', defaultType: 'movie', aliases: ['movie', 'movies'] },
+            { path: 'series', defaultType: 'series', aliases: ['series'] },
+            { path: 'adultContent', defaultType: 'adult', aliases: ['adult', 'adultcontent'] },
+            { path: 'connection', defaultType: 'connection', aliases: ['connection'] },
+            { path: 'xxx', defaultType: 'xxx', aliases: ['xxx', 'education'] }
+        ];
         const shouldBypassDataCache = (path = '') => DATA_CACHE_BYPASS_PREFIXES.some(prefix => path === prefix || path.startsWith(`${prefix}/`));
         const PENDING_REFERRAL_CODE_KEY = 'swamedia_pending_referral_code';
         const DEVICE_ID_KEY = 'swamedia_device_id';
@@ -2523,7 +2580,7 @@
             if (completionAction === 'download') {
                 isCompleted = true;
             } else if (normalizeContentType(couponEntry.contentType || '') === 'series') {
-                const seriesItem = (await fetchAllContent()).find(item =>
+                const seriesItem = (await fetchContentByTypes(['series'])).find(item =>
                     String(item.id || '') === String(couponEntry.contentId || '') &&
                     normalizeContentType(item.type || '') === 'series'
                 );
@@ -2758,6 +2815,36 @@
         const isRunningStandalone = () => window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone === true;
         const hasSeenSplashThisSession = () => sessionStorage.getItem(SPLASH_SEEN_SESSION_KEY) === '1';
         const markSplashAsSeen = () => sessionStorage.setItem(SPLASH_SEEN_SESSION_KEY, '1');
+        const setSplashProgress = (percent = 0) => {
+            const progress = Math.max(0, Math.min(100, Number(percent) || 0));
+            const loader = document.getElementById('app-loader');
+            const progressBar = document.getElementById('app-loader-progress-bar');
+            if (loader) loader.style.setProperty('--loader-progress', String(progress / 100));
+            if (progressBar?.parentElement) {
+                progressBar.parentElement.setAttribute('aria-valuenow', String(Math.round(progress)));
+            }
+        };
+        const startSplashProgress = (durationMs = SPLASH_FORCE_OPEN_MS) => {
+            let frameId = 0;
+            const startedAt = performance.now();
+            const tick = (now) => {
+                const elapsed = now - startedAt;
+                const ratio = Math.min(1, elapsed / Math.max(1, durationMs));
+                setSplashProgress(Math.min(96, 8 + (ratio * 88)));
+                if (ratio < 1) frameId = requestAnimationFrame(tick);
+            };
+            setSplashProgress(8);
+            frameId = requestAnimationFrame(tick);
+            return {
+                complete() {
+                    if (frameId) cancelAnimationFrame(frameId);
+                    setSplashProgress(100);
+                },
+                stop() {
+                    if (frameId) cancelAnimationFrame(frameId);
+                }
+            };
+        };
         const scheduleAfterInitialRender = (label, task, fallbackDelay = 450) => {
             const runTask = async () => {
                 try {
@@ -3408,11 +3495,9 @@
             const unreadFeedbackCount = await getUnreadFeedbackReplyCount();
             const bellCount = unreadNotificationCount + unreadFeedbackCount;
             if (!Array.isArray(allContentCache) || allContentCache.length === 0) {
-                try {
-                    await fetchAllContent();
-                } catch (error) {
+                fetchHomeContent().catch(error => {
                     console.error('Could not refresh content cache for header state:', error);
-                }
+                });
             }
             const freeCount = getFreeContentCount();
             if (notificationDot) notificationDot.classList.toggle('hidden', bellCount === 0);
@@ -3864,7 +3949,6 @@
         window.addEventListener('beforeinstallprompt', (e) => {
             e.preventDefault();
             deferredInstallPrompt = e;
-            console.log(`'beforeinstallprompt' event was fired.`);
         });
 
         const NOTIFICATIONS_LAST_READ_KEY = 'swamedia_last_read_ts';
@@ -3909,6 +3993,18 @@
         const hidePageLoader = () => {
             if (pageLoader) pageLoader.classList.remove('page-loader-visible');
             appContainer.classList.remove('page-transitioning');
+        };
+        const shouldShowHomeContentLoader = () =>
+            getRouteRoot() === 'home' && !appContainer.querySelector('.item-card');
+        const showHomeContentLoaderIfNeeded = () => {
+            if (shouldShowHomeContentLoader()) {
+                showPageLoader();
+            }
+        };
+        const hideHomeContentLoaderIfReady = () => {
+            if (getRouteRoot() === 'home' && appContainer.querySelector('.item-card')) {
+                hidePageLoader();
+            }
         };
 
         document.getElementById('close-more-menu-btn')?.addEventListener('click', closeMoreMenuDrawer);
@@ -4144,14 +4240,21 @@
         const fetchData = async (type, options = {}) => {
             const path = String(type || '').replace(/^\/+/, '');
             const ttl = Number(options.ttl || DATA_SNAPSHOT_CACHE_TTL_MS);
-            const cacheKey = path;
+            const queryKeyParts = [];
+            if (options.orderByChild) queryKeyParts.push(`orderBy:${options.orderByChild}`);
+            if (options.limitToLast) queryKeyParts.push(`last:${Number(options.limitToLast)}`);
+            const cacheKey = queryKeyParts.length ? `${path}?${queryKeyParts.join('&')}` : path;
             const cached = dataSnapshotCache.get(cacheKey);
             const shouldUseCache = !options.force && !shouldBypassDataCache(path);
             if (shouldUseCache && cached && Date.now() - cached.timestamp < ttl) {
                 return cached.snapshot;
             }
             try {
-                const snapshot = await get(ref(database, path));
+                const constraints = [];
+                if (options.orderByChild) constraints.push(orderByChild(options.orderByChild));
+                if (options.limitToLast) constraints.push(limitToLast(Number(options.limitToLast)));
+                const dbRef = ref(database, path);
+                const snapshot = await get(constraints.length > 0 ? firebaseQuery(dbRef, ...constraints) : dbRef);
                 const shouldCacheSnapshot = shouldUseCache && (!CONTENT_DATA_PATHS.has(path) || snapshot.exists());
                 if (shouldCacheSnapshot) {
                     dataSnapshotCache.set(cacheKey, { snapshot, timestamp: Date.now() });
@@ -4164,9 +4267,129 @@
             }
         };
 
+        const sortContentItems = (items = []) => [...items].sort((a, b) => Number(b.createdAt || b.timestamp || 0) - Number(a.createdAt || a.timestamp || 0));
+        const uniqueContentItems = (items = []) => {
+            const seen = new Set();
+            return (items || []).filter(item => {
+                if (!item) return false;
+                const key = `${normalizeContentType(item.type || 'movie')}:${item.id || item.title || Math.random()}`;
+                if (seen.has(key)) return false;
+                seen.add(key);
+                return true;
+            });
+        };
+        const getContentCollectionConfig = (contentTypeOrPath = '') => {
+            const rawValue = String(contentTypeOrPath || '').trim();
+            const normalizedRaw = rawValue.toLowerCase();
+            const normalizedType = normalizeContentType(rawValue);
+            return CONTENT_COLLECTION_CONFIGS.find(config =>
+                config.path.toLowerCase() === normalizedRaw ||
+                config.defaultType === normalizedType ||
+                config.aliases.includes(normalizedRaw) ||
+                config.aliases.includes(normalizedType)
+            ) || null;
+        };
+        const getContentCollectionCacheKey = (path, options = {}) => {
+            const keyParts = [path];
+            if (options.cacheScope) keyParts.push(`scope:${options.cacheScope}`);
+            if (options.orderByChild) keyParts.push(`orderBy:${options.orderByChild}`);
+            if (options.limitToLast) keyParts.push(`last:${Number(options.limitToLast)}`);
+            return keyParts.join('|');
+        };
+        const refreshCombinedContentCache = () => {
+            const cachedItems = [];
+            let latestTimestamp = 0;
+            contentCollectionCache.forEach(entry => {
+                if (!entry || !Array.isArray(entry.items)) return;
+                cachedItems.push(...entry.items);
+                latestTimestamp = Math.max(latestTimestamp, Number(entry.timestamp || 0));
+            });
+            allContentCache = sortContentItems(uniqueContentItems(cachedItems));
+            allContentCacheTimestamp = latestTimestamp || (allContentCache.length > 0 ? Date.now() : 0);
+            return allContentCache;
+        };
+        const refreshAllContentCompleteness = () => {
+            allContentCacheComplete = CONTENT_COLLECTION_CONFIGS.every(config => contentCollectionCache.has(config.path));
+            return allContentCacheComplete;
+        };
+        const cacheContentCollection = (path, items = [], options = {}) => {
+            const cacheKey = getContentCollectionCacheKey(path, options);
+            contentCollectionCache.set(cacheKey, {
+                items: sortContentItems(items),
+                timestamp: Date.now(),
+                path,
+                isComplete: !options.limitToLast && !options.cacheScope
+            });
+            refreshAllContentCompleteness();
+            refreshCombinedContentCache();
+        };
+        const fetchContentCollection = async (contentTypeOrPath = '', options = {}) => {
+            const config = getContentCollectionConfig(contentTypeOrPath);
+            if (!config) return [];
+            const forceRefresh = options.force === true;
+            const ttl = Number(options.ttl || ALL_CONTENT_CACHE_TTL_MS);
+            const cacheKey = getContentCollectionCacheKey(config.path, options);
+            const cached = contentCollectionCache.get(cacheKey);
+            if (!forceRefresh && cached && Date.now() - cached.timestamp < ttl) {
+                return [...cached.items];
+            }
+            if (!forceRefresh && contentCollectionPromises.has(cacheKey)) {
+                return contentCollectionPromises.get(cacheKey);
+            }
+            const loadPromise = (async () => {
+                const snapshot = await fetchData(config.path, {
+                    force: forceRefresh,
+                    ttl,
+                    orderByChild: options.orderByChild,
+                    limitToLast: options.limitToLast
+                });
+                const items = transformSnapshotToArray(snapshot).map(item => ({
+                    ...item,
+                    type: normalizeContentType(item.type || config.defaultType)
+                }));
+                cacheContentCollection(config.path, items, options);
+                return items;
+            })().catch(error => {
+                console.error(`Failed to fetch content collection ${config.path}:`, error);
+                return cached?.items ? [...cached.items] : [];
+            }).finally(() => {
+                contentCollectionPromises.delete(cacheKey);
+            });
+            contentCollectionPromises.set(cacheKey, loadPromise);
+            return loadPromise;
+        };
+        const fetchContentByTypes = async (contentTypes = [], options = {}) => {
+            const requestedTypes = Array.isArray(contentTypes) ? contentTypes : [contentTypes];
+            const configs = uniqueContentItems(
+                requestedTypes
+                    .map(type => getContentCollectionConfig(type))
+                    .filter(Boolean)
+                    .map(config => ({ id: config.path, type: config.defaultType, config }))
+            ).map(entry => entry.config);
+            if (configs.length === 0) return [];
+            const results = await Promise.all(configs.map(config => fetchContentCollection(config.path, options)));
+            return filterContentForPreferences(sortContentItems(uniqueContentItems(results.flat())));
+        };
+        const fetchHomeContent = async (options = {}) => {
+            const [movies, series] = await Promise.all([
+                fetchContentCollection('movies', {
+                    ...options,
+                    cacheScope: 'home',
+                    orderByChild: 'createdAt',
+                    limitToLast: HOME_MOVIES_LIMIT
+                }),
+                fetchContentCollection('series', {
+                    ...options,
+                    cacheScope: 'home',
+                    orderByChild: 'createdAt',
+                    limitToLast: HOME_SERIES_LIMIT
+                })
+            ]);
+            return filterContentForPreferences(sortContentItems(uniqueContentItems([...movies, ...series])));
+        };
         const fetchAllContent = async (options = {}) => {
             const forceRefresh = options.force === true;
-            if (!forceRefresh && Array.isArray(allContentCache) && allContentCache.length > 0 && Date.now() - allContentCacheTimestamp < ALL_CONTENT_CACHE_TTL_MS) {
+            if (!forceRefresh && allContentCacheComplete && Array.isArray(allContentCache) && allContentCache.length > 0 && Date.now() - allContentCacheTimestamp < ALL_CONTENT_CACHE_TTL_MS) {
                 return filterContentForPreferences([...allContentCache]);
             }
             if (!forceRefresh && allContentCachePromise) {
@@ -4174,38 +4397,17 @@
                 return filterContentForPreferences([...sharedContent]);
             }
             try {
-                allContentCachePromise = Promise.all([
-                    fetchData('movies', { force: forceRefresh }), 
-                    fetchData('series', { force: forceRefresh }),
-                    fetchData('adultContent', { force: forceRefresh }),
-                    fetchData('connection', { force: forceRefresh }),
-                    fetchData('xxx', { force: forceRefresh })
-                ]);
-                const [moviesSnap, seriesSnap, adultContentSnap, connectionSnap, EducationSnap] = await allContentCachePromise;
-                const movies = transformSnapshotToArray(moviesSnap);
-                const series = transformSnapshotToArray(seriesSnap);
-                const adultContent = transformSnapshotToArray(adultContentSnap);
-                const connectionContent = transformSnapshotToArray(connectionSnap);
-                const EducationContent = transformSnapshotToArray(EducationSnap);
-                
-                const moviesWithTypes = (movies || []).map(m => ({ ...m, type: normalizeContentType(m.type || 'movie') }));
-                const seriesWithTypes = (series || []).map(s => ({ ...s, type: normalizeContentType(s.type || 'series') }));
-                const adultContentWithTypes = (adultContent || []).map(m => ({ ...m, type: m.type || 'adult' }));
-                const connectionWithTypes = (connectionContent || []).map(m => ({ ...m, type: m.type || 'connection' }));
-                const EducationWithTypes = (EducationContent || []).map(m => ({ ...m, type: m.type || 'Education' }));
-
-                allContentCache = [...moviesWithTypes, ...seriesWithTypes, ...adultContentWithTypes, ...connectionWithTypes, ...EducationWithTypes];
-                allContentCache.sort((a, b) => (b.createdAt || 0) - (a.createdAt || 0));
-                allContentCacheTimestamp = allContentCache.length > 0 ? Date.now() : 0;
+                allContentCachePromise = Promise.all(
+                    CONTENT_COLLECTION_CONFIGS.map(config => fetchContentCollection(config.path, { force: forceRefresh }))
+                ).then(results => sortContentItems(uniqueContentItems(results.flat())));
+                const allContent = await allContentCachePromise;
+                allContentCache = allContent;
+                allContentCacheTimestamp = allContent.length > 0 ? Date.now() : 0;
                 return filterContentForPreferences([...allContentCache]);
             } catch (error) {
                 console.error("Failed to fetch and cache content", error);
-                if (Array.isArray(allContentCache) && allContentCache.length > 0) {
-                    return filterContentForPreferences([...allContentCache]);
-                }
-                allContentCache = [];
-                allContentCacheTimestamp = 0;
-                return [];
+                refreshCombinedContentCache();
+                return filterContentForPreferences([...allContentCache]);
             } finally {
                 allContentCachePromise = null;
             }
@@ -4217,21 +4419,22 @@
         );
         const waitForHomeMovieContent = async (retryCount = 0) => {
             let attempt = Math.max(0, retryCount);
-            while (getRouteRoot() === 'home') {
-                const timeoutMs = Math.min(HOME_INITIAL_CONTENT_TIMEOUT_MS + (attempt * 900), 9000);
+            const maxAttempt = attempt + 2;
+            while (getRouteRoot() === 'home' && attempt < maxAttempt) {
+                const timeoutMs = Math.min(HOME_INITIAL_CONTENT_TIMEOUT_MS + (attempt * 650), 4200);
                 const content = await withTimeout(
-                    fetchAllContent({ force: attempt > 0 }),
+                    fetchHomeContent({ force: attempt > 0 }),
                     timeoutMs,
-                    null,
+                    [],
                     `Home content attempt ${attempt + 1}`
                 );
                 if (Array.isArray(content) && hasHomeMovieContent(content)) {
                     return content;
                 }
                 attempt += 1;
-                await wait(Math.min(500 + (attempt * 250), 1800));
+                await wait(Math.min(220 + (attempt * 120), 700));
             }
-            return [];
+            return filterContentForPreferences((allContentCache || []).filter(item => ['movie', 'series'].includes(normalizeContentType(item?.type || 'movie'))));
         };
         const scheduleHomeRepair = (delay = 1200) => {
             scheduleAfterInitialRender('Home empty DOM repair', repairHomeIfEmpty, delay);
@@ -4240,12 +4443,14 @@
             if (getRouteRoot() !== 'home') return;
             if (appContainer.querySelector('.item-card')) {
                 homeEmptyRepairAttempts = 0;
+                hideHomeContentLoaderIfReady();
                 return;
             }
             if (homeEmptyRepairAttempts >= HOME_REPAIR_MAX_ATTEMPTS) return;
+            showHomeContentLoaderIfNeeded();
             homeEmptyRepairAttempts += 1;
             const freshContent = await withTimeout(
-                fetchAllContent({ force: homeEmptyRepairAttempts > 1 }),
+                fetchHomeContent({ force: homeEmptyRepairAttempts > 1 }),
                 2600,
                 [],
                 'Home repair content'
@@ -4253,6 +4458,7 @@
             if (hasHomeMovieContent(freshContent) && getRouteRoot() === 'home') {
                 await renderHomePage(0);
                 homeEmptyRepairAttempts = 0;
+                hideHomeContentLoaderIfReady();
                 return;
             }
             if (getRouteRoot() === 'home') {
@@ -4988,7 +5194,6 @@
                     uid: currentUser ? currentUser.uid : 'anonymous',
                     timestamp: Date.now()
                 });
-                console.log('FCM token saved to database.');
             } catch (error) {
                 console.error('Error saving FCM token:', error);
             }
@@ -5006,7 +5211,6 @@
         };
 
         const requestNotificationPermission = async () => {
-            console.log('Requesting notification permission...');
             if (isIosSafari()) {
                 showNotification('Notifications za push zimezimwa kwenye iPhone ili app ifunguke stable.', 'error');
                 return;
@@ -5018,7 +5222,6 @@
             try {
                 const permission = await Notification.requestPermission();
                 if (permission === 'granted') {
-                    console.log('Notification permission granted.');
                     const messagingApi = await loadFirebaseMessagingModule();
                     if (!messagingApi) {
                         alert('Notifications hazijaweza kuwashwa kwenye browser hii.');
@@ -5027,15 +5230,12 @@
                     const messaging = messagingApi.getMessaging(app);
                     const currentToken = await messagingApi.getToken(messaging, { vapidKey: VAPID_KEY });
                     if (currentToken) {
-                        console.log('FCM Token:', currentToken);
                         await saveFcmToken(currentToken);
                         alert('Notifications enabled successfully!');
                     } else {
-                        console.log('No registration token available. Request permission to generate one.');
                         alert('Could not get notification token. Please try again or check browser settings.');
                     }
                 } else {
-                    console.log('Unable to get permission to notify.');
                     alert('Notification permission was denied. You can enable it in your browser settings.');
                 }
             } catch (error) {
@@ -5051,13 +5251,11 @@
                     const swUrl = withAppBasePath('/firebase-messaging-sw.js');
                     navigator.serviceWorker.register(swUrl)
                         .then(async (registration) => {
-                            console.log('Service Worker registered with scope:', registration.scope);
                             if (Notification.permission !== 'granted') return;
                             const messagingApi = await loadFirebaseMessagingModule();
                             if (!messagingApi) return;
                             const messaging = messagingApi.getMessaging(app);
                             messagingApi.onMessage(messaging, (payload) => {
-                                console.log('Message received in foreground. ', payload);
                                 const { title, body } = payload.notification;
                                 showFcmToast(title, body);
                             });
@@ -5072,6 +5270,9 @@
 
         const initApp = async () => {
             let initializationComplete = false;
+            let hasRenderedInitialRoute = false;
+            let isInitialRouteRendering = false;
+            const splashProgress = startSplashProgress(SPLASH_FORCE_OPEN_MS);
             const initialRoute = getRouteFromLocation();
             const shouldShowSplashLoader = true;
             const startupContainer = document.getElementById('app-container');
@@ -5086,6 +5287,7 @@
                 initializationComplete = true;
                 const loader = document.getElementById('app-loader');
                 if (loader && !loader.classList.contains('loader-hidden')) {
+                    splashProgress.complete();
                     loader.classList.add('loader-hidden');
                 }
                 return;
@@ -5100,9 +5302,11 @@
             const hideLoader = (immediate = false) => {
                 const loader = document.getElementById('app-loader');
                 if (loader && !loader.classList.contains('loader-hidden')) {
+                    splashProgress.complete();
                     const finishHide = () => {
                         loader.classList.add('loader-hidden');
                         const removeDelay = immediate ? 0 : 500;
+                        setTimeout(showHomeContentLoaderIfNeeded, removeDelay + 40);
                         setTimeout(() => {
                             if (loader.parentNode) loader.parentNode.removeChild(loader);
                         }, removeDelay);
@@ -5113,23 +5317,30 @@
             
             const safetyTimeout = setTimeout(async () => {
                 if (!initializationComplete) {
-                    if (getRouteRoot(initialRoute) === 'home') {
-                        console.warn("Home startup is still waiting for movie content. Keeping splash loader visible.");
-                        return;
+                    console.warn("Startup is still loading. Forcing app shell open while content continues in background.");
+                    if (!hasRenderedInitialRoute && !isInitialRouteRendering) {
+                        await withTimeout(
+                            navigateTo(initialRoute, true, { skipUrlUpdate: true, skipHistoryStack: true, suppressLoader: shouldShowSplashLoader }),
+                            1400,
+                            null,
+                            'Forced startup route render'
+                        );
+                        hasRenderedInitialRoute = true;
                     }
-                    console.warn("App initialization timed out after 30 seconds. Forcing UI render.");
-                    await navigateTo(initialRoute, true, { suppressLoader: shouldShowSplashLoader }).catch(e => {
-                        console.error("Failed to render home page on timeout", e);
-                        appContainer.innerHTML = `<div class="p-8 text-center text-red-400">App failed to load. Please refresh the page.</div>`;
-                    });
+                    if (!startupContainer?.querySelector('.page')) {
+                        startupContainer.innerHTML = `
+                            <div class="page">
+                                <div class="px-4 pt-6">${SwaMediaHeader}</div>
+                                <div class="px-4 mt-4">${getHomeBannerPlaceholderHtml()}</div>
+                            </div>`;
+                    }
                     await revealStartupContent();
                     hideLoader();
                 }
-            }, 30000);
+            }, SPLASH_FORCE_OPEN_MS);
 
             try {
                 let isAuthReady = false;
-                let hasRenderedInitialRoute = false;
                 const authReadyPromise = new Promise(resolve => {
                     onAuthStateChanged(auth, async (user) => {
                         const isFirstAuthEvent = !isAuthReady;
@@ -5179,14 +5390,18 @@
                 document.documentElement.lang = 'sw';
 
                 historyStack = [initialRoute];
-                await navigateTo(initialRoute, true, { skipUrlUpdate: true, skipHistoryStack: true, suppressLoader: shouldShowSplashLoader });
+                isInitialRouteRendering = true;
+                try {
+                    await navigateTo(initialRoute, true, { skipUrlUpdate: true, skipHistoryStack: true, suppressLoader: shouldShowSplashLoader });
+                } finally {
+                    isInitialRouteRendering = false;
+                }
                 hasRenderedInitialRoute = true;
                 await revealStartupContent();
 
                 scheduleAfterInitialRender('Background startup tasks', async () => {
                     setupFirebaseMessaging();
                     await Promise.all([
-                        fetchAllContent(),
                         fetchAndCheckNotifications(),
                         fetchAdSettings(),
                         fetchSocialLinks(),
@@ -5198,7 +5413,7 @@
                     setInterval(() => {
                         Promise.all([
                             fetchAndCheckNotifications(),
-                            fetchAllContent().then(() => {
+                            fetchHomeContent().then(() => {
                                 const latestContentTimestamp = getLatestContentTimestamp();
                                 const lastAlertedContentTimestamp = Number(sessionStorage.getItem(LAST_NEW_POST_ALERT_KEY) || 0);
                                 if (lastAlertedContentTimestamp === 0) {
@@ -5861,11 +6076,29 @@ const renderActionButtons = (item, size = 'large', itemType = null) => {
             const banners = transformSnapshotToArray(bannersSnap);
             const categories = transformSnapshotToArray(categoriesSnap);
 
-            const moviesOfTheWeek = homeContent.filter(c => c.isMovieOfTheWeek === true);
+            const moviesOfTheWeek = homeContent.filter(c => c.isMovieOfTheWeek === true).slice(0, 15);
             
             const moviesWithTypes = homeContent.filter(c => normalizeContentType(c.type || 'movie') === 'movie');
             const seriesWithTypes = homeContent.filter(c => normalizeContentType(c.type || 'series') === 'series');
             if (moviesWithTypes.length === 0) {
+                appContainer.innerHTML = `
+                <div class="page">
+                    <div class="px-4 pt-6">${SwaMediaHeader}</div>
+                    <div class="px-4 mt-4">${getHomeBannerPlaceholderHtml()}</div>
+                    <section class="px-4 mt-6">
+                        <h2 class="text-xl font-bold text-white mb-3">Movie za Week</h2>
+                        <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-4">
+                            ${Array.from({ length: 6 }).map(() => `
+                                <div class="rounded-2xl border border-white/5 bg-gray-900/70 p-3">
+                                    <div class="aspect-[2/3] rounded-xl bg-gray-800 animate-pulse"></div>
+                                    <div class="mt-3 h-3 rounded bg-gray-800 animate-pulse"></div>
+                                </div>
+                            `).join('')}
+                        </div>
+                    </section>
+                </div>`;
+                requestAnimationFrame(showHomeContentLoaderIfNeeded);
+                scheduleHomeRepair(900);
                 return;
             }
             homeEmptyRepairAttempts = 0;
@@ -5880,11 +6113,11 @@ const renderActionButtons = (item, size = 'large', itemType = null) => {
                 <a href="#" class="home-dj-link text-sm font-medium" data-dj-name="${escapeHtml(name)}">${escapeHtml(name)}</a>
             `).join('<span class="text-slate-600">•</span>');
 
-            const categoryCarousels = (categories || []).map(cat => {
+            const categoryCarousels = (categories || []).slice(0, HOME_CATEGORY_SECTION_LIMIT).map(cat => {
                 if (!cat || !cat.name) return '';
                 const categoryContent = homeContent.filter(item => 
                     item && (item.category === cat.name || (Array.isArray(item.genres) && item.genres.includes(cat.name)))
-                );
+                ).slice(0, HOME_CATEGORY_ITEMS_LIMIT);
                 return carouselTemplate(cat.name, categoryContent, 'movie');
             }).join('');
 
@@ -5907,6 +6140,7 @@ const renderActionButtons = (item, size = 'large', itemType = null) => {
                     <div id="free-spotlight-carousel-container"></div>
                     ${categoryCarousels}
                 </div>`;
+            hideHomeContentLoaderIfReady();
             const didRenderHomeBanner = renderBannerCarousel(banners, 'home-banner-carousel-container', allContent, { preserveEmpty: true });
             if (didRenderHomeBanner) {
                 if (homeBannerRepairTimer) {
@@ -5962,11 +6196,11 @@ const renderActionButtons = (item, size = 'large', itemType = null) => {
             const [bannersSnap] = await Promise.all([
                 fetchData(`${pageType}banners`)
             ]);
-            const allContent = await fetchAllContent();
+            const allContent = await fetchContentByTypes(pageType === 'Education' ? ['xxx'] : [pageType]);
             const banners = transformSnapshotToArray(bannersSnap);
             const contentTypes = pageType === 'Education' ? ['Education', 'xxx'] : [pageType];
             const content = allContent
-                .filter(c => contentTypes.includes(c.type) && c.isPublished !== false)
+                .filter(c => contentTypes.map(type => normalizeContentType(type)).includes(normalizeContentType(c.type)) && c.isPublished !== false)
                 .sort((a, b) => {
                     const getSortValue = (item) => {
                         const explicitDate = item?.date ? new Date(item.date).getTime() : 0;
@@ -6089,7 +6323,7 @@ const renderActionButtons = (item, size = 'large', itemType = null) => {
         };
 
         const renderFreePage = async (activeFilter = 'all') => {
-            const allContent = await fetchAllContent();
+            const allContent = await fetchContentByTypes(['movie', 'series']);
             const freeItems = filterContentForPreferences((allContent || []).filter(item =>
                 item &&
                 item.isPublished !== false &&
@@ -6269,8 +6503,9 @@ const renderActionButtons = (item, size = 'large', itemType = null) => {
         const renderDetailsPage = async (itemId, itemType) => {
             if (!itemId || !itemType) { appContainer.innerHTML = 'Content ID or Type is missing.'; return; }
             
-            const allContent = await fetchAllContent();
-            const item = allContent.find(c => c.id === itemId);
+            const allContent = await fetchContentByTypes([itemType || 'movie']);
+            const normalizedItemType = normalizeContentType(itemType || 'movie');
+            const item = allContent.find(c => c.id === itemId && normalizeContentType(c.type || normalizedItemType) === normalizedItemType) || allContent.find(c => c.id === itemId);
 
             if (!item) {
                 appContainer.innerHTML = `<div class="page text-center p-8"><p>Content unavailable. It might have been removed.</p><button id="back-btn" class="mt-4 bg-red-600 text-white font-bold py-2 px-4 rounded">Go Back</button></div>`;
@@ -6454,9 +6689,9 @@ const renderActionButtons = (item, size = 'large', itemType = null) => {
             const safeContentTitle = escapeHtml(contentTitle);
             const safeGenreText = escapeHtml(genreText);
             const safeDescription = escapeHtml(description || 'No description available.');
-            const allContent = await fetchAllContent();
+            const allContent = parentType ? await fetchContentByTypes([parentType]) : await fetchAllContent();
             await loadCommentAliasRegistry();
-            const parentContent = allContent.find(item => item.id === parentId && (item.type || 'movie') === parentType);
+            const parentContent = allContent.find(item => item.id === parentId && normalizeContentType(item.type || 'movie') === parentType);
             const resolvedPlaybackItem = parentContent ? { ...parentContent, ...payload } : payload;
             const resolvedPlaybackDjName = dj || getResolvedDjName(parentContent || payload);
             const playbackMetaChipsHtml = renderContentMetaChips({
@@ -6871,7 +7106,7 @@ const renderActionButtons = (item, size = 'large', itemType = null) => {
         };
         
         const renderXXXVideoPage = async (itemId) => {
-            const allContent = await fetchAllContent();
+            const allContent = await fetchContentByTypes(['xxx']);
             const item = allContent.find(c => c.id === itemId && ['Education', 'xxx'].includes(c.type));
             const xxxMediaUrls = item ? getPrimaryMediaUrls(item) : { watchUrl: '' };
             const xxxSourceUrl = item?.directUrl || xxxMediaUrls.watchUrl || item?.videoUrl || '';
@@ -6914,8 +7149,8 @@ const renderActionButtons = (item, size = 'large', itemType = null) => {
 
 
         const renderVideoDetailPage = async (itemId, itemType) => {
-             const allContent = await fetchAllContent();
-             const item = allContent.find(c => c.id === itemId && c.type === itemType);
+             const allContent = await fetchContentByTypes([itemType]);
+             const item = allContent.find(c => c.id === itemId && normalizeContentType(c.type) === normalizeContentType(itemType));
 
             if (!item) {
                 appContainer.innerHTML = `<div class="page text-center p-8"><p>Content unavailable. It might have been removed.</p><button id="back-btn" class="mt-4 bg-red-600 text-white font-bold py-2 px-4 rounded">Go Back</button></div>`;
@@ -7131,8 +7366,8 @@ const renderActionButtons = (item, size = 'large', itemType = null) => {
                 await navigateTo(`watch:${watchId}`, true);
                 return;
             }
-            const allContent = await fetchAllContent();
             const parentType = normalizeContentType(payload.parentType || payload.type || payload.sourceType || 'movie');
+            const allContent = await fetchContentByTypes([parentType]);
             const parentContent = allContent.find(item => item.id === payload.parentId && normalizeContentType(item.type || 'movie') === parentType);
             const resolvedPlaybackItem = parentContent ? { ...parentContent, ...payload } : payload;
             if (!promptForProtectedAccess(resolvedPlaybackItem, 'watch')) {
@@ -7297,8 +7532,19 @@ const renderActionButtons = (item, size = 'large', itemType = null) => {
             const discoveryPanels = document.getElementById('search-discovery-panels');
             const resultsMeta = document.getElementById('search-results-meta');
             const searchAdsContainer = document.getElementById('swamedia-ads-container');
-            const allContent = await fetchAllContent();
-            const publishedContent = filterContentForPreferences((allContent || []).filter(item => item && item.title && item.isPublished !== false));
+            let publishedContent = [];
+            let isSearchContentReady = false;
+            const searchContentPromise = fetchAllContent()
+                .then(allContent => {
+                    publishedContent = filterContentForPreferences((allContent || []).filter(item => item && item.title && item.isPublished !== false));
+                    isSearchContentReady = true;
+                    return publishedContent;
+                })
+                .catch(error => {
+                    console.error('Search content failed to load:', error);
+                    isSearchContentReady = true;
+                    return [];
+                });
             let titleCommitTimer = null;
             let activeRecognition = null;
             let searchCommitted = false;
@@ -7317,6 +7563,11 @@ const renderActionButtons = (item, size = 'large', itemType = null) => {
             const renderSuggestions = (query) => {
                 const normalizedQuery = normalizeSearchQuery(query).toLowerCase();
                 if (!normalizedQuery) {
+                    suggestionsContainer.classList.add('hidden');
+                    suggestionsContainer.innerHTML = '';
+                    return;
+                }
+                if (!isSearchContentReady) {
                     suggestionsContainer.classList.add('hidden');
                     suggestionsContainer.innerHTML = '';
                     return;
@@ -7382,7 +7633,7 @@ const renderActionButtons = (item, size = 'large', itemType = null) => {
                     renderSuggestions(transcript);
                     discoveryPanels.classList.toggle('hidden', !normalizeSearchQuery(transcript));
                     syncSearchAdsVisibility(transcript);
-                    handleStandardSearch({ target: targetInput }, publishedContent, true);
+                    handleStandardSearch({ target: targetInput }, searchContentPromise, true);
                 };
                 recognition.onerror = () => showNotification('Mic haikuweza kusoma sauti yako.', 'error');
                 recognition.onend = () => {
@@ -7399,9 +7650,9 @@ const renderActionButtons = (item, size = 'large', itemType = null) => {
                 discoveryPanels.classList.toggle('hidden', !normalizeSearchQuery(e.target.value));
                 syncSearchAdsVisibility(e.target.value);
                 syncSearchActionButtons();
-                handleStandardSearch(e, publishedContent, false);
+                handleStandardSearch(e, searchContentPromise, false);
                 clearTimeout(titleCommitTimer);
-                titleCommitTimer = setTimeout(() => handleStandardSearch(e, publishedContent, false), 450);
+                titleCommitTimer = setTimeout(() => handleStandardSearch(e, searchContentPromise, false), 450);
             });
 
             suggestionsContainer.addEventListener('click', (event) => {
@@ -7414,7 +7665,7 @@ const renderActionButtons = (item, size = 'large', itemType = null) => {
                 syncSearchAdsVisibility(query);
                 searchCommitted = true;
                 syncSearchActionButtons();
-                handleStandardSearch({ target: standardSearchInput }, publishedContent, true);
+                handleStandardSearch({ target: standardSearchInput }, searchContentPromise, true);
             });
 
             searchSubmitBtn?.addEventListener('click', () => {
@@ -7424,7 +7675,7 @@ const renderActionButtons = (item, size = 'large', itemType = null) => {
                 suggestionsContainer.classList.add('hidden');
                 discoveryPanels.classList.add('hidden');
                 syncSearchActionButtons();
-                handleStandardSearch({ target: standardSearchInput }, publishedContent, true);
+                handleStandardSearch({ target: standardSearchInput }, searchContentPromise, true);
             });
 
             searchCancelBtn?.addEventListener('click', () => {
@@ -7435,7 +7686,7 @@ const renderActionButtons = (item, size = 'large', itemType = null) => {
                 discoveryPanels.classList.add('hidden');
                 syncSearchAdsVisibility('');
                 syncSearchActionButtons();
-                handleStandardSearch({ target: standardSearchInput }, publishedContent, false);
+                handleStandardSearch({ target: standardSearchInput }, searchContentPromise, false);
                 standardSearchInput.focus();
             });
 
@@ -7456,7 +7707,7 @@ const renderActionButtons = (item, size = 'large', itemType = null) => {
                 syncSearchAdsVisibility(query);
                 searchCommitted = true;
                 syncSearchActionButtons();
-                handleStandardSearch({ target: standardSearchInput }, publishedContent, true);
+                handleStandardSearch({ target: standardSearchInput }, searchContentPromise, true);
             });
 
             document.getElementById('popular-searches')?.addEventListener('click', (event) => {
@@ -7469,11 +7720,17 @@ const renderActionButtons = (item, size = 'large', itemType = null) => {
                 syncSearchAdsVisibility(query);
                 searchCommitted = true;
                 syncSearchActionButtons();
-                handleStandardSearch({ target: standardSearchInput }, publishedContent, true);
+                handleStandardSearch({ target: standardSearchInput }, searchContentPromise, true);
             });
             await renderSwaMediaAds();
             syncSearchAdsVisibility(standardSearchInput.value);
             syncSearchActionButtons();
+            searchContentPromise.then(() => {
+                const currentQuery = standardSearchInput?.value || '';
+                if (!normalizeSearchQuery(currentQuery)) return;
+                renderSuggestions(currentQuery);
+                handleStandardSearch({ target: standardSearchInput }, publishedContent, false);
+            });
         };
 
         const calculateAIScore = (item, query) => {
@@ -7578,7 +7835,10 @@ const renderActionButtons = (item, size = 'large', itemType = null) => {
             
             resultsContainer.innerHTML = `<div class="col-span-full flex justify-center mt-8"><div class="w-8 h-8 border-4 border-blue-500 border-t-transparent rounded-full animate-spin"></div></div>`;
             
-            const allContent = preloadedContent || await fetchAllContent();
+            const resolvedPreloadedContent = preloadedContent && typeof preloadedContent.then === 'function'
+                ? await preloadedContent
+                : preloadedContent;
+            const allContent = resolvedPreloadedContent || await fetchAllContent();
             const publishedContent = filterContentForPreferences((allContent || []).filter(item => item && item.title && item.isPublished !== false));
 
             const scoredResults = publishedContent
@@ -7691,7 +7951,10 @@ const renderActionButtons = (item, size = 'large', itemType = null) => {
                 searchAdsContainer.style.display = 'none';
             }
 
-            const allContent = preloadedContent || await fetchAllContent();
+            const resolvedPreloadedContent = preloadedContent && typeof preloadedContent.then === 'function'
+                ? await preloadedContent
+                : preloadedContent;
+            const allContent = resolvedPreloadedContent || await fetchAllContent();
             const publishedContent = filterContentForPreferences((allContent || []).filter(item => item && item.title && item.isPublished !== false));
             const parsedQuery = parseStructuredSearchQuery(rawQuery);
             const filteredResults = publishedContent
@@ -7775,7 +8038,7 @@ const renderActionButtons = (item, size = 'large', itemType = null) => {
                         </div>
                     `;
                 } else if (ad.type === 'movie-list' && ad.movieIds && ad.movieIds.length > 0) {
-                    const allContent = await fetchAllContent();
+                    const allContent = await fetchHomeContent();
                     const adMovies = allContent.filter(item => ad.movieIds.includes(item.id));
                     if (adMovies.length > 0) {
                         adHtml = `
@@ -7808,7 +8071,7 @@ const renderActionButtons = (item, size = 'large', itemType = null) => {
                 fetchData('seriesbanners'),
                 fetchData('categories')
             ]);
-            const allContent = await fetchAllContent();
+            const allContent = await fetchContentByTypes(['series']);
             const seriesBanners = transformSnapshotToArray(seriesBannersSnap);
             const categories = transformSnapshotToArray(categoriesSnap);
 
@@ -7857,7 +8120,7 @@ const renderActionButtons = (item, size = 'large', itemType = null) => {
         };
 
         const renderDetailsInfoPage = async (itemId, itemType) => {
-            const allContent = await fetchAllContent();
+            const allContent = await fetchContentByTypes([itemType || 'movie']);
             const item = allContent.find(entry => entry.id === itemId && normalizeContentType(entry.type || itemType) === normalizeContentType(itemType));
 
             if (!item) {
@@ -7908,7 +8171,7 @@ const renderActionButtons = (item, size = 'large', itemType = null) => {
         };
 
         const renderSeriesEpisodeListPage = async (seriesId, seasonNumberParam) => {
-            const allContent = await fetchAllContent();
+            const allContent = await fetchContentByTypes(['series']);
             const seriesItem = allContent.find(entry => entry.id === seriesId && normalizeContentType(entry.type || '') === 'series');
             const seasonNumber = Number(seasonNumberParam || 1);
 
@@ -8027,7 +8290,7 @@ const renderActionButtons = (item, size = 'large', itemType = null) => {
         };
 
         const renderCategoryContentPage = async (categoryName) => {
-             const allContent = await fetchAllContent();
+             const allContent = await fetchHomeContent();
              const filtered = allContent.filter(item => item && (item.category === categoryName || (Array.isArray(item.genres) && item.genres.includes(categoryName))) && item.isPublished !== false);
              
              appContainer.innerHTML = `
@@ -8046,7 +8309,7 @@ const renderActionButtons = (item, size = 'large', itemType = null) => {
         };
 
         const renderGenreContentPage = async (genreName) => {
-             const allContent = await fetchAllContent();
+             const allContent = await fetchHomeContent();
              const filtered = allContent.filter(item => item && (item.category === genreName || (Array.isArray(item.genres) && item.genres.includes(genreName))) && item.isPublished !== false);
              
              appContainer.innerHTML = `
@@ -8065,7 +8328,7 @@ const renderActionButtons = (item, size = 'large', itemType = null) => {
         };
         
         const renderDjPage = async (selectedDjName = '') => {
-             const [allContent, djNames] = await Promise.all([fetchAllContent(), fetchDjNames()]);
+             const [allContent, djNames] = await Promise.all([fetchHomeContent(), fetchDjNames()]);
              const publishedContent = filterContentForPreferences(allContent.filter(item => item && item.isPublished !== false));
              const activeDj = selectedDjName || djNames[0] || DEFAULT_DJ_NAMES[0];
              const displayDjNames = [...new Set([activeDj, ...djNames].map(name => String(name || '').trim()).filter(Boolean))];
@@ -8613,11 +8876,12 @@ const renderActionButtons = (item, size = 'large', itemType = null) => {
         };
 
         const renderWakubwaTuPage = async () => {
-            const allContent = await fetchAllContent();
+            const allContent = await fetchContentByTypes(['adult', 'xxx']);
             
             const wakubwaContent = allContent.filter(item => {
                 if (!item || item.isPublished === false) return false;
                 if (item.type === 'adult') return true;
+                if (normalizeContentType(item.type) === 'xxx') return true;
                 if (item.category === 'Education') return true;
                 return false;
             });
@@ -10506,7 +10770,8 @@ const renderActionButtons = (item, size = 'large', itemType = null) => {
 
         const renderWatchHistoryPage = async () => {
             const historyItems = getStoredWatchHistory();
-            const allContent = await fetchAllContent();
+            const historyTypes = [...new Set(historyItems.map(entry => normalizeContentType(entry.parentType || 'movie')).filter(Boolean))];
+            const allContent = historyTypes.length > 0 ? await fetchContentByTypes(historyTypes) : [];
             const resolvedHistory = historyItems.map(entry => {
                 const content = allContent.find(item => item.id === entry.parentId);
                 return {
