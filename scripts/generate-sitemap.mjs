@@ -33,6 +33,7 @@ const coreUrls = [
   '/search',
   '/series',
   '/storyzone',
+  '/novel',
   '/payment',
   '/app',
   '/free',
