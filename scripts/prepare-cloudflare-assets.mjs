@@ -17,7 +17,6 @@ const staticFiles = [
 ];
 
 const staticDirs = [
-  'admin',
   'icons',
   'subscriptions'
 ];
