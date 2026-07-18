@@ -96,11 +96,7 @@ const handleOfficialMediaRefresh = async (request, env) => {
     await verifyFirebaseUser(request, env);
 
     const url = new URL(request.url);
-
-    if (url.pathname === "/api/media-url") {
-      return handleOfficialMediaRefresh(request, env);
-    }
-    const provider = String(url.searchParams.get("provider") || "").toLowerCase();
+const provider = String(url.searchParams.get("provider") || "").toLowerCase();
     const sourceId = String(url.searchParams.get("source_id") || "").trim();
     const action = url.searchParams.get("action") === "download"
       ? "download"
@@ -151,6 +147,10 @@ const handleOfficialMediaRefresh = async (request, env) => {
 export default {
   async fetch(request, env) {
     const url = new URL(request.url);
+
+    if (url.pathname === "/api/media-url") {
+      return handleOfficialMediaRefresh(request, env);
+    }
 
     if (url.pathname === "/api/media-config") {
       return Response.json({
