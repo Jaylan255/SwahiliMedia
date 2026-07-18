@@ -146,6 +146,12 @@ const provider = String(url.searchParams.get("provider") || "").toLowerCase();
 
 export default {
   async fetch(request, env) {
+    const requestUrl = new URL(request.url);
+
+    if (requestUrl.pathname === "/api/media-url") {
+      return handleOfficialMediaRefresh(request, env);
+    }
+
     /* SWAMEDIA_API_ROUTES_V2 */
     const apiUrl = new URL(request.url);
 
@@ -160,11 +166,6 @@ export default {
       return handleOfficialMediaRefresh(request, env);
     }
 
-    const requestUrl = new URL(request.url);
-
-    if (requestUrl.pathname === "/api/media-url") {
-      return handleOfficialMediaRefresh(request, env);
-    }
     const url = new URL(request.url);
 
     if (url.pathname === "/api/debug-version") {
@@ -179,10 +180,6 @@ export default {
           "Cache-Control": "no-store"
         }
       });
-    }
-
-    if (url.pathname === "/api/media-url") {
-      return handleOfficialMediaRefresh(request, env);
     }
     if (url.pathname === "/api/media-route-test") {
       return new Response(JSON.stringify({
