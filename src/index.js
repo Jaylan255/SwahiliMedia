@@ -166,6 +166,24 @@ export default {
       return handleOfficialMediaRefresh(request, env);
     }
     const url = new URL(request.url);
+
+    if (url.pathname === "/api/debug-version") {
+      return new Response(JSON.stringify({
+        ok: true,
+        mediaRoute: true,
+        version: "media-route-v2"
+      }), {
+        status: 200,
+        headers: {
+          "Content-Type": "application/json; charset=UTF-8",
+          "Cache-Control": "no-store"
+        }
+      });
+    }
+
+    if (url.pathname === "/api/media-url") {
+      return handleOfficialMediaRefresh(request, env);
+    }
     if (url.pathname === "/api/media-route-test") {
       return new Response(JSON.stringify({
         ok: true,
@@ -178,10 +196,6 @@ export default {
           "Cache-Control": "no-store"
         }
       });
-    }
-
-    if (url.pathname === "/api/media-url") {
-      return handleOfficialMediaRefresh(request, env);
     }
 
 if (url.pathname === "/api/media-config") {
