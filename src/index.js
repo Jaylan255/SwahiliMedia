@@ -168,6 +168,10 @@ export default {
 
     const url = new URL(request.url);
 
+    if (url.pathname === "/api/media-url") {
+      return handleOfficialMediaRefresh(request, env);
+    }
+
     if (url.pathname === "/api/debug-version") {
       return new Response(JSON.stringify({
         ok: true,
