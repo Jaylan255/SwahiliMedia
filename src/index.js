@@ -146,16 +146,44 @@ const provider = String(url.searchParams.get("provider") || "").toLowerCase();
 
 export default {
   async fetch(request, env) {
+    /* SWAMEDIA_API_ROUTES_V2 */
+    const apiUrl = new URL(request.url);
+
+    if (apiUrl.pathname === "/api/version") {
+      return Response.json(
+        { worker: "swamedia", version: "api-routes-v2" },
+        { headers: { "Cache-Control": "no-store" } }
+      );
+    }
+
+    if (apiUrl.pathname === "/api/media-url") {
+      return handleOfficialMediaRefresh(request, env);
+    }
+
     const requestUrl = new URL(request.url);
 
     if (requestUrl.pathname === "/api/media-url") {
       return handleOfficialMediaRefresh(request, env);
     }
     const url = new URL(request.url);
+    if (url.pathname === "/api/media-route-test") {
+      return new Response(JSON.stringify({
+        ok: true,
+        worker: "swamedia",
+        version: "media-route-v3"
+      }), {
+        status: 200,
+        headers: {
+          "Content-Type": "application/json; charset=UTF-8",
+          "Cache-Control": "no-store"
+        }
+      });
+    }
 
     if (url.pathname === "/api/media-url") {
       return handleOfficialMediaRefresh(request, env);
     }
+
 if (url.pathname === "/api/media-config") {
       return Response.json({
         enabled: env.MEDIA_REFRESH_ENABLED === "true",
