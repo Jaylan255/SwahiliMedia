@@ -4408,6 +4408,29 @@
                 return true;
             });
         };
+        const proxyExternalPosterUrl = (posterUrl = '') => {
+            const rawUrl = String(posterUrl || '').trim();
+            if (!rawUrl) return '';
+
+            try {
+                const parsed = new URL(rawUrl);
+                const allowedHosts = new Set([
+                    'castillabizz.com',
+                    'www.castillabizz.com',
+                    'swahilicinema.com',
+                    'www.swahilicinema.com',
+                    's3.ap-southeast-1.wasabisys.com',
+                    's3.eu-central-2.wasabisys.com'
+                ]);
+
+                return allowedHosts.has(parsed.hostname.toLowerCase())
+                    ? '/api/image-proxy?url=' + encodeURIComponent(rawUrl)
+                    : rawUrl;
+            } catch {
+                return rawUrl;
+            }
+        };
+
         const getContentCollectionConfig = (contentTypeOrPath = '') => {
             const rawValue = String(contentTypeOrPath || '').trim();
             const normalizedRaw = rawValue.toLowerCase();
@@ -4475,6 +4498,7 @@
                 });
                 const items = transformSnapshotToArray(snapshot).map(item => ({
                     ...item,
+                    posterUrl: proxyExternalPosterUrl(item.posterUrl),
                     type: normalizeContentType(item.type || config.defaultType)
                 }));
                 cacheContentCollection(config.path, items, options);
