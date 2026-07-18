@@ -146,13 +146,17 @@ const provider = String(url.searchParams.get("provider") || "").toLowerCase();
 
 export default {
   async fetch(request, env) {
+    const requestUrl = new URL(request.url);
+
+    if (requestUrl.pathname === "/api/media-url") {
+      return handleOfficialMediaRefresh(request, env);
+    }
     const url = new URL(request.url);
 
     if (url.pathname === "/api/media-url") {
       return handleOfficialMediaRefresh(request, env);
     }
-
-    if (url.pathname === "/api/media-config") {
+if (url.pathname === "/api/media-config") {
       return Response.json({
         enabled: env.MEDIA_REFRESH_ENABLED === "true",
         firebaseConfigured: Boolean(env.FIREBASE_WEB_API_KEY),
