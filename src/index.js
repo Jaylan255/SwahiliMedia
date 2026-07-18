@@ -44,7 +44,8 @@ export default {
         });
 
         if (!upstream.ok) {
-          return new Response("Image unavailable", { status: 502 });
+          const fallbackUrl = new URL("/icons/icon-512.png", request.url);
+          return env.ASSETS.fetch(new Request(fallbackUrl.toString()));
         }
 
         const contentType =
