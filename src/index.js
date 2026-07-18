@@ -44,8 +44,14 @@ export default {
         });
 
         if (!upstream.ok) {
-          const fallbackUrl = new URL("/icons/icon-512.png", request.url);
-          return env.ASSETS.fetch(new Request(fallbackUrl.toString()));
+          const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="512" height="720"><rect width="100%" height="100%" fill="#111"/><text x="50%" y="48%" fill="#fff" font-size="50" text-anchor="middle" font-family="Arial">SwaMedia</text><text x="50%" y="56%" fill="#aaa" font-size="24" text-anchor="middle" font-family="Arial">Poster unavailable</text></svg>`;
+          return new Response(svg, {
+            status: 200,
+            headers: {
+              "Content-Type": "image/svg+xml; charset=UTF-8",
+              "Cache-Control": "public, max-age=3600"
+            }
+          });
         }
 
         const contentType =
