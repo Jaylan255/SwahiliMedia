@@ -7515,6 +7515,38 @@ const renderActionButtons = (item, size = 'large', itemType = null) => {
             const watchFullscreenBtn = document.getElementById('watch-fullscreen-btn');
             if (watchFullscreenBtn) watchFullscreenBtn.addEventListener('click', async () => {
                 if (!promptForProtectedAccess(resolvedPlaybackItem, 'watch')) return;
+
+                const watchMediaContext = {
+                    ...(parentContent || {}),
+                    ...payload,
+                    id: parentId,
+                    parentId
+                };
+
+                const watchProvider = identifyMediaProvider(watchMediaContext);
+
+                if (watchProvider.provider) {
+                    try {
+                        const freshWatchUrl = await fetchFreshMediaUrl(
+                            watchMediaContext,
+                            'stream'
+                        );
+
+                        if (freshWatchUrl) {
+                            payload.watchUrl = freshWatchUrl;
+                            payload.videoUrl = freshWatchUrl;
+                            storeWatchPagePayload(payload);
+                        }
+                    } catch (error) {
+                        console.error('Fresh Watch URL error:', error);
+                        showNotification(
+                            error.message || 'Watch link mpya haijapatikana.',
+                            'error'
+                        );
+                        return;
+                    }
+                }
+
                 await navigateTo(`watchFullscreen:${watchId}`);
             });
             const watchAddToListBtn = document.getElementById('watch-add-to-list-btn');
@@ -7524,23 +7556,59 @@ const renderActionButtons = (item, size = 'large', itemType = null) => {
                 promptForProtectedAccess(resolvedPlaybackItem, 'watch');
             });
             const watchDownloadBtn = document.getElementById('watch-download-btn');
-            if (watchDownloadBtn) watchDownloadBtn.addEventListener('click', () => {
-                if (!downloadUrl) return;
+            if (watchDownloadBtn) watchDownloadBtn.addEventListener('click', async () => {
                 if (!promptForProtectedAccess(resolvedPlaybackItem, 'download')) return;
-                if (downloadUrl) {
-                    const directDownloadUrl = getGoogleDriveUrls(downloadUrl).downloadUrl || downloadUrl;
-                    triggerDirectDownload(directDownloadUrl, `${String(contentTitle || 'swamedia-download').replace(/[^\w.-]+/g, '_')}`, {
+
+                const downloadMediaContext = {
+                    ...(parentContent || {}),
+                    ...payload,
+                    id: parentId,
+                    parentId
+                };
+
+                let resolvedDownloadUrl = downloadUrl;
+                const downloadProvider = identifyMediaProvider(downloadMediaContext);
+
+                if (downloadProvider.provider) {
+                    try {
+                        resolvedDownloadUrl = await fetchFreshMediaUrl(
+                            downloadMediaContext,
+                            'download'
+                        );
+                    } catch (error) {
+                        console.error('Fresh Download URL error:', error);
+                        showNotification(
+                            error.message || 'Download link mpya haijapatikana.',
+                            'error'
+                        );
+                        return;
+                    }
+                }
+
+                if (!resolvedDownloadUrl) {
+                    showNotification('Download link haipatikani.', 'error');
+                    return;
+                }
+
+                const directDownloadUrl =
+                    getGoogleDriveUrls(resolvedDownloadUrl).downloadUrl ||
+                    resolvedDownloadUrl;
+
+                triggerDirectDownload(
+                    directDownloadUrl,
+                    `${String(contentTitle || 'swamedia-download').replace(/[^\w.-]+/g, '_')}`,
+                    {
                         parentId,
                         parentType,
                         parentTitle,
                         title: contentTitle,
                         posterUrl: payload.posterUrl || '',
-                        sourceId: payload.sourceId || '',
+                        sourceId: payload.sourceId || payload.source_id || '',
                         sourceType: payload.sourceType || parentType,
                         seasonNumber: payload.seasonNumber || 0,
                         episodeNumber: payload.episodeNumber || 0
-                    });
-                }
+                    }
+                );
             });
             const watchDetailsBtn = document.getElementById('watch-details-btn');
             if (watchDetailsBtn) watchDetailsBtn.addEventListener('click', () => {
@@ -13955,6 +14023,98 @@ const renderActionButtons = (item, size = 'large', itemType = null) => {
                     hidePageLoader();
                 }
             }
+        };
+
+
+        const identifyMediaProvider = (item = {}) => {
+            const source = String(
+                item.source ||
+                item.source_name ||
+                item.sourceName ||
+                item.source_site ||
+                item.sourceSite ||
+                ''
+            ).toLowerCase();
+
+            const recordId = String(
+                item.source_id ||
+                item.sourceId ||
+                item.castillaId ||
+                item.parentId ||
+                item.id ||
+                ''
+            ).trim();
+
+            let provider = '';
+
+            if (source.includes('swahilicinema') || /^swahilicinema_/i.test(recordId)) {
+                provider = 'swahilicinema';
+            } else if (source.includes('castilla') || /^castilla_/i.test(recordId)) {
+                provider = 'castilla';
+            }
+
+            const sourceId = recordId
+                .replace(/^castilla_/i, '')
+                .replace(/^swahilicinema_/i, '');
+
+            return { provider, sourceId };
+        };
+
+        const fetchFreshMediaUrl = async (item = {}, action = 'stream') => {
+            const { provider, sourceId } = identifyMediaProvider(item);
+
+            if (!provider || !sourceId) return '';
+
+            const endpoint = new URL('/api/media-url', window.location.origin);
+            endpoint.searchParams.set('provider', provider);
+            endpoint.searchParams.set('source_id', sourceId);
+            endpoint.searchParams.set(
+                'action',
+                action === 'download' ? 'download' : 'stream'
+            );
+            endpoint.searchParams.set('_fresh', Date.now().toString());
+
+            const episodeNumber = Number(
+                item.episodeNumber ||
+                item.episode_number ||
+                item.episode ||
+                0
+            );
+
+            if (episodeNumber > 0) {
+                endpoint.searchParams.set('episode', String(episodeNumber));
+            }
+
+            if (item.partKey) {
+                endpoint.searchParams.set('part', String(item.partKey));
+            }
+
+            const headers = {
+                Accept: 'application/json',
+                'Cache-Control': 'no-cache'
+            };
+
+            if (currentUser && typeof currentUser.getIdToken === 'function') {
+                headers.Authorization = `Bearer ${await currentUser.getIdToken(true)}`;
+            }
+
+            const response = await fetch(endpoint.toString(), {
+                method: 'GET',
+                headers,
+                cache: 'no-store',
+                credentials: 'same-origin'
+            });
+
+            const result = await response.json().catch(() => ({}));
+
+            if (!response.ok || !result.url) {
+                throw new Error(
+                    result.error ||
+                    `Fresh media URL request failed (${response.status})`
+                );
+            }
+
+            return result.url;
         };
 
         const handleBack = () => {
