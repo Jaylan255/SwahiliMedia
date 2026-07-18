@@ -11,6 +11,23 @@ export default {
   async fetch(request, env) {
     const url = new URL(request.url);
 
+    if (url.pathname === "/api/media-config") {
+      return Response.json({
+        enabled: env.MEDIA_REFRESH_ENABLED === "true",
+        firebaseConfigured: Boolean(env.FIREBASE_WEB_API_KEY),
+        castillaConfigured: Boolean(
+          env.CASTILLA_WASABI_ACCESS_KEY_ID &&
+          env.CASTILLA_WASABI_SECRET_ACCESS_KEY
+        ),
+        swahiliCinemaConfigured: Boolean(
+          env.SWAHILI_WASABI_ACCESS_KEY_ID &&
+          env.SWAHILI_WASABI_SECRET_ACCESS_KEY
+        )
+      }, {
+        headers: { "Cache-Control": "no-store" }
+      });
+    }
+
     if (url.pathname === "/api/ping") {
       return new Response("OK", {
         status: 200,
